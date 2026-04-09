@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://zeppelin-bar.com/sitemap.xml
