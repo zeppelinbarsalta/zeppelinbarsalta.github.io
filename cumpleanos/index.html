@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- SEO Primary -->
+  <title>Cumpleaños en Salta | Zeppelin Bar — El bar más icónico desde 2001</title>
+  <meta name="description" content="Festejá tu cumpleaños en Zeppelin Bar, el bar más icónico de Salta. Mesa reservada con tu nombre, trago de bienvenida y mozo dedicado. Grupos de 6 o más. Viernes y sábados desde las 20:30 hs.">
+  <meta name="keywords" content="cumpleaños en Salta, festejar cumpleaños Salta, bar para cumpleaños Salta, reserva cumpleaños Salta, bar grupos Salta, Zeppelin Bar cumpleaños">
+  <link rel="canonical" href="https://zeppelin-bar.com/cumpleanos">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Festejá tu cumpleaños en Zeppelin Bar — Salta">
+  <meta property="og:description" content="Mesa reservada con tu nombre, trago de bienvenida y mozo dedicado. El bar más icónico de Salta te espera.">
+  <meta property="og:url" content="https://zeppelin-bar.com/cumpleanos">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_AR">
+
+  <!-- Schema.org -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BarOrPub",
+    "name": "Zeppelin Bar",
+    "description": "El bar más icónico de Salta para festejar cumpleaños. Mesa reservada, trago de bienvenida y mozo dedicado.",
+    "url": "https://zeppelin-bar.com/cumpleanos",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "25 de Mayo 340",
+      "addressLocality": "Salta",
+      "addressRegion": "Salta",
+      "addressCountry": "AR"
+    },
+    "openingHours": ["Fr 20:30-04:00", "Sa 20:30-04:00"],
+    "telephone": "+5493875458204",
+    "sameAs": [
+      "https://www.instagram.com/zeppelinbar.salta"
+    ]
+  }
+  </script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@300;400;500;600&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --black: #0a0a0a;
+      --orange: #FF5A00;
+      --white: #f5f5f0;
+      --gray: #888;
+      --gray-dark: #1a1a1a;
+      --gray-mid: #2a2a2a;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Oswald', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(to bottom, rgba(10,10,10,0.95), transparent);
+    }
+
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      letter-spacing: 0.08em;
+      text-decoration: none;
+      color: var(--white);
+    }
+
+    .nav-logo span { color: var(--orange); }
+
+    .nav-back {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gray);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-back:hover { color: var(--white); }
+    .nav-back::before { content: '← '; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 60px 40px;
+      position: relative;
+      overflow: hidden;
+      background: var(--black);
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 70% 40%, rgba(255,90,0,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse at 20% 80%, rgba(255,90,0,0.05) 0%, transparent 50%);
+    }
+
+    /* Diagonal orange accent line */
+    .hero-line {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .hero-line::after {
+      content: '';
+      position: absolute;
+      top: 35%;
+      left: -10%;
+      width: 120%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--orange), transparent);
+      opacity: 0.3;
+      transform: rotate(-3deg);
+    }
+
+    .hero-eyebrow {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 16px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.2s;
+    }
+
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(4rem, 12vw, 10rem);
+      line-height: 0.9;
+      letter-spacing: 0.02em;
+      margin-bottom: 24px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.4s;
+    }
+
+    .hero-title span { color: var(--orange); }
+
+    .hero-sub {
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+      color: var(--gray);
+      max-width: 480px;
+      line-height: 1.5;
+      margin-bottom: 40px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.6s;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.8s;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--orange);
+      color: var(--white);
+      font-family: 'Oswald', sans-serif;
+      font-weight: 500;
+      font-size: 0.85rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 16px 32px;
+      text-decoration: none;
+      transition: all 0.2s;
+      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+    }
+    .btn-primary:hover {
+      background: #ff7a2a;
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: transparent;
+      color: var(--white);
+      font-family: 'Oswald', sans-serif;
+      font-weight: 400;
+      font-size: 0.85rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 16px 32px;
+      text-decoration: none;
+      border: 1px solid rgba(255,255,255,0.2);
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover {
+      border-color: var(--orange);
+      color: var(--orange);
+    }
+
+    .hero-badge {
+      position: absolute;
+      top: 50%;
+      right: 40px;
+      transform: translateY(-50%);
+      width: 130px;
+      height: 130px;
+      border: 1px solid rgba(255,90,0,0.4);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      opacity: 0;
+      animation: fadeIn 1s ease forwards 1s;
+    }
+    .hero-badge::before {
+      content: '';
+      position: absolute;
+      inset: 6px;
+      border: 1px solid rgba(255,90,0,0.2);
+      border-radius: 50%;
+    }
+    .hero-badge-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.8rem;
+      color: var(--orange);
+      line-height: 1;
+    }
+    .hero-badge-text {
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gray);
+      line-height: 1.4;
+    }
+
+    /* ── FEATURES ── */
+    .features {
+      padding: 100px 40px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 60px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      max-width: 60px;
+      height: 1px;
+      background: var(--orange);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 2px;
+    }
+
+    .feature-card {
+      background: var(--gray-dark);
+      padding: 40px 32px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s;
+    }
+    .feature-card:hover { background: var(--gray-mid); }
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px;
+      height: 0;
+      background: var(--orange);
+      transition: height 0.4s ease;
+    }
+    .feature-card:hover::before { height: 100%; }
+
+    .feature-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3.5rem;
+      color: rgba(255,90,0,0.15);
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+
+    .feature-title {
+      font-family: 'Oswald', sans-serif;
+      font-weight: 500;
+      font-size: 1rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      color: var(--white);
+    }
+
+    .feature-desc {
+      font-family: 'EB Garamond', serif;
+      font-size: 1rem;
+      color: var(--gray);
+      line-height: 1.6;
+    }
+
+    /* ── STATEMENT ── */
+    .statement {
+      padding: 100px 40px;
+      background: var(--gray-dark);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .statement::before {
+      content: 'CUMPLEAÑOS';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(6rem, 20vw, 18rem);
+      color: rgba(255,255,255,0.02);
+      white-space: nowrap;
+      pointer-events: none;
+      letter-spacing: 0.05em;
+    }
+
+    .statement-quote {
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-size: clamp(1.4rem, 3vw, 2.2rem);
+      line-height: 1.5;
+      max-width: 700px;
+      margin: 0 auto 32px;
+      color: var(--white);
+      position: relative;
+    }
+
+    .statement-sub {
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--orange);
+    }
+
+    /* ── HOW ── */
+    .how {
+      padding: 100px 40px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .how-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      line-height: 1;
+      margin-bottom: 60px;
+    }
+    .how-title span { color: var(--orange); }
+
+    .how-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .how-step {
+      display: grid;
+      grid-template-columns: 60px 1fr;
+      gap: 32px;
+      align-items: start;
+      padding: 32px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      position: relative;
+    }
+
+    .step-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1rem;
+      color: var(--orange);
+      letter-spacing: 0.1em;
+      padding-top: 4px;
+    }
+
+    .step-content h3 {
+      font-family: 'Oswald', sans-serif;
+      font-weight: 500;
+      font-size: 1.1rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .step-content p {
+      font-family: 'EB Garamond', serif;
+      font-size: 1rem;
+      color: var(--gray);
+      line-height: 1.6;
+    }
+
+    /* ── HISTORY STRIP ── */
+    .history {
+      padding: 60px 40px;
+      background: var(--orange);
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+
+    .history-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(4rem, 10vw, 8rem);
+      line-height: 1;
+      color: rgba(0,0,0,0.2);
+      flex-shrink: 0;
+    }
+
+    .history-text h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(1.5rem, 4vw, 3rem);
+      color: var(--black);
+      line-height: 1.1;
+      margin-bottom: 8px;
+    }
+
+    .history-text p {
+      font-family: 'EB Garamond', serif;
+      font-size: 1rem;
+      color: rgba(0,0,0,0.6);
+      line-height: 1.5;
+      max-width: 500px;
+    }
+
+    /* ── CTA FINAL ── */
+    .cta-final {
+      padding: 120px 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-final::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(255,90,0,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .cta-final h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 8vw, 7rem);
+      line-height: 0.95;
+      margin-bottom: 24px;
+    }
+    .cta-final h2 span { color: var(--orange); }
+
+    .cta-final p {
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-size: 1.2rem;
+      color: var(--gray);
+      margin-bottom: 48px;
+    }
+
+    .cta-info {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      flex-wrap: wrap;
+      margin-top: 48px;
+    }
+
+    .cta-info-item {
+      text-align: center;
+    }
+    .cta-info-item .label {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-bottom: 6px;
+    }
+    .cta-info-item .value {
+      font-family: 'Oswald', sans-serif;
+      font-weight: 500;
+      font-size: 1rem;
+      color: var(--white);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 32px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.2rem;
+      letter-spacing: 0.08em;
+      color: var(--white);
+      text-decoration: none;
+    }
+    .footer-logo span { color: var(--orange); }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+    }
+    .footer-links a {
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gray);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--orange); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 640px) {
+      nav { padding: 16px 20px; }
+      .hero { padding: 100px 20px 50px; }
+      .hero-badge { display: none; }
+      .features { padding: 60px 20px; }
+      .statement { padding: 60px 20px; }
+      .how { padding: 60px 20px; }
+      .history { padding: 40px 20px; }
+      .cta-final { padding: 80px 20px; }
+      footer { padding: 24px 20px; }
+      .cta-info { gap: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="https://zeppelin-bar.com" class="nav-logo">ZEP<span>PE</span>LIN BAR</a>
+    <a href="https://zeppelin-bar.com" class="nav-back">Inicio</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-line"></div>
+
+    <div class="hero-badge" aria-hidden="true">
+      <div class="hero-badge-num">25</div>
+      <div class="hero-badge-text">años en<br>Salta</div>
+    </div>
+
+    <p class="hero-eyebrow">Zeppelin Bar · Salta · Desde 2001</p>
+    <h1 class="hero-title">CUMPLE<span>AÑOS</span><br>EN SALTA</h1>
+    <p class="hero-sub">El lugar que los salteños eligen para festejar. Mesa con tu nombre, trago de bienvenida y atención dedicada.</p>
+
+    <div class="hero-cta">
+      <a href="https://wa.me/5493875458204?text=Hola!%20Quiero%20reservar%20para%20un%20cumplea%C3%B1os" class="btn-primary">
+        Reservar por WhatsApp
+      </a>
+      <a href="https://www.instagram.com/zeppelinbar.salta" class="btn-secondary" target="_blank" rel="noopener">
+        @zeppelinbar.salta
+      </a>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features">
+    <p class="section-label">Lo que incluye festejar en Zeppelin</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-num">01</div>
+        <h2 class="feature-title">Mesa reservada con tu nombre</h2>
+        <p class="feature-desc">Tu mesa te espera. Con cartel y todo. Llegás y ya está.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-num">02</div>
+        <h2 class="feature-title">Trago de bienvenida</h2>
+        <p class="feature-desc">Un brindis de nuestra parte. Entregado cuando está todo el grupo, como tiene que ser.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-num">03</div>
+        <h2 class="feature-title">Mozo dedicado</h2>
+        <p class="feature-desc">Tu grupo tiene atención propia. Sin esperar, sin perderse en la noche.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-num">04</div>
+        <h2 class="feature-title">25 años de historia</h2>
+        <p class="feature-desc">El bar más icónico de Salta. El lugar que los salteños eligen desde 2001.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATEMENT -->
+  <section class="statement">
+    <p class="statement-quote">"El cumpleaños que la gente recuerda no es el más caro. Es el que tuvo el mejor ambiente."</p>
+    <p class="statement-sub">Zeppelin Bar — El bar más icónico de Salta</p>
+  </section>
+
+  <!-- HOW -->
+  <section class="how">
+    <h2 class="how-title">CÓMO<br><span>FUNCIONA</span></h2>
+    <div class="how-steps">
+      <div class="how-step">
+        <span class="step-num">01</span>
+        <div class="step-content">
+          <h3>Escribinos por WhatsApp</h3>
+          <p>Avisanos la fecha, la cantidad de personas y el nombre del cumpleañero. Nosotros separamos la mesa.</p>
+        </div>
+      </div>
+      <div class="how-step">
+        <span class="step-num">02</span>
+        <div class="step-content">
+          <h3>Llegás y ya está todo listo</h3>
+          <p>Tu mesa con el cartel, el mozo que te reconoce. Sin filas, sin vueltas.</p>
+        </div>
+      </div>
+      <div class="how-step">
+        <span class="step-num">03</span>
+        <div class="step-content">
+          <h3>El grupo completo, el brindis</h3>
+          <p>Cuando llegaron todos, el trago de bienvenida aparece. El momento que se filma solo.</p>
+        </div>
+      </div>
+      <div class="how-step">
+        <span class="step-num">04</span>
+        <div class="step-content">
+          <h3>El resto es tuyo</h3>
+          <p>Carta completa, ambiente inigualable, la noche de Salta en el lugar que la gente elige hace 25 años.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HISTORY STRIP -->
+  <div class="history">
+    <div class="history-num">25</div>
+    <div class="history-text">
+      <h2>AÑOS SIENDO<br>EL BAR DE SALTA</h2>
+      <p>Desde 2001. El bar que más historia tiene en la noche salteña.</p>
+    </div>
+  </div>
+
+  <!-- CTA FINAL -->
+  <section class="cta-final">
+    <h2>RESERVÁ<br><span>TU MESA</span></h2>
+    <p>Grupos de 6 o más. Viernes y sábados desde las 20:30 hs.</p>
+
+    <a href="https://wa.me/5493875458204?text=Hola!%20Quiero%20reservar%20para%20un%20cumplea%C3%B1os" class="btn-primary">
+      Reservar ahora
+    </a>
+
+    <div class="cta-info">
+      <div class="cta-info-item">
+        <div class="label">Dirección</div>
+        <div class="value">25 de Mayo 340, Salta</div>
+      </div>
+      <div class="cta-info-item">
+        <div class="label">Apertura</div>
+        <div class="value">Vie y Sáb desde 20:30</div>
+      </div>
+      <div class="cta-info-item">
+        <div class="label">Grupos mínimos</div>
+        <div class="value">6 personas</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <a href="https://zeppelin-bar.com" class="footer-logo">ZEP<span>PE</span>LIN BAR</a>
+    <div class="footer-links">
+      <a href="https://zeppelin-bar.com">Inicio</a>
+      <a href="https://zeppelin-bar.com/juntada">Juntada</a>
+      <a href="https://zeppelin-bar.com/cocteles">Cócteles</a>
+      <a href="https://zeppelin-bar.com/vinos">Vinos</a>
+      <a href="https://zeppelin-bar.com/turistas">Turistas</a>
+      <a href="https://www.instagram.com/zeppelinbar.salta" target="_blank" rel="noopener">Instagram</a>
+    </div>
+  </footer>
+
+</body>
+</html>
