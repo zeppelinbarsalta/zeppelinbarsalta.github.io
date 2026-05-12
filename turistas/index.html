@@ -1,1 +1,520 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <title>Bares en Salta para Turistas | Zeppelin Bar — El bar más icónico desde 2001</title>
+  <meta name="description" content="El bar más icónico de Salta para turistas. 25 años de historia, cócteles con ingredientes del NOA y vinos de los Valles Calchaquíes. 25 de Mayo 340, Salta. Viernes y sábados desde las 20:30 hs.">
+  <meta name="keywords" content="bares en Salta turistas, qué hacer de noche en Salta, vida nocturna Salta, bar histórico Salta, bar icónico Salta Capital, bars in Salta Argentina, nightlife Salta, bares turísticos Salta, où sortir Salta, bares Salta centro">
+  <link rel="canonical" href="https://zeppelin-bar.com/turistas">
+  <meta property="og:title" content="Zeppelin Bar Salta — The most iconic bar since 2001">
+  <meta property="og:description" content="25 years of history. Cocktails with NOA ingredients. Wines from the Calchaquí Valleys.">
+  <meta property="og:url" content="https://zeppelin-bar.com/turistas">
+  <meta property="og:type" content="website">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BarOrPub",
+    "name": "Zeppelin Bar",
+    "description": "El bar más icónico de Salta desde 2001.",
+    "url": "https://zeppelin-bar.com/turistas",
+    "foundingDate": "2001",
+    "address": { "@type": "PostalAddress", "streetAddress": "25 de Mayo 340", "addressLocality": "Salta", "addressCountry": "AR" },
+    "openingHours": ["Fr 20:30-04:00", "Sa 20:30-04:00"],
+    "telephone": "+5493875458204",
+    "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.2", "reviewCount": "3000" }
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@300;400;500;600&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --black: #0a0a0a;
+      --orange: #FF5A00;
+      --white: #f5f5f0;
+      --gray: #888;
+      --gray-dark: #111;
+      --gray-mid: #1a1a1a;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--black); color: var(--white); font-family: 'Oswald', sans-serif; font-weight: 300; overflow-x: hidden; }
+
+    /* NAV */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(to bottom, rgba(10,10,10,0.97), transparent); }
+    .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 0.08em; text-decoration: none; color: var(--white); }
+    .nav-logo span { color: var(--orange); }
+    .nav-right { display: flex; align-items: center; gap: 20px; }
+    .nav-back { font-size: 0.75rem; font-weight: 400; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray); text-decoration: none; transition: color 0.2s; }
+    .nav-back:hover { color: var(--white); }
+    .nav-back::before { content: '← '; }
+
+    /* LANG SWITCHER */
+    .lang-switcher { display: flex; gap: 3px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); padding: 4px; }
+    .lang-btn { font-family: 'Oswald', sans-serif; font-size: 0.65rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gray); background: transparent; border: none; padding: 6px 10px; cursor: pointer; transition: all 0.2s; }
+    .lang-btn:hover { color: var(--white); }
+    .lang-btn.active { background: var(--orange); color: var(--white); }
+
+    /* LANG CONTENT */
+    [data-lang] { display: none; }
+    [data-lang].active { display: contents; }
+    span[data-lang].active { display: inline; }
+    p[data-lang].active, h1[data-lang].active, h2[data-lang].active, div[data-lang].active { display: block; }
+
+    /* HERO */
+    .hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: flex-end; padding: 80px 40px; position: relative; overflow: hidden; }
+    .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 80% 20%, rgba(255,90,0,0.1) 0%, transparent 50%), radial-gradient(ellipse at 10% 80%, rgba(255,90,0,0.06) 0%, transparent 40%); pointer-events: none; }
+
+    .hero-badge { position: absolute; top: 50%; right: 80px; transform: translateY(-50%); text-align: center; opacity: 0; animation: fadeIn 1s ease forwards 1s; }
+    .hero-badge-num { font-family: 'Bebas Neue', sans-serif; font-size: 6rem; color: rgba(255,90,0,0.12); line-height: 1; }
+    .hero-badge-label { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--orange); }
+
+    .hero-eyebrow { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.3em; text-transform: uppercase; color: var(--orange); margin-bottom: 16px; opacity: 0; animation: fadeUp 0.8s ease forwards 0.2s; }
+    .hero-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3.5rem, 10vw, 9rem); line-height: 0.88; margin-bottom: 28px; opacity: 0; animation: fadeUp 0.8s ease forwards 0.4s; }
+    .hero-title .accent { color: var(--orange); }
+    .hero-sub { font-family: 'EB Garamond', serif; font-style: italic; font-size: clamp(1rem, 2vw, 1.3rem); color: var(--gray); line-height: 1.65; max-width: 520px; margin-bottom: 44px; opacity: 0; animation: fadeUp 0.8s ease forwards 0.6s; }
+    .hero-cta { display: flex; gap: 16px; flex-wrap: wrap; opacity: 0; animation: fadeUp 0.8s ease forwards 0.8s; }
+
+    .btn-primary { display: inline-flex; align-items: center; gap: 10px; background: var(--orange); color: var(--white); font-family: 'Oswald', sans-serif; font-weight: 500; font-size: 0.85rem; letter-spacing: 0.2em; text-transform: uppercase; padding: 16px 32px; text-decoration: none; transition: all 0.2s; clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px)); }
+    .btn-primary:hover { background: #ff7a2a; transform: translateY(-2px); }
+    .btn-secondary { display: inline-flex; align-items: center; background: transparent; color: var(--white); font-family: 'Oswald', sans-serif; font-weight: 400; font-size: 0.85rem; letter-spacing: 0.2em; text-transform: uppercase; padding: 16px 32px; text-decoration: none; border: 1px solid rgba(255,255,255,0.2); transition: all 0.2s; }
+    .btn-secondary:hover { border-color: var(--orange); color: var(--orange); }
+
+    /* QUICK INFO */
+    .quick-info { background: var(--orange); display: grid; grid-template-columns: repeat(4, 1fr); }
+    .qi-item { padding: 28px 32px; border-right: 1px solid rgba(0,0,0,0.1); }
+    .qi-item:last-child { border-right: none; }
+    .qi-label { display: block; font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(0,0,0,0.5); margin-bottom: 4px; }
+    .qi-value { font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 0.95rem; color: var(--black); }
+
+    /* WHY */
+    .why { padding: 100px 40px; max-width: 1100px; margin: 0 auto; }
+    .section-label { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.3em; text-transform: uppercase; color: var(--orange); margin-bottom: 60px; display: flex; align-items: center; gap: 16px; }
+    .section-label::after { content: ''; flex: 1; max-width: 60px; height: 1px; background: var(--orange); }
+    .why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+    .why-card { background: var(--gray-dark); padding: 44px 36px; position: relative; overflow: hidden; transition: background 0.3s; }
+    .why-card:hover { background: var(--gray-mid); }
+    .why-card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: var(--orange); transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease; }
+    .why-card:hover::after { transform: scaleX(1); }
+    .why-num { font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; color: rgba(255,90,0,0.1); line-height: 1; margin-bottom: 16px; }
+    .why-title { font-family: 'Oswald', sans-serif; font-weight: 500; font-size: 1rem; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; }
+    .why-desc { font-family: 'EB Garamond', serif; font-size: 1rem; color: var(--gray); line-height: 1.6; }
+
+    /* STATEMENT */
+    .statement { padding: 100px 40px; background: var(--gray-dark); text-align: center; position: relative; overflow: hidden; }
+    .statement::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(255,90,0,0.05) 0%, transparent 65%); pointer-events: none; }
+    .statement-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3rem, 9vw, 8rem); line-height: 0.9; margin-bottom: 24px; }
+    .statement-title .accent { color: var(--orange); }
+    .statement-sub { font-family: 'EB Garamond', serif; font-style: italic; font-size: clamp(1.1rem, 2.5vw, 1.6rem); color: var(--gray); max-width: 600px; margin: 0 auto; line-height: 1.6; }
+
+    /* HOW TO */
+    .howto { padding: 100px 40px; max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+    .howto-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 5vw, 4.5rem); line-height: 1; margin-bottom: 40px; }
+    .howto-title .accent { color: var(--orange); }
+    .howto-item { padding: 24px 0; border-bottom: 1px solid rgba(255,255,255,0.06); display: grid; grid-template-columns: 32px 1fr; gap: 20px; }
+    .howto-icon { font-size: 1.2rem; padding-top: 2px; }
+    .howto-item-title { font-family: 'Oswald', sans-serif; font-weight: 500; font-size: 0.9rem; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+    .howto-item-desc { font-family: 'EB Garamond', serif; font-size: 0.95rem; color: var(--gray); line-height: 1.5; }
+    .howto-map { background: var(--gray-dark); aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px; border: 1px solid rgba(255,255,255,0.04); position: relative; overflow: hidden; }
+    .howto-map::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at center, rgba(255,90,0,0.06) 0%, transparent 70%); }
+    .map-pin { font-size: 3rem; margin-bottom: 16px; }
+    .map-address { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .map-city { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--orange); margin-bottom: 24px; }
+    .map-link { display: inline-flex; align-items: center; gap: 8px; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray); text-decoration: none; border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; transition: all 0.2s; }
+    .map-link:hover { border-color: var(--orange); color: var(--orange); }
+
+    /* OFFERS */
+    .offers { padding: 100px 40px; background: var(--gray-dark); }
+    .offers-inner { max-width: 1100px; margin: 0 auto; }
+    .offers-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1; margin-bottom: 60px; }
+    .offers-title .accent { color: var(--orange); }
+    .offers-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+    .offer-card { background: var(--black); padding: 44px 36px; position: relative; transition: background 0.3s; }
+    .offer-card:hover { background: #0d0d0d; }
+    .offer-card::before { content: ''; position: absolute; top: 0; left: 0; width: 0; height: 3px; background: var(--orange); transition: width 0.4s ease; }
+    .offer-card:hover::before { width: 100%; }
+    .offer-tag { display: inline-block; font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--orange); border: 1px solid rgba(255,90,0,0.3); padding: 3px 10px; margin-bottom: 20px; }
+    .offer-title { font-family: 'Oswald', sans-serif; font-weight: 500; font-size: 1.1rem; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; }
+    .offer-desc { font-family: 'EB Garamond', serif; font-size: 1rem; color: var(--gray); line-height: 1.6; }
+
+    /* CTA */
+    .cta-final { padding: 120px 40px; text-align: center; position: relative; overflow: hidden; }
+    .cta-final::before { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 700px; height: 700px; background: radial-gradient(circle, rgba(255,90,0,0.06) 0%, transparent 70%); pointer-events: none; }
+    .cta-eyebrow { font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--orange); margin-bottom: 20px; }
+    .cta-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3rem, 9vw, 8rem); line-height: 0.92; margin-bottom: 24px; }
+    .cta-title .accent { color: var(--orange); }
+    .cta-sub { font-family: 'EB Garamond', serif; font-style: italic; font-size: 1.2rem; color: var(--gray); margin-bottom: 48px; }
+    .cta-info { display: flex; justify-content: center; gap: 48px; flex-wrap: wrap; margin-top: 48px; padding-top: 48px; border-top: 1px solid rgba(255,255,255,0.06); }
+    .cta-info-item .label { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gray); margin-bottom: 6px; }
+    .cta-info-item .value { font-family: 'Oswald', sans-serif; font-weight: 500; font-size: 1rem; color: var(--white); }
+
+    /* FOOTER */
+    footer { border-top: 1px solid rgba(255,255,255,0.06); padding: 32px 40px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+    .footer-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: 0.08em; color: var(--white); text-decoration: none; }
+    .footer-logo span { color: var(--orange); }
+    .footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
+    .footer-links a { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray); text-decoration: none; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--orange); }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    @media (max-width: 768px) {
+      nav { padding: 16px 20px; }
+      .hero { padding: 100px 20px 60px; }
+      .hero-badge { display: none; }
+      .quick-info { grid-template-columns: 1fr 1fr; }
+      .why { padding: 60px 20px; }
+      .why-grid { grid-template-columns: 1fr; }
+      .statement { padding: 60px 20px; }
+      .howto { padding: 60px 20px; grid-template-columns: 1fr; gap: 40px; }
+      .offers { padding: 60px 20px; }
+      .offers-grid { grid-template-columns: 1fr; }
+      .cta-final { padding: 80px 20px; }
+      footer { padding: 24px 20px; }
+    }
+    @media (max-width: 480px) { .quick-info { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="https://zeppelin-bar.com" class="nav-logo">ZEP<span>PE</span>LIN BAR</a>
+  <div class="nav-right">
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('es')">ES</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('pt')">PT</button>
+      <button class="lang-btn" onclick="setLang('fr')">FR</button>
+    </div>
+    <a href="https://zeppelin-bar.com" class="nav-back" id="nav-back-text">Inicio</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-badge" aria-hidden="true">
+    <div class="hero-badge-num">25</div>
+    <div class="hero-badge-label" id="badge-label">años</div>
+  </div>
+  <p class="hero-eyebrow" id="hero-eyebrow">Zeppelin Bar · Salta · Desde 2001</p>
+  <h1 class="hero-title">
+    <span id="hero-title-line1">EL BAR MÁS ICÓNICO</span><br>
+    <span class="accent" id="hero-title-line2">DE</span><br>
+    <span id="hero-title-line3">SALTA</span>
+  </h1>
+  <p class="hero-sub" id="hero-sub">25 años de historia en el corazón de Salta Capital. Cócteles con ingredientes del NOA, vinos de los Valles Calchaquíes y el ambiente que ningún otro bar de Salta puede replicar.</p>
+  <div class="hero-cta">
+    <a href="https://wa.me/5493875458204?text=Hola!%20Quiero%20reservar%20una%20mesa%20en%20Zeppelin" class="btn-primary" id="btn-reserve">Reservar por WhatsApp</a>
+    <a href="https://www.instagram.com/zeppelinbar.salta" class="btn-secondary" target="_blank" rel="noopener">@zeppelinbar.salta</a>
+  </div>
+</section>
+
+<div class="quick-info">
+  <div class="qi-item"><span class="qi-label" id="qi-label-1">Dirección</span><span class="qi-value">25 de Mayo 340</span></div>
+  <div class="qi-item"><span class="qi-label" id="qi-label-2">Apertura</span><span class="qi-value" id="qi-hours">Vie y Sáb · 20:30 hs</span></div>
+  <div class="qi-item"><span class="qi-label" id="qi-label-3">Historia</span><span class="qi-value" id="qi-history">25 años · Desde 2001</span></div>
+  <div class="qi-item"><span class="qi-label">Google</span><span class="qi-value">4.2 ★ · 3.000+</span></div>
+</div>
+
+<section class="why">
+  <p class="section-label" id="why-label">Por qué elegir Zeppelin</p>
+  <div class="why-grid">
+    <div class="why-card">
+      <div class="why-num">25</div>
+      <h2 class="why-title" id="why-t1">25 años de historia</h2>
+      <p class="why-desc" id="why-d1">Desde 2001. El bar con más historia en la noche salteña. Lo que ningún bar nuevo puede replicar.</p>
+    </div>
+    <div class="why-card">
+      <div class="why-num">🍹</div>
+      <h2 class="why-title" id="why-t2">Cócteles únicos del NOA</h2>
+      <p class="why-desc" id="why-d2">8 tragos de autor elaborados con higo, cayote, membrillo y batata. Ingredientes del norte argentino que no vas a encontrar en otro bar.</p>
+    </div>
+    <div class="why-card">
+      <div class="why-num">🍷</div>
+      <h2 class="why-title" id="why-t3">Vinos de altura extrema</h2>
+      <p class="why-desc" id="why-d3">Carta Terroir Extremo: 30+ etiquetas de los Valles Calchaquíes entre 1.700 y 2.685 msnm. Torrontés, Malbec y más.</p>
+    </div>
+    <div class="why-card">
+      <div class="why-num">📍</div>
+      <h2 class="why-title" id="why-t4">En el centro de Salta</h2>
+      <p class="why-desc" id="why-d4">25 de Mayo 340. A pasos de la Plaza 9 de Julio, los hoteles del centro y los principales atractivos turísticos de Salta Capital.</p>
+    </div>
+    <div class="why-card">
+      <div class="why-num">⭐</div>
+      <h2 class="why-title" id="why-t5">3.000+ reseñas en Google</h2>
+      <p class="why-desc" id="why-d5">4.2 estrellas y más de 3.000 reseñas. El respaldo de quienes ya estuvieron.</p>
+    </div>
+    <div class="why-card">
+      <div class="why-num">🎸</div>
+      <h2 class="why-title" id="why-t6">Ambiente inigualable</h2>
+      <p class="why-desc" id="why-d6">Paredes con historia, música con carácter. El tipo de lugar que no se puede reproducir. Hay que vivirlo.</p>
+    </div>
+  </div>
+</section>
+
+<section class="statement">
+  <h2 class="statement-title">
+    <span id="stmt-line1">SALTA DE DÍA.</span><br>
+    <span class="accent">ZEPPELIN</span><br>
+    <span id="stmt-line2">DE NOCHE.</span>
+  </h2>
+  <p class="statement-sub" id="stmt-sub">Después del cerro, la quebrada y el cabildo — hay un lugar donde la noche salteña tiene más de 25 años de historia.</p>
+</section>
+
+<section class="howto">
+  <div>
+    <h2 class="howto-title"><span id="howto-title">CÓMO</span><br><span class="accent" id="howto-title2">LLEGAR</span></h2>
+    <div class="howto-item">
+      <span class="howto-icon">🚶</span>
+      <div>
+        <div class="howto-item-title" id="howto-t1">A pie desde el centro</div>
+        <p class="howto-item-desc" id="howto-d1">A 5 minutos caminando desde la Plaza 9 de Julio. Si estás en los hoteles del microcentro, Zeppelin te queda a la vuelta.</p>
+      </div>
+    </div>
+    <div class="howto-item">
+      <span class="howto-icon">🚖</span>
+      <div>
+        <div class="howto-item-title" id="howto-t2">En remis o taxi</div>
+        <p class="howto-item-desc" id="howto-d2">Decile al chofer: "25 de Mayo 340, Salta Capital". Desde cualquier punto del centro, menos de 10 minutos.</p>
+      </div>
+    </div>
+    <div class="howto-item">
+      <span class="howto-icon">📱</span>
+      <div>
+        <div class="howto-item-title" id="howto-t3">Reserva previa</div>
+        <p class="howto-item-desc" id="howto-d3">Para grupos de 6 o más, reservá por WhatsApp. Para grupos menores podés llegar directamente.</p>
+      </div>
+    </div>
+  </div>
+  <div class="howto-map">
+    <div class="map-pin">📍</div>
+    <div class="map-address">25 de Mayo 340</div>
+    <div class="map-city">Salta Capital · Argentina</div>
+    <a href="https://maps.google.com/?q=25+de+Mayo+340+Salta+Argentina" target="_blank" rel="noopener" class="map-link" id="map-link-text">Abrir en Google Maps</a>
+  </div>
+</section>
+
+<section class="offers">
+  <div class="offers-inner">
+    <h2 class="offers-title"><span id="offers-title">QUÉ VAS A</span><br><span class="accent" id="offers-title2">ENCONTRAR</span></h2>
+    <div class="offers-grid">
+      <div class="offer-card">
+        <span class="offer-tag" id="offer-tag1">Exclusivo</span>
+        <h3 class="offer-title" id="offer-t1">Sabores de Nuestra Tierra</h3>
+        <p class="offer-desc" id="offer-d1">8 cócteles diseñados con ingredientes auténticos del NOA. Higo, cayote, membrillo, batata. Una experiencia que solo existe en Zeppelin.</p>
+      </div>
+      <div class="offer-card">
+        <span class="offer-tag">Terroir Extremo</span>
+        <h3 class="offer-title" id="offer-t2">Vinos de los Calchaquíes</h3>
+        <p class="offer-desc" id="offer-d2">30+ etiquetas entre 1.700 y 2.685 msnm. Torrontés, Malbec, rosados y dulces naturales. Los mejores vinos de altura del NOA.</p>
+      </div>
+      <div class="offer-card">
+        <span class="offer-tag" id="offer-tag3">Reservas</span>
+        <h3 class="offer-title" id="offer-t3">Mesa para tu grupo</h3>
+        <p class="offer-desc" id="offer-d3">Para grupos de 6 o más podés reservar mesa. Tu lugar asegurado, mozo dedicado y trago de bienvenida si es un cumpleaños.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-final">
+  <p class="cta-eyebrow" id="cta-eyebrow">Salta Capital · 25 de Mayo 340 · Desde 2001</p>
+  <h2 class="cta-title"><span id="cta-title1">TU NOCHE EN</span><br><span class="accent">SALTA</span></h2>
+  <p class="cta-sub" id="cta-sub">Viernes y sábados desde las 20:30 hs. Reservá tu mesa.</p>
+  <a href="https://wa.me/5493875458204?text=Hola!%20Quiero%20reservar%20una%20mesa%20en%20Zeppelin" class="btn-primary" id="cta-btn">Reservar por WhatsApp</a>
+  <div class="cta-info">
+    <div class="cta-info-item"><div class="label" id="info-label1">Dirección</div><div class="value">25 de Mayo 340, Salta</div></div>
+    <div class="cta-info-item"><div class="label" id="info-label2">Apertura</div><div class="value" id="info-hours">Vie y Sáb · 20:30 hs</div></div>
+    <div class="cta-info-item"><div class="label">Instagram</div><div class="value">@zeppelinbar.salta</div></div>
+  </div>
+</section>
+
+<footer>
+  <a href="https://zeppelin-bar.com" class="footer-logo">ZEP<span>PE</span>LIN BAR</a>
+  <div class="footer-links">
+    <a href="https://zeppelin-bar.com" id="footer-home">Inicio</a>
+    <a href="https://zeppelin-bar.com/cumpleanos" id="footer-cumple">Cumpleaños</a>
+    <a href="https://zeppelin-bar.com/juntada" id="footer-juntada">Juntada</a>
+    <a href="https://zeppelin-bar.com/cocteles" id="footer-cocteles">Cócteles</a>
+    <a href="https://zeppelin-bar.com/vinos" id="footer-vinos">Vinos</a>
+    <a href="https://www.instagram.com/zeppelinbar.salta" target="_blank" rel="noopener">Instagram</a>
+  </div>
+</footer>
+
+<script>
+const t = {
+  es: {
+    navBack: 'Inicio', badgeLabel: 'años',
+    heroEyebrow: 'Zeppelin Bar · Salta · Desde 2001',
+    heroLine1: 'EL BAR MÁS ICÓNICO', heroLine2: 'DE', heroLine3: 'SALTA',
+    heroSub: '25 años de historia en el corazón de Salta Capital. Cócteles con ingredientes del NOA, vinos de los Valles Calchaquíes y el ambiente que ningún otro bar de Salta puede replicar.',
+    btnReserve: 'Reservar por WhatsApp',
+    qiLabel1: 'Dirección', qiHours: 'Vie y Sáb · 20:30 hs', qiLabel2: 'Apertura', qiLabel3: 'Historia', qiHistory: '25 años · Desde 2001',
+    whyLabel: 'Por qué elegir Zeppelin',
+    whyT1: '25 años de historia', whyD1: 'Desde 2001. El bar con más historia en la noche salteña. Lo que ningún bar nuevo puede replicar.',
+    whyT2: 'Cócteles únicos del NOA', whyD2: '8 tragos de autor elaborados con higo, cayote, membrillo y batata. Ingredientes del norte argentino que no vas a encontrar en otro bar.',
+    whyT3: 'Vinos de altura extrema', whyD3: 'Carta Terroir Extremo: 30+ etiquetas de los Valles Calchaquíes entre 1.700 y 2.685 msnm. Torrontés, Malbec y más.',
+    whyT4: 'En el centro de Salta', whyD4: '25 de Mayo 340. A pasos de la Plaza 9 de Julio, los hoteles del centro y los principales atractivos turísticos de Salta Capital.',
+    whyT5: '3.000+ reseñas en Google', whyD5: '4.2 estrellas y más de 3.000 reseñas. El respaldo de quienes ya estuvieron.',
+    whyT6: 'Ambiente inigualable', whyD6: 'Paredes con historia, música con carácter. El tipo de lugar que no se puede reproducir. Hay que vivirlo.',
+    stmtLine1: 'SALTA DE DÍA.', stmtLine2: 'DE NOCHE.',
+    stmtSub: 'Después del cerro, la quebrada y el cabildo — hay un lugar donde la noche salteña tiene más de 25 años de historia.',
+    howtoTitle: 'CÓMO', howtoTitle2: 'LLEGAR',
+    howtoT1: 'A pie desde el centro', howtoD1: 'A 5 minutos caminando desde la Plaza 9 de Julio. Si estás en los hoteles del microcentro, Zeppelin te queda a la vuelta.',
+    howtoT2: 'En remis o taxi', howtoD2: 'Decile al chofer: "25 de Mayo 340, Salta Capital". Desde cualquier punto del centro, menos de 10 minutos.',
+    howtoT3: 'Reserva previa', howtoD3: 'Para grupos de 6 o más, reservá por WhatsApp. Para grupos menores podés llegar directamente.',
+    mapLink: 'Abrir en Google Maps',
+    offersTitle: 'QUÉ VAS A', offersTitle2: 'ENCONTRAR',
+    offerTag1: 'Exclusivo', offerT1: 'Sabores de Nuestra Tierra', offerD1: '8 cócteles diseñados con ingredientes auténticos del NOA. Higo, cayote, membrillo, batata. Una experiencia que solo existe en Zeppelin.',
+    offerT2: 'Vinos de los Calchaquíes', offerD2: '30+ etiquetas entre 1.700 y 2.685 msnm. Torrontés, Malbec, rosados y dulces naturales. Los mejores vinos de altura del NOA.',
+    offerTag3: 'Reservas', offerT3: 'Mesa para tu grupo', offerD3: 'Para grupos de 6 o más podés reservar mesa. Tu lugar asegurado, mozo dedicado y trago de bienvenida si es un cumpleaños.',
+    ctaEyebrow: 'Salta Capital · 25 de Mayo 340 · Desde 2001',
+    ctaTitle1: 'TU NOCHE EN', ctaSub: 'Viernes y sábados desde las 20:30 hs. Reservá tu mesa.',
+    ctaBtn: 'Reservar por WhatsApp',
+    infoLabel1: 'Dirección', infoLabel2: 'Apertura', infoHours: 'Vie y Sáb · 20:30 hs',
+    footerHome: 'Inicio', footerCumple: 'Cumpleaños', footerJuntada: 'Juntada', footerCocteles: 'Cócteles', footerVinos: 'Vinos'
+  },
+  en: {
+    navBack: 'Home', badgeLabel: 'years',
+    heroEyebrow: 'Zeppelin Bar · Salta · Since 2001',
+    heroLine1: 'THE MOST ICONIC', heroLine2: 'BAR IN', heroLine3: 'SALTA',
+    heroSub: '25 years of history in the heart of Salta. Cocktails with NOA regional ingredients, wines from the Calchaquí Valleys, and an atmosphere no other bar in Salta can replicate.',
+    btnReserve: 'Reserve on WhatsApp',
+    qiLabel1: 'Address', qiHours: 'Fri & Sat · 8:30 PM', qiLabel2: 'Opening hours', qiLabel3: 'History', qiHistory: '25 years · Since 2001',
+    whyLabel: 'Why choose Zeppelin',
+    whyT1: '25 years of history', whyD1: 'Since 2001. The bar with the most history in Salta\'s nightlife. Something no new bar can replicate.',
+    whyT2: 'Unique NOA cocktails', whyD2: '8 signature cocktails made with fig, cayote, quince and sweet potato. Northern Argentine ingredients you won\'t find at any other bar.',
+    whyT3: 'Extreme altitude wines', whyD3: 'Terroir Extremo wine list: 30+ labels from the Calchaquí Valleys between 1,700 and 2,685 meters above sea level.',
+    whyT4: 'In the heart of Salta', whyD4: '25 de Mayo 340. Steps from Plaza 9 de Julio, downtown hotels and Salta\'s main tourist attractions.',
+    whyT5: '3,000+ Google reviews', whyD5: '4.2 stars and over 3,000 reviews. Backed by those who\'ve already been.',
+    whyT6: 'Unmatched atmosphere', whyD6: 'Walls with history, music with character. The kind of place that can\'t be reproduced. You have to experience it.',
+    stmtLine1: 'SALTA BY DAY.', stmtLine2: 'BY NIGHT.',
+    stmtSub: 'After the mountain, the gorge and the cabildo — there\'s a place where Salta\'s nightlife has over 25 years of history.',
+    howtoTitle: 'HOW TO', howtoTitle2: 'GET THERE',
+    howtoT1: 'Walking from downtown', howtoD1: '5 minutes walking from Plaza 9 de Julio. If you\'re staying at downtown hotels, Zeppelin is just around the corner.',
+    howtoT2: 'By taxi or remis', howtoD2: 'Tell the driver: "25 de Mayo 340, Salta Capital". From anywhere in the city center, less than 10 minutes.',
+    howtoT3: 'Prior reservation', howtoD3: 'For groups of 6 or more, reserve via WhatsApp. Smaller groups can walk in directly.',
+    mapLink: 'Open in Google Maps',
+    offersTitle: 'WHAT YOU\'LL', offersTitle2: 'FIND HERE',
+    offerTag1: 'Exclusive', offerT1: 'Flavors of Our Land', offerD1: '8 cocktails designed with authentic NOA ingredients. Fig, cayote, quince, sweet potato. An experience that only exists at Zeppelin.',
+    offerT2: 'Calchaquí Valley Wines', offerD2: '30+ labels from 1,700 to 2,685 meters above sea level. Torrontés, Malbec, rosés and natural sweets.',
+    offerTag3: 'Reservations', offerT3: 'Table for your group', offerD3: 'For groups of 6 or more you can reserve a table. Your spot guaranteed, dedicated waiter and welcome drink for birthdays.',
+    ctaEyebrow: 'Salta Capital · 25 de Mayo 340 · Since 2001',
+    ctaTitle1: 'YOUR NIGHT IN', ctaSub: 'Fridays and Saturdays from 8:30 PM. Reserve your table.',
+    ctaBtn: 'Reserve on WhatsApp',
+    infoLabel1: 'Address', infoLabel2: 'Hours', infoHours: 'Fri & Sat · 8:30 PM',
+    footerHome: 'Home', footerCumple: 'Birthdays', footerJuntada: 'Groups', footerCocteles: 'Cocktails', footerVinos: 'Wines'
+  },
+  pt: {
+    navBack: 'Início', badgeLabel: 'anos',
+    heroEyebrow: 'Zeppelin Bar · Salta · Desde 2001',
+    heroLine1: 'O BAR MAIS', heroLine2: 'ICÔNICO', heroLine3: 'DE SALTA',
+    heroSub: '25 anos de história no coração de Salta. Drinks com ingredientes regionais do NOA, vinhos dos Vales Calchaquíes e uma atmosfera que nenhum outro bar de Salta consegue replicar.',
+    btnReserve: 'Reservar pelo WhatsApp',
+    qiLabel1: 'Endereço', qiHours: 'Sex e Sáb · 20h30', qiLabel2: 'Horário', qiLabel3: 'História', qiHistory: '25 anos · Desde 2001',
+    whyLabel: 'Por que escolher o Zeppelin',
+    whyT1: '25 anos de história', whyD1: 'Desde 2001. O bar com mais história na vida noturna de Salta. Algo que nenhum bar novo consegue copiar.',
+    whyT2: 'Drinks únicos do NOA', whyD2: '8 drinks autorais feitos com figo, cayote, marmelo e batata-doce. Ingredientes do norte argentino que você não vai encontrar em outro bar.',
+    whyT3: 'Vinhos de altitude extrema', whyD3: 'Carta Terroir Extremo: 30+ rótulos dos Vales Calchaquíes entre 1.700 e 2.685 m acima do nível do mar.',
+    whyT4: 'No centro de Salta', whyD4: '25 de Mayo 340. A poucos passos da Plaza 9 de Julio, hotéis do centro e as principais atrações turísticas de Salta.',
+    whyT5: '3.000+ avaliações no Google', whyD5: '4.2 estrelas e mais de 3.000 avaliações. O respaldo de quem já esteve.',
+    whyT6: 'Ambiente inigualável', whyD6: 'Paredes com história, música com caráter. O tipo de lugar que não pode ser reproduzido. Tem que ser vivido.',
+    stmtLine1: 'SALTA DE DIA.', stmtLine2: 'DE NOITE.',
+    stmtSub: 'Depois do morro, da quebrada e do cabildo — há um lugar onde a vida noturna de Salta tem mais de 25 anos de história.',
+    howtoTitle: 'COMO', howtoTitle2: 'CHEGAR',
+    howtoT1: 'A pé do centro', howtoD1: 'A 5 minutos a pé da Plaza 9 de Julio. Se você está nos hotéis do microcentro, o Zeppelin fica logo ali.',
+    howtoT2: 'De táxi ou remis', howtoD2: 'Diga ao motorista: "25 de Mayo 340, Salta Capital". De qualquer ponto do centro, menos de 10 minutos.',
+    howtoT3: 'Reserva antecipada', howtoD3: 'Para grupos de 6 ou mais, reserve pelo WhatsApp. Grupos menores podem entrar diretamente.',
+    mapLink: 'Abrir no Google Maps',
+    offersTitle: 'O QUE VOCÊ VAI', offersTitle2: 'ENCONTRAR',
+    offerTag1: 'Exclusivo', offerT1: 'Sabores da Nossa Terra', offerD1: '8 drinks criados com ingredientes autênticos do NOA. Figo, cayote, marmelo, batata-doce. Uma experiência que só existe no Zeppelin.',
+    offerT2: 'Vinhos dos Calchaquíes', offerD2: '30+ rótulos entre 1.700 e 2.685 m acima do nível do mar. Torrontés, Malbec, rosés e doces naturais.',
+    offerTag3: 'Reservas', offerT3: 'Mesa para o seu grupo', offerD3: 'Para grupos de 6 ou mais, você pode reservar uma mesa. Lugar garantido, garçom dedicado e drink de boas-vindas nos aniversários.',
+    ctaEyebrow: 'Salta Capital · 25 de Mayo 340 · Desde 2001',
+    ctaTitle1: 'SUA NOITE EM', ctaSub: 'Sextas e sábados a partir das 20h30. Reserve sua mesa.',
+    ctaBtn: 'Reservar pelo WhatsApp',
+    infoLabel1: 'Endereço', infoLabel2: 'Horário', infoHours: 'Sex e Sáb · 20h30',
+    footerHome: 'Início', footerCumple: 'Aniversários', footerJuntada: 'Grupos', footerCocteles: 'Drinks', footerVinos: 'Vinhos'
+  },
+  fr: {
+    navBack: 'Accueil', badgeLabel: 'ans',
+    heroEyebrow: 'Zeppelin Bar · Salta · Depuis 2001',
+    heroLine1: 'LE BAR LE PLUS', heroLine2: 'ICONIQUE', heroLine3: 'DE SALTA',
+    heroSub: '25 ans d\'histoire au cœur de Salta. Cocktails aux ingrédients régionaux du NOA, vins des Vallées Calchaquíes et une atmosphère qu\'aucun autre bar de Salta ne peut répliquer.',
+    btnReserve: 'Réserver par WhatsApp',
+    qiLabel1: 'Adresse', qiHours: 'Ven & Sam · 20h30', qiLabel2: 'Horaires', qiLabel3: 'Histoire', qiHistory: '25 ans · Depuis 2001',
+    whyLabel: 'Pourquoi choisir Zeppelin',
+    whyT1: '25 ans d\'histoire', whyD1: 'Depuis 2001. Le bar avec le plus d\'histoire dans la vie nocturne de Salta. Ce qu\'aucun nouveau bar ne peut vous offrir.',
+    whyT2: 'Cocktails uniques du NOA', whyD2: '8 cocktails signatures préparés avec des figues, du cayote, du coing et de la patate douce. Des ingrédients introuvables ailleurs.',
+    whyT3: 'Vins de haute altitude', whyD3: 'Carte Terroir Extremo : 30+ étiquettes des Vallées Calchaquíes entre 1 700 et 2 685 m d\'altitude.',
+    whyT4: 'Au cœur de Salta', whyD4: '25 de Mayo 340. À quelques pas de la Plaza 9 de Julio, des hôtels du centre et des principales attractions touristiques de Salta.',
+    whyT5: '3 000+ avis Google', whyD5: '4,2 étoiles et plus de 3 000 avis. Le soutien de ceux qui y sont déjà allés.',
+    whyT6: 'Ambiance incomparable', whyD6: 'Des murs chargés d\'histoire, une musique avec du caractère. Le genre d\'endroit qui ne peut pas être reproduit. Il faut le vivre.',
+    stmtLine1: 'SALTA LE JOUR.', stmtLine2: 'LA NUIT.',
+    stmtSub: 'Après la montagne, la gorge et le cabildo — il y a un endroit où la nuit de Salta a plus de 25 ans d\'histoire.',
+    howtoTitle: 'COMMENT', howtoTitle2: 'Y ALLER',
+    howtoT1: 'À pied depuis le centre', howtoD1: 'À 5 minutes à pied de la Plaza 9 de Julio. Si vous séjournez dans les hôtels du centre, Zeppelin est juste à côté.',
+    howtoT2: 'En taxi ou remis', howtoD2: 'Dites au chauffeur : "25 de Mayo 340, Salta Capital". Depuis n\'importe quel point du centre, moins de 10 minutes.',
+    howtoT3: 'Réservation préalable', howtoD3: 'Pour les groupes de 6 personnes ou plus, réservez via WhatsApp. Les petits groupes peuvent venir directement.',
+    mapLink: 'Ouvrir dans Google Maps',
+    offersTitle: 'CE QUE VOUS', offersTitle2: 'TROUVEREZ',
+    offerTag1: 'Exclusif', offerT1: 'Saveurs de Notre Terre', offerD1: '8 cocktails conçus avec des ingrédients authentiques du NOA. Figue, cayote, coing, patate douce. Une expérience qui n\'existe qu\'au Zeppelin.',
+    offerT2: 'Vins des Calchaquíes', offerD2: '30+ étiquettes entre 1 700 et 2 685 m d\'altitude. Torrontés, Malbec, rosés et doux naturels.',
+    offerTag3: 'Réservations', offerT3: 'Table pour votre groupe', offerD3: 'Pour les groupes de 6 personnes ou plus, vous pouvez réserver une table. Place garantie, serveur dédié et boisson de bienvenue pour les anniversaires.',
+    ctaEyebrow: 'Salta Capital · 25 de Mayo 340 · Depuis 2001',
+    ctaTitle1: 'VOTRE NUIT À', ctaSub: 'Vendredis et samedis à partir de 20h30. Réservez votre table.',
+    ctaBtn: 'Réserver par WhatsApp',
+    infoLabel1: 'Adresse', infoLabel2: 'Horaires', infoHours: 'Ven & Sam · 20h30',
+    footerHome: 'Accueil', footerCumple: 'Anniversaires', footerJuntada: 'Groupes', footerCocteles: 'Cocktails', footerVinos: 'Vins'
+  }
+};
+
+function setLang(lang) {
+  const d = t[lang];
+  document.documentElement.lang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.textContent.trim().toLowerCase() === lang));
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  set('nav-back-text', d.navBack);
+  set('badge-label', d.badgeLabel);
+  set('hero-eyebrow', d.heroEyebrow);
+  set('hero-title-line1', d.heroLine1);
+  set('hero-title-line3', d.heroLine3);
+  set('hero-sub', d.heroSub);
+  set('btn-reserve', d.btnReserve);
+  set('qi-label-1', d.qiLabel1);
+  set('qi-hours', d.qiHours);
+  set('qi-label-2', d.qiLabel2);
+  set('qi-label-3', d.qiLabel3);
+  set('qi-history', d.qiHistory);
+  set('why-label', d.whyLabel);
+  set('why-t1', d.whyT1); set('why-d1', d.whyD1);
+  set('why-t2', d.whyT2); set('why-d2', d.whyD2);
+  set('why-t3', d.whyT3); set('why-d3', d.whyD3);
+  set('why-t4', d.whyT4); set('why-d4', d.whyD4);
+  set('why-t5', d.whyT5); set('why-d5', d.whyD5);
+  set('why-t6', d.whyT6); set('why-d6', d.whyD6);
+  set('stmt-line1', d.stmtLine1); set('stmt-line2', d.stmtLine2); set('stmt-sub', d.stmtSub);
+  set('howto-title', d.howtoTitle); set('howto-title2', d.howtoTitle2);
+  set('howto-t1', d.howtoT1); set('howto-d1', d.howtoD1);
+  set('howto-t2', d.howtoT2); set('howto-d2', d.howtoD2);
+  set('howto-t3', d.howtoT3); set('howto-d3', d.howtoD3);
+  set('map-link-text', d.mapLink);
+  set('offers-title', d.offersTitle); set('offers-title2', d.offersTitle2);
+  set('offer-tag1', d.offerTag1); set('offer-t1', d.offerT1); set('offer-d1', d.offerD1);
+  set('offer-t2', d.offerT2); set('offer-d2', d.offerD2);
+  set('offer-tag3', d.offerTag3); set('offer-t3', d.offerT3); set('offer-d3', d.offerD3);
+  set('cta-eyebrow', d.ctaEyebrow);
+  set('cta-title1', d.ctaTitle1); set('cta-sub', d.ctaSub); set('cta-btn', d.ctaBtn);
+  set('info-label1', d.infoLabel1); set('info-label2', d.infoLabel2); set('info-hours', d.infoHours);
+  set('footer-home', d.footerHome); set('footer-cumple', d.footerCumple);
+  set('footer-juntada', d.footerJuntada); set('footer-cocteles', d.footerCocteles); set('footer-vinos', d.footerVinos);
+}
+</script>
+
+</body>
+</html>
