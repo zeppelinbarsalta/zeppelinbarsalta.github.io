@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- SEO Primary -->
+  <title>Juntada en Salta | Zeppelin Bar — Bar para grupos en Salta Capital</title>
+  <meta name="description" content="Organizá tu juntada en Zeppelin Bar, el bar más icónico de Salta. Mesa reservada para grupos de 6 o más. Viernes y sábados desde las 20:30 hs. Reservá por WhatsApp.">
+  <meta name="keywords" content="juntada en Salta, bar para grupos Salta, salir con amigos Salta, donde ir en Salta, bares Salta Capital, reserva bar Salta, Zeppelin Bar Salta">
+  <link rel="canonical" href="https://zeppelin-bar.com/juntada">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Juntada en Zeppelin Bar — El bar más icónico de Salta">
+  <meta property="og:description" content="Vos organizás. Nosotros nos encargamos del resto. Mesa reservada para grupos de 6 o más.">
+  <meta property="og:url" content="https://zeppelin-bar.com/juntada">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_AR">
+
+  <!-- Schema.org -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BarOrPub",
+    "name": "Zeppelin Bar",
+    "description": "Bar para grupos y juntadas en Salta Capital. Mesa reservada, atención dedicada.",
+    "url": "https://zeppelin-bar.com/juntada",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "25 de Mayo 340",
+      "addressLocality": "Salta",
+      "addressRegion": "Salta",
+      "addressCountry": "AR"
+    },
+    "openingHours": ["Fr 20:30-04:00", "Sa 20:30-04:00"],
+    "telephone": "+5493875458204",
+    "sameAs": ["https://www.instagram.com/zeppelinbar.salta"]
+  }
+  </script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@300;400;500;600&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --black: #0a0a0a;
+      --orange: #FF5A00;
+      --white: #f5f5f0;
+      --gray: #888;
+      --gray-dark: #141414;
+      --gray-mid: #1e1e1e;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Oswald', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(to bottom, rgba(10,10,10,0.95), transparent);
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      letter-spacing: 0.08em;
+      text-decoration: none;
+      color: var(--white);
+    }
+    .nav-logo span { color: var(--orange); }
+    .nav-back {
+      font-size: 0.75rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gray);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-back:hover { color: var(--white); }
+    .nav-back::before { content: '← '; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: end;
+      padding: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-left {
+      padding: 120px 60px 80px 40px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-right {
+      background: var(--gray-dark);
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Decorative pattern on right side */
+    .hero-right-inner {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+    }
+
+    .hero-stat {
+      width: 100%;
+      padding: 40px 60px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      position: relative;
+      transition: background 0.3s;
+    }
+    .hero-stat:last-child { border-bottom: none; }
+    .hero-stat:hover { background: rgba(255,90,0,0.04); }
+
+    .hero-stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 4rem;
+      color: var(--orange);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .hero-stat-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gray);
+    }
+
+    .hero-eyebrow {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 20px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.2s;
+    }
+
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3.5rem, 8vw, 7rem);
+      line-height: 0.92;
+      letter-spacing: 0.02em;
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.4s;
+    }
+    .hero-title span { color: var(--orange); }
+
+    .hero-sub {
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-size: clamp(1rem, 2vw, 1.3rem);
+      color: var(--gray);
+      line-height: 1.6;
+      margin-bottom: 40px;
+      max-width: 420px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.6s;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.8s;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--orange);
+      color: var(--white);
+      font-family: 'Oswald', sans-serif;
+      font-weight: 500;
+      font-size: 0.85rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 16px 32px;
+      text-decoration: none;
+      transition: all 0.2s;
+      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+    }
+    .btn-primary:hover { background: #ff7a2a; transform: translateY(-2px); }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: transparent;
+      color: var(--white);
+      font-family: 'Oswald', sans-serif;
+      font-weight: 400;
+      font-size: 0.85rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 16px 32px;
+      text-decoration: none;
+      border: 1px solid rgba(255,255,255,0.2);
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover { border-color: var(--orange); color: var(--orange); }
+
+    /* ── TAGLINE STRIP ── */
+    .tagline-strip {
+      background: var(--orange);
+      padding: 28px 40px;
+      overflow: hidden;
+      position: relative;
+    }
+    .tagline-scroll {
+      display: flex;
+      gap: 60px;
+      animation: scroll 20s linear infinite;
+      white-space: nowrap;
+      width: max-content;
+    }
+    .tagline-scroll span {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: 0.1em;
+      color: var(--black);
+      opacity: 0.7;
+    }
+    .tagline-scroll span.accent { opacity: 1; }
+    @keyframes scroll {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ── WHY ── */
+    .why {
+      padding: 100px 40px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 60px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      max-width: 60px;
+      height: 1px;
+      background: var(--orange);
+    }
+
+    .why-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+    }
+
+    .why-card {
+      background: var(--gray-dark);
+      padding: 48px 40px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s;
+    }
+    .why-card:hover { background: var(--gray-mid); }
+    .why-card.large {
+      grid-column: span 2;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .why-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--orange);
+      transition: width 0.4s ease;
+    }
+    .why-card:hover::after { width: 100%; }
+
+    .why-icon {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .why-title {
+      font-family: 'Oswald', sans-serif;
+      font-weight: 600;
+      font-size: 1.1rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      color: var(--white);
+    }
+
+    .why-desc {
+      font-family: 'EB Garamond', serif;
+      font-size: 1.05rem;
+      color: var(--gray);
+      line-height: 1.65;
+    }
+
+    .why-large-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      line-height: 1;
+      color: var(--white);
+    }
+    .why-large-title span { color: var(--orange); }
+
+    /* ── QUOTE ── */
+    .quote-section {
+      padding: 100px 40px;
+      background: var(--gray-dark);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .quote-section::before {
+      content: '"';
+      position: absolute;
+      top: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'EB Garamond', serif;
+      font-size: 30rem;
+      color: rgba(255,90,0,0.04);
+      line-height: 1;
+      pointer-events: none;
+    }
+    .quote-text {
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-size: clamp(1.4rem, 3vw, 2.2rem);
+      line-height: 1.5;
+      max-width: 700px;
+      margin: 0 auto 32px;
+      color: var(--white);
+      position: relative;
+    }
+    .quote-author {
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--orange);
+    }
+
+    /* ── CTA FINAL ── */
+    .cta-final {
+      padding: 120px 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-final::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(255,90,0,0.05) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .cta-eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 20px;
+    }
+
+    .cta-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 9vw, 8rem);
+      line-height: 0.92;
+      margin-bottom: 24px;
+    }
+    .cta-title span { color: var(--orange); }
+
+    .cta-sub {
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-size: 1.2rem;
+      color: var(--gray);
+      margin-bottom: 48px;
+    }
+
+    .cta-info {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      flex-wrap: wrap;
+      margin-top: 48px;
+      padding-top: 48px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .cta-info-item .label {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-bottom: 6px;
+    }
+    .cta-info-item .value {
+      font-family: 'Oswald', sans-serif;
+      font-weight: 500;
+      font-size: 1rem;
+      color: var(--white);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 32px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.2rem;
+      letter-spacing: 0.08em;
+      color: var(--white);
+      text-decoration: none;
+    }
+    .footer-logo span { color: var(--orange); }
+    .footer-links {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .footer-links a {
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gray);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--orange); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      .hero {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+      .hero-left { padding: 100px 20px 40px; }
+      .hero-right { display: none; }
+      .why-grid { grid-template-columns: 1fr; }
+      .why-card.large {
+        grid-column: span 1;
+        grid-template-columns: 1fr;
+      }
+      nav { padding: 16px 20px; }
+      .why, .quote-section, .cta-final { padding: 60px 20px; }
+      footer { padding: 24px 20px; }
+      .cta-info { gap: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="https://zeppelin-bar.com" class="nav-logo">ZEP<span>PE</span>LIN BAR</a>
+    <a href="https://zeppelin-bar.com" class="nav-back">Inicio</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-left">
+      <p class="hero-eyebrow">Zeppelin Bar · Salta · Desde 2001</p>
+      <h1 class="hero-title">JUNTADA<br><span>EN</span><br>ZEPPELIN</h1>
+      <p class="hero-sub">Vos organizás. Nosotros nos encargamos del resto. El bar más icónico de Salta te espera con todo listo.</p>
+      <div class="hero-cta">
+        <a href="https://wa.me/5493875458204?text=Hola!%20Quiero%20reservar%20una%20mesa%20para%20una%20juntada" class="btn-primary">
+          Reservar por WhatsApp
+        </a>
+        <a href="https://www.instagram.com/zeppelinbar.salta" class="btn-secondary" target="_blank" rel="noopener">
+          @zeppelinbar.salta
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="hero-right-inner">
+        <div class="hero-stat">
+          <div class="hero-stat-num">25</div>
+          <div class="hero-stat-label">Años en la noche salteña</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">6+</div>
+          <div class="hero-stat-label">Personas mínimo para reservar</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">20:30</div>
+          <div class="hero-stat-label">Apertura viernes y sábados</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">#1</div>
+          <div class="hero-stat-label">Bar más icónico de Salta</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAGLINE STRIP -->
+  <div class="tagline-strip" aria-hidden="true">
+    <div class="tagline-scroll">
+      <span class="accent">JUNTADA EN ZEPPELIN</span>
+      <span>·</span>
+      <span>EL BAR MÁS ICÓNICO DE SALTA</span>
+      <span>·</span>
+      <span class="accent">DESDE 2001</span>
+      <span>·</span>
+      <span>25 DE MAYO 340</span>
+      <span>·</span>
+      <span class="accent">JUNTADA EN ZEPPELIN</span>
+      <span>·</span>
+      <span>EL BAR MÁS ICÓNICO DE SALTA</span>
+      <span>·</span>
+      <span class="accent">DESDE 2001</span>
+      <span>·</span>
+      <span>25 DE MAYO 340</span>
+      <span>·</span>
+    </div>
+  </div>
+
+  <!-- WHY -->
+  <section class="why">
+    <p class="section-label">Por qué elegir Zeppelin</p>
+    <div class="why-grid">
+
+      <div class="why-card large">
+        <div class="why-large-title">EL BAR QUE<br>SALTA <span>ELIGIÓ</span><br>HACE 25 AÑOS</div>
+        <p class="why-desc">No es marketing. Son 25 años de noches, grupos, juntadas y momentos que quedaron grabados en las paredes de Zeppelin. El bar que los salteños conocen, recomiendan y vuelven a elegir.</p>
+      </div>
+
+      <div class="why-card">
+        <span class="why-icon">🪑</span>
+        <h2 class="why-title">Mesa con tu nombre</h2>
+        <p class="why-desc">Reservás, llegás y tu mesa ya está esperando. Sin vueltas, sin esperar parado en la puerta.</p>
+      </div>
+
+      <div class="why-card">
+        <span class="why-icon">🥃</span>
+        <h2 class="why-title">Carta completa</h2>
+        <p class="why-desc">Tragos de autor, coctelería clásica, vinos de los Valles Calchaquíes, cervezas y comida. Todo en un solo lugar.</p>
+      </div>
+
+      <div class="why-card">
+        <span class="why-icon">🎸</span>
+        <h2 class="why-title">Ambiente inigualable</h2>
+        <p class="why-desc">Las paredes tienen historia. La música también. Hay lugares que crean el ambiente — Zeppelin es uno de ellos.</p>
+      </div>
+
+      <div class="why-card">
+        <span class="why-icon">📍</span>
+        <h2 class="why-title">Centro de Salta</h2>
+        <p class="why-desc">25 de Mayo 340. A dos pasos de todo. Fácil de llegar, imposible de olvidar.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- QUOTE -->
+  <section class="quote-section">
+    <p class="quote-text">"Hay bares nuevos en Salta. Y después está Zeppelin."</p>
+    <p class="quote-author">El bar más icónico de Salta — Desde 2001</p>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section class="cta-final">
+    <p class="cta-eyebrow">Grupos de 6 o más · Viernes y sábados desde las 20:30</p>
+    <h2 class="cta-title">RESERVÁ<br>TU <span>MESA</span></h2>
+    <p class="cta-sub">Un mensaje alcanza. Nosotros hacemos el resto.</p>
+
+    <a href="https://wa.me/5493875458204?text=Hola!%20Quiero%20reservar%20una%20mesa%20para%20una%20juntada" class="btn-primary">
+      Reservar por WhatsApp
+    </a>
+
+    <div class="cta-info">
+      <div class="cta-info-item">
+        <div class="label">Dirección</div>
+        <div class="value">25 de Mayo 340, Salta</div>
+      </div>
+      <div class="cta-info-item">
+        <div class="label">Apertura</div>
+        <div class="value">Vie y Sáb desde 20:30</div>
+      </div>
+      <div class="cta-info-item">
+        <div class="label">Reservas</div>
+        <div class="value">Por WhatsApp</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <a href="https://zeppelin-bar.com" class="footer-logo">ZEP<span>PE</span>LIN BAR</a>
+    <div class="footer-links">
+      <a href="https://zeppelin-bar.com">Inicio</a>
+      <a href="https://zeppelin-bar.com/cumpleanos">Cumpleaños</a>
+      <a href="https://zeppelin-bar.com/cocteles">Cócteles</a>
+      <a href="https://zeppelin-bar.com/vinos">Vinos</a>
+      <a href="https://zeppelin-bar.com/turistas">Turistas</a>
+      <a href="https://www.instagram.com/zeppelinbar.salta" target="_blank" rel="noopener">Instagram</a>
+    </div>
+  </footer>
+
+</body>
+</html>
