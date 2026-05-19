@@ -733,7 +733,47 @@ src="https://www.facebook.com/tr?id=2288749361531054&ev=PageView&noscript=1"
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'AW-18003811067');
-</script>  
+</script>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+  .section { width: 100%; max-width: 860px; margin: 0 auto; padding: 2rem 1rem; }
+  .section-header { text-align: center; margin-bottom: 2.5rem; }
+  .section-label { font-family: 'Oswald', sans-serif; font-weight: 300; font-size: 0.75rem; letter-spacing: 0.35em; text-transform: uppercase; color: #FF5A00; margin-bottom: 0.5rem; }
+  .section-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.2rem, 6vw, 3.5rem); letter-spacing: 0.04em; line-height: 1; color: #ffffff; }
+  .section-title span { color: #FF5A00; }
+  .rating-summary { display: flex; align-items: center; justify-content: center; gap: 0.75rem; margin-top: 0.9rem; }
+  .g-logo { font-family: 'Oswald', sans-serif; font-size: 0.72rem; font-weight: 300; letter-spacing: 0.1em; color: #aaa; text-transform: uppercase; }
+  .g-dot { width: 6px; height: 6px; border-radius: 50%; background: #2a2a2a; display: inline-block; }
+  .stars-inline { display: flex; gap: 2px; }
+  .stars-inline svg { width: 14px; height: 14px; }
+  .rating-num { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; color: #FF5A00; }
+  .carousel-wrap { position: relative; overflow: hidden; }
+  .carousel-track { display: flex; gap: 1.25rem; transition: transform 0.55s cubic-bezier(0.77, 0, 0.175, 1); will-change: transform; }
+  .card { flex: 0 0 100%; background: #1a1a1a; border: 1px solid #2e2e2e; border-top: 3px solid #FF5A00; padding: 2rem 2.2rem 1.8rem; position: relative; }
+  .card::before { content: '\201C'; font-family: Georgia, serif; font-size: 6rem; color: #FF5A00; opacity: 0.12; position: absolute; top: -0.5rem; left: 1.2rem; line-height: 1; pointer-events: none; }
+  .card-stars { display: flex; gap: 3px; margin-bottom: 1rem; }
+  .card-stars svg { width: 18px; height: 18px; }
+  .card-text { font-family: 'Oswald', sans-serif; font-weight: 300; font-size: clamp(0.95rem, 2.2vw, 1.05rem); line-height: 1.65; color: #ddd; margin-bottom: 1.6rem; }
+  .card-author { display: flex; align-items: center; gap: 0.75rem; border-top: 1px solid #2e2e2e; padding-top: 1.1rem; }
+  .avatar { width: 38px; height: 38px; border-radius: 50%; background: #FF5A00; display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; color: #0a0a0a; flex-shrink: 0; }
+  .author-info { flex: 1; min-width: 0; }
+  .author-name { font-family: 'Oswald', sans-serif; font-weight: 500; font-size: 0.9rem; color: #ffffff; letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; visibility: hidden; }
+  .author-meta { font-size: 0.7rem; font-weight: 300; color: #666; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 1px; font-family: 'Oswald', sans-serif; }
+  .google-badge { width: 20px; height: 20px; flex-shrink: 0; }
+  .controls { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-top: 1.8rem; }
+  .btn-arrow { width: 44px; height: 44px; border: 1px solid #333; background: transparent; color: #ffffff; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s, border-color 0.2s, color 0.2s; }
+  .btn-arrow:hover { background: #FF5A00; border-color: #FF5A00; color: #0a0a0a; }
+  .btn-arrow svg { width: 18px; height: 18px; }
+  .dots { display: flex; gap: 0.45rem; align-items: center; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: #333; cursor: pointer; transition: background 0.25s, transform 0.25s; border: none; padding: 0; }
+  .dot.active { background: #FF5A00; transform: scale(1.4); }
+  .cta-wrap { text-align: center; margin-top: 2.2rem; }
+  .cta-link { display: inline-flex; align-items: center; gap: 0.5rem; font-family: 'Oswald', sans-serif; font-weight: 400; font-size: 0.78rem; letter-spacing: 0.2em; text-transform: uppercase; color: #666; text-decoration: none; transition: color 0.2s; }
+  .cta-link:hover { color: #FF5A00; }
+  .cta-link svg { width: 14px; height: 14px; }
+  @media (min-width: 640px) { .card { flex: 0 0 calc(50% - 0.625rem); } }
+</style>
 </head>
 <body>
 
@@ -840,7 +880,123 @@ src="https://www.facebook.com/tr?id=2288749361531054&ev=PageView&noscript=1"
     </div>
   </div>
 </section>
+<section class="section">
+  <div class="section-header">
+    <p class="section-label">Lo que dicen de nosotros</p>
+    <h2 class="section-title">RESEÑAS <span>REALES</span></h2>
+    <div class="rating-summary">
+      <span class="g-logo">Google</span>
+      <span class="g-dot"></span>
+      <div class="stars-inline">
+        <svg viewBox="0 0 20 20" fill="#FF5A00"><path d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.44.91-5.32L2.27 6.62l5.34-.78z"/></svg>
+        <svg viewBox="0 0 20 20" fill="#FF5A00"><path d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.44.91-5.32L2.27 6.62l5.34-.78z"/></svg>
+        <svg viewBox="0 0 20 20" fill="#FF5A00"><path d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.44.91-5.32L2.27 6.62l5.34-.78z"/></svg>
+        <svg viewBox="0 0 20 20" fill="#FF5A00"><path d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.44.91-5.32L2.27 6.62l5.34-.78z"/></svg>
+        <svg viewBox="0 0 20 20" fill="#FF5A00"><path d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.44.91-5.32L2.27 6.62l5.34-.78z"/></svg>
+      </div>
+      <span class="rating-num">5.0</span>
+    </div>
+  </div>
 
+  <div class="carousel-wrap">
+    <div class="carousel-track" id="track">
+
+      <div class="card">
+        <div class="card-stars">
+          <svg viewBox="0 0 20 20" fill="#FF5A00"><path d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.44.91-5.32L2.27 6.62l5.34-.78z"/></svg>
+          <svg viewBox="0 0 20 20" fill="#FF5A00"><path d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.44.91-5.32L2.27 6.62l5.34-.78z"/></svg>
+          <svg viewBox="0 0 20 20" fill="#FF5A00"><path d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.44.91-5.32L2.27 6.62l5.34-.78z"/></svg>
+          <svg viewBox="0 0 20 20" fill="#FF5A00"><path d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.44.91-5.32L2.27 6.62l5.34-.78z"/></svg>
+          <svg viewBox="0 0 20 20" fill="#FF5A00"><path d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.44.91-5.32L2.27 6.62l5.34-.78z"/></svg>
+        </div>
+        <p class="card-text">La estética del lugar es simplemente increíble, hay muchos detalles y cosas escondidas por todas partes que al descubrirlas te maravillás. Los mozos y bartenders todos muy amables, muy respetuosos y muy atentos. La comida es simplemente espectacular. Volvería mil y un veces.</p>
+        <div class="card-author">
+          <div class="avatar">F</div>
+          <div class="author-info">
+            <div class="author-name">francis ;;</div>
+            <div class="author-meta">Google · Hace un mes</div>
+          </div>
+          <svg class="google-badge" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-stars">
+          <svg viewBox="0 0 20 20" fill="#FF5A00"><path d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.44.91-5.32L2.27 6.62l5.34-.78z"/></svg>
+          <svg viewBox="0 0 20 20" fill="#FF5A00"><path d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.44.91-5.32L2.27 6.62l5.34-.78z"/></svg>
+          <svg viewBox="0 0 20 20" fill="#FF5A00"><path d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.44.91-5.32L2.27 6.62l5.34-.78z"/></svg>
+          <svg viewBox="0 0 20 20" fill="#FF5A00"><path d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.44.91-5.32L2.27 6.62l5.34-.78z"/></svg>
+          <svg viewBox="0 0 20 20" fill="#FF5A00"><path d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.44.91-5.32L2.27 6.62l5.34-.78z"/></svg>
+        </div>
+        <p class="card-text">Zeppelin es lejos mi bar favorito. Tiene una combinación que cuesta encontrar: excelente música, comida riquísima y precios súper accesibles. Es ese lugar donde podés ser vos, relajarte, bailar, pasarla bien y juntarte con amigos. Ya es tradición festejar cada uno de mis cumpleaños ahí. Súper recomendado.</p>
+        <div class="card-author">
+          <div class="avatar">F</div>
+          <div class="author-info">
+            <div class="author-name">Flor Bentolila</div>
+            <div class="author-meta">Local Guide · Google</div>
+          </div>
+          <svg class="google-badge" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-stars">
+          <svg viewBox="0 0 20 20" fill="#FF5A00"><path d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.44.91-5.32L2.27 6.62l5.34-.78z"/></svg>
+          <svg viewBox="0 0 20 20" fill="#FF5A00"><path d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.44.91-5.32L2.27 6.62l5.34-.78z"/></svg>
+          <svg viewBox="0 0 20 20" fill="#FF5A00"><path d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.44.91-5.32L2.27 6.62l5.34-.78z"/></svg>
+          <svg viewBox="0 0 20 20" fill="#FF5A00"><path d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.44.91-5.32L2.27 6.62l5.34-.78z"/></svg>
+          <svg viewBox="0 0 20 20" fill="#FF5A00"><path d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.44.91-5.32L2.27 6.62l5.34-.78z"/></svg>
+        </div>
+        <p class="card-text">Lindo lugar. Ideal para compartir con amigos o pareja. Tragos de autor para probarlos todos!!! Los chicos que atienden constantemente atentos. Super recomendable.</p>
+        <div class="card-author">
+          <div class="avatar">M</div>
+          <div class="author-info">
+            <div class="author-name">Manu Alejandro</div>
+            <div class="author-meta">Local Guide · Google · Hace 4 meses</div>
+          </div>
+          <svg class="google-badge" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-stars">
+          <svg viewBox="0 0 20 20" fill="#FF5A00"><path d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.44.91-5.32L2.27 6.62l5.34-.78z"/></svg>
+          <svg viewBox="0 0 20 20" fill="#FF5A00"><path d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.44.91-5.32L2.27 6.62l5.34-.78z"/></svg>
+          <svg viewBox="0 0 20 20" fill="#FF5A00"><path d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.44.91-5.32L2.27 6.62l5.34-.78z"/></svg>
+          <svg viewBox="0 0 20 20" fill="#FF5A00"><path d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.44.91-5.32L2.27 6.62l5.34-.78z"/></svg>
+          <svg viewBox="0 0 20 20" fill="#FF5A00"><path d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.44.91-5.32L2.27 6.62l5.34-.78z"/></svg>
+        </div>
+        <p class="card-text">Excelente servicio, los chicos muy amables. El ambiente agradable, hay sectores en los cuales podés elegir música a alto volumen y otros más relajados para poder charlar.</p>
+        <div class="card-author">
+          <div class="avatar">L</div>
+          <div class="author-info">
+            <div class="author-name">Lorena Paola Gutierrez</div>
+            <div class="author-meta">Local Guide · Google · Hace 5 meses</div>
+          </div>
+          <svg class="google-badge" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="btn-arrow" id="prev" aria-label="Anterior">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div class="dots" id="dots"></div>
+    <button class="btn-arrow" id="next" aria-label="Siguiente">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+  </div>
+
+  <div class="cta-wrap">
+    <a class="cta-link" href="https://g.page/r/CVyGeY-ET1qhEBE/review" target="_blank" rel="noopener">
+      Dejá tu reseña en Google
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+    </a>
+  </div>
+</section>
 <!-- HISTORIA -->
 <section id="historia" style="background: var(--black2); border-top: 1px solid var(--border);">
   <div class="section-wrap">
@@ -1122,5 +1278,40 @@ function setTab(id, btn) {
   btn.classList.add('active');
 }
 </script>
+<script>
+  const track = document.getElementById('track');
+  const dotsContainer = document.getElementById('dots');
+  const cards = track.querySelectorAll('.card');
+  let current = 0, perPage = 1, total, autoTimer;
+  function getPerPage() { return window.innerWidth >= 640 ? 2 : 1; }
+  function buildDots() {
+    dotsContainer.innerHTML = '';
+    total = Math.ceil(cards.length / perPage);
+    for (let i = 0; i < total; i++) {
+      const d = document.createElement('button');
+      d.className = 'dot' + (i === current ? ' active' : '');
+      d.setAttribute('aria-label', 'Ir a ' + (i + 1));
+      d.addEventListener('click', () => goTo(i));
+      dotsContainer.appendChild(d);
+    }
+  }
+  function goTo(index) {
+    current = (index + total) % total;
+    const cardWidth = cards[0].getBoundingClientRect().width;
+    track.style.transform = `translateX(-${current * perPage * (cardWidth + 20)}px)`;
+    dotsContainer.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === current));
+  }
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+  function startAuto() { clearInterval(autoTimer); autoTimer = setInterval(next, 4500); }
+  function init() { perPage = getPerPage(); current = 0; buildDots(); goTo(0); startAuto(); }
+  document.getElementById('next').addEventListener('click', () => { next(); startAuto(); });
+  document.getElementById('prev').addEventListener('click', () => { prev(); startAuto(); });
+  let touchStartX = 0;
+  track.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+  track.addEventListener('touchend', e => { const diff = touchStartX - e.changedTouches[0].clientX; if (Math.abs(diff) > 40) { diff > 0 ? next() : prev(); startAuto(); } });
+  window.addEventListener('resize', init);
+  init();
+</script>  
 </body>
 </html>
