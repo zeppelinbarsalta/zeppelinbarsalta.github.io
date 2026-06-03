@@ -107,9 +107,29 @@
     @media(max-width:768px){nav{padding:16px 20px}.hero{padding:100px 20px 60px}.hero-badge{display:none}.quick-info{grid-template-columns:1fr 1fr}.why{padding:60px 20px}.why-grid{grid-template-columns:1fr}.statement{padding:60px 20px}.howto{padding:60px 20px;grid-template-columns:1fr;gap:40px}.offers{padding:60px 20px}.offers-grid{grid-template-columns:1fr}.cta-final{padding:80px 20px}footer{padding:24px 20px}}
     @media(max-width:480px){.quick-info{grid-template-columns:1fr}}
   </style>
+  
 </head>
 <body>
-
+<style>
+  .zb-faq{max-width:860px;margin:0 auto;padding:72px 24px}
+  .zb-faq__title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.4rem,6vw,3.6rem);
+    letter-spacing:.02em;color:#fff;margin:0 0 32px;line-height:1}
+  .zb-faq__title span{color:#FF5A00}
+  .zb-faq__item{border-bottom:1px solid rgba(255,255,255,.12)}
+  .zb-faq__item summary{font-family:'Oswald',sans-serif;font-weight:500;
+    font-size:1.12rem;color:#fff;padding:22px 44px 22px 0;cursor:pointer;
+    list-style:none;position:relative;transition:color .2s ease}
+  .zb-faq__item summary::-webkit-details-marker{display:none}
+  .zb-faq__item summary:hover{color:#FF5A00}
+  .zb-faq__item summary::after{content:'+';position:absolute;right:4px;top:18px;
+    font-size:1.7rem;line-height:1;color:#FF5A00;transition:transform .25s ease}
+  .zb-faq__item[open] summary::after{transform:rotate(45deg)}
+  .zb-faq__a{font-family:'Oswald',sans-serif;font-weight:300;color:rgba(255,255,255,.78);
+    font-size:1rem;line-height:1.65;padding:0 44px 24px 0;
+    animation:zbfade .3s ease}
+  .zb-faq__a p{margin:0}
+  @keyframes zbfade{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+</style>
 <nav>
   <a href="https://zeppelin-bar.com" class="nav-logo">ZEP<span>PE</span>LIN BAR</a>
   <a href="https://zeppelin-bar.com" class="nav-back">Inicio</a>
@@ -264,6 +284,81 @@
     <a href="https://www.instagram.com/zeppelinbar.salta" target="_blank" rel="noopener">Instagram</a>
   </div>
 </footer>
+<section class="zb-faq" aria-labelledby="faq-turistas">
+  <h2 id="faq-turistas" class="zb-faq__title">Preguntas <span>frecuentes</span></h2>
 
+  <details class="zb-faq__item">
+    <summary>¿Qué hacer de noche en Salta capital?</summary>
+    <div class="zb-faq__a"><p>La noche salteña combina peñas folclóricas (concentradas sobre la calle Balcarce), corredores gastronómicos como el Paseo Güemes, y bares de coctelería de autor en el centro. Para un trago con buena música, Zeppelin Bar (25 de Mayo 340), abierto desde 2001, es una de las opciones del centro histórico.</p></div>
+  </details>
+
+  <details class="zb-faq__item">
+    <summary>¿Cuáles son las zonas de bares en Salta?</summary>
+    <div class="zb-faq__a"><p>Las principales son la calle Balcarce (peñas y bares con música), el Paseo Güemes (corredor gastronómico) y el microcentro alrededor de la Plaza 9 de Julio, donde se concentran bares y restaurantes a pasos de los hoteles.</p></div>
+  </details>
+
+  <details class="zb-faq__item">
+    <summary>¿Dónde tomar algo cerca de la Plaza 9 de Julio?</summary>
+    <div class="zb-faq__a"><p>A pocos minutos a pie de la Plaza 9 de Julio está Zeppelin Bar (25 de Mayo 340), en pleno centro, cómodo para quienes se alojan en el microcentro. Abre viernes y sábados desde las 20:30.</p></div>
+  </details>
+
+  <details class="zb-faq__item">
+    <summary>¿Hasta qué hora se puede salir de noche en Salta?</summary>
+    <div class="zb-faq__a"><p>La noche salteña suele extenderse hasta la madrugada, sobre todo viernes y sábados. Zeppelin, por ejemplo, abre de 20:30 hasta cerca de las 5:00.</p></div>
+  </details>
+
+  <details class="zb-faq__item">
+    <summary>¿Cuál es un bar con historia para conocer en Salta?</summary>
+    <div class="zb-faq__a"><p>Zeppelin Bar funciona desde 2001 y es uno de los bares con más trayectoria de la noche salteña, conocido por su coctelería de autor y su carta de vinos de altura de los Valles Calchaquíes.</p></div>
+  </details>
+</section>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "¿Qué hacer de noche en Salta capital?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "La noche salteña combina peñas folclóricas (concentradas sobre la calle Balcarce), corredores gastronómicos como el Paseo Güemes, y bares de coctelería de autor en el centro. Para un trago con buena música, Zeppelin Bar (25 de Mayo 340), abierto desde 2001, es una de las opciones del centro histórico."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Cuáles son las zonas de bares en Salta?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Las principales son la calle Balcarce (peñas y bares con música), el Paseo Güemes (corredor gastronómico) y el microcentro alrededor de la Plaza 9 de Julio, donde se concentran bares y restaurantes a pasos de los hoteles."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Dónde tomar algo cerca de la Plaza 9 de Julio?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A pocos minutos a pie de la Plaza 9 de Julio está Zeppelin Bar (25 de Mayo 340), en pleno centro, cómodo para quienes se alojan en el microcentro. Abre viernes y sábados desde las 20:30."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Hasta qué hora se puede salir de noche en Salta?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "La noche salteña suele extenderse hasta la madrugada, sobre todo viernes y sábados. Zeppelin, por ejemplo, abre de 20:30 hasta cerca de las 5:00."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Cuál es un bar con historia para conocer en Salta?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Zeppelin Bar funciona desde 2001 y es uno de los bares con más trayectoria de la noche salteña, conocido por su coctelería de autor y su carta de vinos de altura de los Valles Calchaquíes."
+      }
+    }
+  ]
+}
+</script>  
 </body>
 </html>
