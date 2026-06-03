@@ -313,15 +313,20 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "BarOrPub",
+  "@type": ["BarOrPub", "LocalBusiness"],
+  "@id": "https://zeppelin-bar.com/#zeppelinbar",
   "name": "Zeppelin Bar",
-  "description": "El bar más icónico de Salta desde 2001.",
+  "alternateName": "Zeppelin Bar Salta",
+  "slogan": "El bar más icónico de Salta.",
+  "description": "Bar icónico de Salta desde 2001, en el centro histórico sobre 25 de Mayo 340. Buena música de todas las épocas y géneros, coctelería de autor y cocina (pizzas artesanales, hamburguesas y más). El lugar preferido de los salteños para salir de noche, festejar y reunirse con amigos.",
   "url": "https://zeppelin-bar.com",
-  "image": "https://zeppelin-bar.com/og_imagen.webp",
+  "image": ["https://i.ibb.co/FqXq8H6n/og-imagen.png"],
   "telephone": "+5493875458204",
-  "priceRange": "$$",
-  "servesCuisine": ["Coctelería de autor", "Vinos de altura"],
   "foundingDate": "2001",
+  "priceRange": "$$",
+  "currenciesAccepted": "ARS",
+  "paymentAccepted": "Cash, Credit Card, Debit Card, Mercado Pago, QR",
+  "acceptsReservations": true,
   "address": {
     "@type": "PostalAddress",
     "streetAddress": "25 de Mayo 340",
@@ -330,6 +335,12 @@
     "postalCode": "A4400",
     "addressCountry": "AR"
   },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": -24.78542534888815,
+    "longitude": -65.41459861877314
+  },
+  "hasMap": "https://maps.google.com/?q=Zeppelin+Bar+25+de+Mayo+340+Salta",
   "openingHoursSpecification": [
     {
       "@type": "OpeningHoursSpecification",
@@ -338,9 +349,18 @@
       "closes": "05:00"
     }
   ],
+  "servesCuisine": ["Coctelería de autor", "Pizzas artesanales", "Hamburguesas", "Tacos", "Empanadas"],
+  "menu": "https://www.pedidosya.com.ar/restaurantes/salta/zeppelin-bar-dd917bfe-39be-4d99-877c-d58ec8a6c516-menu",
+  "amenityFeature": [
+    { "@type": "LocationFeatureSpecification", "name": "Wi-Fi", "value": true },
+    { "@type": "LocationFeatureSpecification", "name": "DJ", "value": true },
+    { "@type": "LocationFeatureSpecification", "name": "Eventos de cumpleaños", "value": true },
+    { "@type": "LocationFeatureSpecification", "name": "Reservas", "value": true }
+  ],
   "sameAs": [
     "https://www.instagram.com/zeppelinbar.salta",
-    "https://www.facebook.com/ZeppelinBarSaltaArgentina"
+    "https://www.facebook.com/ZeppelinBarSaltaArgentina",
+    "https://www.tiktok.com/@zeppelinbarsalta"
   ]
 }
 </script>
