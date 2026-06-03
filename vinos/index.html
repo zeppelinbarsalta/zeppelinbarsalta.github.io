@@ -21,21 +21,55 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "BarOrPub",
+    "@type": ["BarOrPub", "LocalBusiness"],
+    "@id": "https://zeppelin-bar.com/#zeppelinbar",
     "name": "Zeppelin Bar",
-    "description": "Carta de vinos de altura Terroir Extremo. Más de 30 etiquetas de los Valles Calchaquíes entre 1.700 y 2.685 msnm.",
-    "url": "https://zeppelin-bar.com/vinos",
-    "servesCuisine": "Vinos de altura Argentina",
+    "alternateName": "Zeppelin Bar Salta",
+    "slogan": "El bar más icónico de Salta.",
+    "description": "Bar icónico de Salta desde 2001, en el centro histórico sobre 25 de Mayo 340. Buena música de todas las épocas y géneros, coctelería de autor y cocina (pizzas artesanales, hamburguesas y más). El lugar preferido de los salteños para salir de noche, festejar y reunirse con amigos.",
+    "url": "https://zeppelin-bar.com",
+    "image": ["https://i.ibb.co/FqXq8H6n/og-imagen.png"],
+    "telephone": "+5493875458204",
+    "foundingDate": "2001",
+    "priceRange": "$$",
+    "currenciesAccepted": "ARS",
+    "paymentAccepted": "Cash, Credit Card, Debit Card, Mercado Pago, QR",
+    "acceptsReservations": true,
     "address": {
       "@type": "PostalAddress",
       "streetAddress": "25 de Mayo 340",
       "addressLocality": "Salta",
       "addressRegion": "Salta",
+      "postalCode": "A4400",
       "addressCountry": "AR"
     },
-    "openingHours": ["Fr 20:30-04:00", "Sa 20:30-04:00"],
-    "telephone": "+5493875458204",
-    "sameAs": ["https://www.instagram.com/zeppelinbar.salta"]
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": -24.78542534888815,
+      "longitude": -65.41459861877314
+    },
+    "hasMap": "https://maps.google.com/?q=Zeppelin+Bar+25+de+Mayo+340+Salta",
+    "openingHoursSpecification": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Friday", "Saturday"],
+        "opens": "20:30",
+        "closes": "05:00"
+      }
+    ],
+    "servesCuisine": ["Coctelería de autor", "Pizzas artesanales", "Hamburguesas", "Tacos", "Empanadas"],
+    "menu": "https://www.pedidosya.com.ar/restaurantes/salta/zeppelin-bar-dd917bfe-39be-4d99-877c-d58ec8a6c516-menu",
+    "amenityFeature": [
+      { "@type": "LocationFeatureSpecification", "name": "Wi-Fi", "value": true },
+      { "@type": "LocationFeatureSpecification", "name": "DJ", "value": true },
+      { "@type": "LocationFeatureSpecification", "name": "Eventos de cumpleaños", "value": true },
+      { "@type": "LocationFeatureSpecification", "name": "Reservas", "value": true }
+    ],
+    "sameAs": [
+      "https://www.instagram.com/zeppelinbar.salta",
+      "https://www.facebook.com/ZeppelinBarSaltaArgentina",
+      "https://www.tiktok.com/@zeppelinbarsalta"
+    ]
   }
   </script>
 
