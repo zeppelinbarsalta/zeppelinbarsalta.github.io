@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Zeppelin · Recetario</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@300;400;500;600&family=EB+Garamond:ital@1&display=swap" rel="stylesheet">
+<style>
+/* ===================================================================
+   CONFIGURACIÓN — editá estas dos líneas antes de subir a GitHub
+   =================================================================== */
+</style>
+<script>
+/* >>> 1) URL del Web App (la misma /exec de tu Apps Script) <<< */
+const ENDPOINT   = 'https://script.google.com/macros/s/AKfycby2xWyn_9xAgSV7xsPaUYL7_NNj9yK60PL_DG3sWtuvCjiF8bTEewdE69qBnPSU9_yOHQ/exec';
+/* >>> 2) Token de SOLO LECTURA (el mismo READ_TOKEN que pusiste en el backend) <<< */
+const READ_TOKEN = 'zeppelin';
+</script>
+<style>
+:root{
+  --bg:#0A0A0A; --surface:#151515; --surface2:#1d1d1d; --line:#2a2a2a;
+  --orange:#FF5A00; --text:#f4f4f4; --muted:#8c8c8c; --cocina:#36b34a; --yellow:#3a3414;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:'Oswald',system-ui,sans-serif;font-weight:300}
+body{padding-bottom:60px}
+button{font-family:inherit;cursor:pointer}
+.num{font-variant-numeric:tabular-nums}
+
+header{position:sticky;top:0;z-index:30;background:linear-gradient(180deg,#0d0d0d,#0a0a0a);border-bottom:1px solid var(--line)}
+.rail{display:flex;align-items:center;gap:14px;padding:13px 16px;max-width:980px;margin:0 auto}
+.brand{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:1px;line-height:.9}
+.brand b{color:var(--orange)}
+.brand span{display:block;font-family:'Oswald';font-weight:300;font-size:10px;letter-spacing:3px;color:var(--muted);margin-top:2px}
+.htools{margin-left:auto;display:flex;gap:8px}
+.htools button{background:var(--surface);border:1px solid var(--line);color:var(--text);padding:8px 13px;border-radius:8px;font-size:12px;letter-spacing:.5px}
+.htools button:hover{border-color:var(--orange)}
+.htools button.on{background:var(--orange);color:#0a0a0a;border-color:var(--orange)}
+
+.controls{max-width:980px;margin:0 auto;padding:14px 16px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.seg{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.seg button{background:var(--surface);border:none;color:var(--muted);padding:11px 22px;font-size:14px;letter-spacing:1.5px;text-transform:uppercase}
+.seg button.active{color:#0a0a0a;background:var(--orange);font-weight:500}
+.seg button.active.coc{background:var(--cocina)}
+.search{flex:1;min-width:160px;background:var(--surface);border:1px solid var(--line);color:var(--text);padding:11px 14px;border-radius:9px;font-size:15px}
+.search:focus{outline:2px solid var(--orange)}
+
+main{max-width:980px;margin:0 auto;padding:0 16px}
+.cathead{font-family:'Bebas Neue';font-size:24px;letter-spacing:1.5px;color:var(--orange);margin:26px 2px 6px;border-bottom:1px solid var(--line);padding-bottom:6px}
+.cathead.coc{color:var(--cocina)}
+
+.recipe{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 18px 16px;margin-bottom:14px;break-inside:avoid}
+.rname{font-family:'Bebas Neue';font-size:30px;letter-spacing:.5px;line-height:1;margin:0 0 2px}
+.rsub{font-style:italic;font-family:'EB Garamond',serif;color:var(--muted);font-size:15px;margin-bottom:14px}
+.cols{display:grid;grid-template-columns:1fr;gap:16px}
+@media(min-width:620px){.cols{grid-template-columns:0.85fr 1.15fr}}
+.block-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;font-weight:500}
+.ings{list-style:none;margin:0;padding:0}
+.ings li{display:flex;justify-content:space-between;gap:12px;padding:5px 0;border-bottom:1px dashed #232323;font-size:15px}
+.ings li .q{color:var(--orange);font-weight:500;white-space:nowrap}
+.ings li.todo .q{color:#5a5a5a;font-weight:300;font-style:italic}
+.steps{font-size:15px;line-height:1.6;white-space:pre-wrap;color:#e8e8e8}
+.steps.empty{color:#5a5a5a;font-style:italic}
+.stepedit{width:100%;min-height:120px;background:var(--yellow);border:1px solid #4a431c;color:#ffe7a3;padding:11px;border-radius:8px;font-size:15px;line-height:1.5;font-family:'Oswald';resize:vertical}
+.stepedit:focus{outline:2px solid var(--orange)}
+
+.empty-state{text-align:center;color:var(--muted);padding:60px 20px}
+.loading{text-align:center;color:var(--muted);padding:60px 20px;font-size:15px}
+.chip{font-size:11px;padding:6px 11px;border-radius:7px;border:1px solid var(--line);color:var(--muted)}
+.chip.ok{color:var(--cocina);border-color:#1f4d2a}
+.chip.err{color:#ff453a;border-color:#5a2420}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--orange);color:#0a0a0a;padding:11px 20px;border-radius:30px;font-size:13px;font-weight:500;z-index:60;opacity:0;transition:opacity .25s;pointer-events:none}
+.toast.show{opacity:1}
+
+/* ---- impresión: blanco, ahorra tóner ---- */
+@media print{
+  :root{--bg:#fff;--surface:#fff;--text:#000;--muted:#444;--line:#bbb;--orange:#000;--cocina:#000}
+  header,.controls,.htools,.toast,.stepedit{display:none!important}
+  body{background:#fff;color:#000}
+  .recipe{border:1px solid #999;box-shadow:none;page-break-inside:avoid}
+  .rname,.cathead{color:#000}
+  .ings li .q{color:#000}
+  main{max-width:100%}
+  .printtitle{display:block!important}
+}
+.printtitle{display:none;font-family:'Bebas Neue';font-size:32px;letter-spacing:1px;margin:0 0 10px;color:#000}
+</style>
+</head>
+<body>
+<header>
+  <div class="rail">
+    <div class="brand"><b>ZEPPELIN</b><span>RECETARIO</span></div>
+    <div class="htools">
+      <span class="chip" id="status">Cargando…</span>
+      <button onclick="window.print()">🖨 Imprimir</button>
+      <button id="editBtn" onclick="toggleEdit()">✎ Editar</button>
+    </div>
+  </div>
+  <div class="controls">
+    <div class="seg" id="seg">
+      <button class="active coc" data-area="cocina" onclick="setArea('cocina')">Cocina</button>
+      <button data-area="barra" onclick="setArea('barra')">Barra</button>
+    </div>
+    <input class="search" id="search" placeholder="Buscar receta o ingrediente…" oninput="ui.q=this.value;renderList()">
+  </div>
+</header>
+<main id="main"><div class="loading">Cargando recetario…</div></main>
+<div class="toast" id="toast"></div>
+
+<script>
+let data = { ingredients:[], products:[], recipes:[] };
+let ui = { area:'cocina', q:'', edit:false };
+let WTOKEN = localStorage.getItem('zep_rec_wtoken') || '';
+let pushTimer=null, pushing=false, dirty=false;
+
+const ingById = id => data.ingredients.find(i=>i.id===id);
+const recipesOf = pid => data.recipes.filter(r=>r.productId===pid);
+
+function setStatus(t, cls){ const c=document.getElementById('status'); c.textContent=t; c.className='chip '+(cls||''); }
+let _tt; function toast(m){ const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(_tt); _tt=setTimeout(()=>t.classList.remove('show'),1800); }
+
+async function loadData(){
+  setStatus('Cargando…');
+  try{
+    const r = await fetch(ENDPOINT+'?token='+encodeURIComponent(READ_TOKEN)+'&t='+Date.now());
+    const d = await r.json();
+    if(d.error) throw new Error(d.error);
+    data = d; setStatus('Actualizado','ok'); renderList();
+  }catch(e){ setStatus('Sin conexión','err'); document.getElementById('main').innerHTML='<div class="empty-state">No se pudo cargar el recetario.<br>Revisá la conexión o el token de lectura.</div>'; }
+}
+
+function setArea(a){
+  ui.area=a;
+  document.querySelectorAll('#seg button').forEach(b=>{ const on=b.dataset.area===a; b.classList.toggle('active',on); b.classList.toggle('coc',b.dataset.area==='cocina'); });
+  renderList();
+}
+
+function qtyLabel(r){
+  const ing = ingById(r.ingredientId);
+  const name = ing ? ing.name : '—';
+  if(r.qty==null || r.qty==='') return {name, q:'a gusto / s/d', todo:true};
+  const u = r.unit || (ing?ing.unit:'');
+  return {name, q:(''+r.qty).replace('.',',')+' '+u, todo:false};
+}
+
+function renderList(){
+  const m=document.getElementById('main');
+  const q=ui.q.toLowerCase().trim();
+  let items=data.products.filter(p=>p.area===ui.area);
+  if(q) items=items.filter(p=>{
+    if(p.name.toLowerCase().includes(q)) return true;
+    return recipesOf(p.id).some(r=>{const i=ingById(r.ingredientId);return i&&i.name.toLowerCase().includes(q);});
+  });
+  if(!items.length){ m.innerHTML='<div class="empty-state">No hay recetas para mostrar.</div>'; return; }
+
+  const groups={};
+  items.forEach(p=>{ (groups[p.category]=groups[p.category]||[]).push(p); });
+  const coc = ui.area==='cocina';
+  let html = `<h1 class="printtitle">ZEPPELIN · Recetario ${coc?'Cocina':'Barra'}</h1>`;
+  for(const [cat,ps] of Object.entries(groups)){
+    html += `<div class="cathead ${coc?'coc':''}">${cat}</div>`;
+    ps.forEach(p=>{ html += recipeCard(p, coc); });
+  }
+  m.innerHTML = html;
+}
+
+function recipeCard(p, coc){
+  const lines = recipesOf(p.id).map(qtyLabel);
+  const ingsHtml = lines.length
+    ? lines.map(l=>`<li class="${l.todo?'todo':''}"><span>${l.name}</span><span class="q num">${l.q}</span></li>`).join('')
+    : '<li class="todo"><span>Sin ingredientes cargados</span><span class="q"></span></li>';
+  const steps = (p.steps||'').trim();
+  const stepsBlock = ui.edit
+    ? `<textarea class="stepedit" placeholder="Escribí la elaboración: pasos, técnica, vaso/emplatado, decoración…" onchange="setSteps('${p.id}',this.value)">${steps.replace(/</g,'&lt;')}</textarea>`
+    : (steps ? `<div class="steps">${steps.replace(/</g,'&lt;')}</div>` : `<div class="steps empty">— Sin elaboración cargada —</div>`);
+  return `<div class="recipe">
+    <div class="rname">${p.name}</div>
+    ${p.composition?`<div class="rsub">${p.composition}</div>`:''}
+    <div class="cols">
+      <div><div class="block-label">Ingredientes</div><ul class="ings">${ingsHtml}</ul></div>
+      <div><div class="block-label">Elaboración</div>${stepsBlock}</div>
+    </div>
+  </div>`;
+}
+
+/* ---- edición (solo dueño, con token de escritura) ---- */
+function toggleEdit(){
+  if(!ui.edit){
+    if(!WTOKEN){
+      const t=prompt('Token de edición (el de escritura):');
+      if(!t) return;
+      WTOKEN=t.trim(); localStorage.setItem('zep_rec_wtoken',WTOKEN);
+    }
+    ui.edit=true;
+  } else { ui.edit=false; }
+  document.getElementById('editBtn').classList.toggle('on',ui.edit);
+  document.getElementById('editBtn').textContent = ui.edit ? '✓ Listo' : '✎ Editar';
+  if(ui.edit) loadData(); else renderList();   // al entrar, refresca para no pisar cambios
+  if(ui.edit) toast('Modo edición: escribí las elaboraciones');
+}
+function setSteps(pid,val){
+  const p=data.products.find(x=>x.id===pid); if(!p) return;
+  p.steps=val; dirty=true; schedulePush();
+}
+function schedulePush(){ clearTimeout(pushTimer); setStatus('Guardando…'); pushTimer=setTimeout(runPush,1000); }
+async function runPush(){
+  if(pushing) return; pushing=true;
+  try{
+    const body=JSON.stringify({token:WTOKEN,data});
+    const r=await fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body});
+    const d=await r.json(); if(d.error) throw new Error(d.error);
+    dirty=false; setStatus('Guardado','ok');
+  }catch(e){ setStatus('Error al guardar','err'); }
+  pushing=false; if(dirty) schedulePush();
+}
+
+/* ---- init ---- */
+(function(){
+  const a=new URLSearchParams(location.search).get('area');
+  if(a==='barra'||a==='cocina') ui.area=a;
+  setArea(ui.area);
+  loadData();
+  window.addEventListener('focus',()=>{ if(!ui.edit && !dirty) loadData(); });
+})();
+</script>
+</body>
+</html>
