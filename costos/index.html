@@ -471,6 +471,7 @@ function openConn(){
       <button class="btn-cancel" style="flex:1;padding:11px;border-radius:8px" onclick="pushNow()">⬆ Subir mis datos</button>
       <button class="btn-cancel" style="flex:1;padding:11px;border-radius:8px" onclick="pullNow()">⬇ Bajar de la nube</button>
     </div>
+    <button class="btn-cancel" style="width:100%;padding:11px;border-radius:8px;margin-top:10px" onclick="showHistory()">🕘 Historial de copias</button>
     <div id="c_status" class="hint" style="margin-top:12px;min-height:18px"></div>`);
 }
 function readConn(){ const url=(document.getElementById('c_url').value||'').trim(); const token=(document.getElementById('c_tok').value||'').trim(); return (url&&token)?{url,token}:null; }
@@ -487,6 +488,36 @@ async function connectNow(){
 }
 async function pushNow(){ const c=readConn(); if(c) saveCfg(c); if(!cfg){ cstat('Completá URL y token.'); return; } cstat('Subiendo…'); try{ await cloudPush(); dirty=false; cstat('Datos subidos a la nube ✓'); setSync('saved'); }catch(e){ cstat('Error al subir. Revisá la conexión.'); setSync('error'); } }
 async function pullNow(){ const c=readConn(); if(c) saveCfg(c); if(!cfg){ cstat('Completá URL y token.'); return; } cstat('Bajando…'); try{ const d=await cloudGet(); const n=normalize(d); if(n){ state=n; localStorage.setItem(KEY,JSON.stringify(state)); refreshStats(); render(); cstat('Datos bajados ✓'); setSync('saved'); } }catch(e){ cstat('Error al bajar.'); setSync('error'); } }
+
+async function showHistory(){
+  const c=readConn(); if(c) saveCfg(c);
+  if(!cfg){ cstat('Conectá primero (URL y token).'); return; }
+  cstat('Cargando historial…');
+  try{
+    const r=await fetch(cfg.url+'?token='+encodeURIComponent(cfg.token)+'&action=list&t='+Date.now());
+    const d=await r.json(); if(d.error) throw new Error(d.error);
+    renderHistory(d.backups||[]);
+  }catch(e){ cstat('No se pudo cargar el historial.'); }
+}
+function fmtFecha(s){ const dt=new Date(s); return isNaN(dt)? s : dt.toLocaleString('es-AR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}); }
+function renderHistory(list){
+  showModal(`<h3>Historial de copias</h3>
+    <div class="hint" style="margin-top:-6px">Copias automáticas con fecha (una por hora como máximo, se guardan las últimas 60). Al restaurar, se guarda primero una copia del estado actual, así nunca perdés nada.</div>
+    <div style="max-height:48vh;overflow:auto;margin-top:4px">
+    ${list.length? list.map(b=>`<div style="display:flex;align-items:center;gap:10px;padding:11px 4px;border-bottom:1px solid var(--line)">
+      <div style="flex:1;min-width:0"><div style="font-size:14px">${fmtFecha(b.when)}</div><div class="hint" style="margin:0">${b.summary||''}</div></div>
+      <button class="miniadd" onclick="doRestore(${b.row})">Restaurar</button></div>`).join('') : '<div class="empty">Todavía no hay copias. Se crean a medida que vas guardando cambios.</div>'}
+    </div>
+    <div class="sheet-actions"><button class="btn-cancel" onclick="openConn()">← Volver</button></div>`);
+}
+async function doRestore(row){
+  if(!confirm('¿Restaurar esta copia? Reemplaza los datos actuales en todos los dispositivos. (El estado actual queda guardado en el historial por las dudas.)')) return;
+  try{
+    const r=await fetch(cfg.url+'?token='+encodeURIComponent(cfg.token)+'&action=restore&row='+row+'&t='+Date.now());
+    const d=await r.json(); const n=normalize(d); if(!n) throw new Error('bad');
+    state=n; localStorage.setItem(KEY,JSON.stringify(state)); refreshStats(); render(); closeModal(); setSync('saved'); toast('Copia restaurada');
+  }catch(e){ toast('Error al restaurar'); }
+}
 
 /* ---------- data io ---------- */
 function exportXlsx(){
