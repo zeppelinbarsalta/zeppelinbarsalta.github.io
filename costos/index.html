@@ -474,7 +474,7 @@ function fillStock(list){
   const items=state.ingredients.filter(i=>i.name.toLowerCase().includes(q)||(i.proveedor||'').toLowerCase().includes(q))
     .sort((a,b)=>a.area.localeCompare(b.area)||a.name.localeCompare(b.name));
   if(!items.length){ list.innerHTML='<div class="empty">Sin ingredientes.</div>'; return; }
-  list.innerHTML = `<div class="hint">Control manual de stock. <b>Stock de piso</b> = tu mínimo de referencia. Contás existencias en <b style="color:#4aa3ff">Zeppelin</b> y <b style="color:#4aa3ff">Depósito</b> (el total se suma solo). El <b>semáforo</b> = piso − total: <span style="color:#ff453a">rojo</span> si estás por debajo del piso, <span style="color:#35c759">verde</span> si estás por encima. En <b>Reposición</b> anotás cuánto pedir.</div>
+  list.innerHTML = `<div class="hint">Control manual de stock. Se cuenta en la <b>unidad de compra</b> (cajón, botella) cuando la definiste en Ajustes → Unidades de compra; si no, en la unidad de medida. <b>Stock de piso</b> = tu mínimo. Contás en <b style="color:#4aa3ff">Zeppelin</b> y <b style="color:#4aa3ff">Depósito</b> (el total se suma solo). El <b>semáforo</b> = piso − total: <span style="color:#ff453a">rojo</span> si estás por debajo. En <b>Reposición</b> anotás cuánto pedir, y el pedido sale en esa misma unidad.</div>
   <div style="overflow-x:auto"><table class="itable"><thead><tr><th>Ingrediente</th><th>Área</th><th>Proveedor</th><th class="r">Stock de piso</th><th class="r">Zeppelin</th><th class="r">Depósito</th><th class="r">Total</th><th class="r">Piso − Total</th><th class="r">Reposición</th><th>Un.</th></tr></thead><tbody>
   ${items.map(i=>{
     const z=+i.stockZ||0, d=+i.stockD||0, tot=z+d, hasStock=(i.stockZ!=null||i.stockD!=null);
@@ -490,10 +490,10 @@ function fillStock(list){
     <td class="r"><input class="num" type="number" inputmode="decimal" value="${i.stockPiso??''}" placeholder="0" onchange="setIng('${i.id}','stockPiso',this.value)" style="width:78px"></td>
     <td class="r"><input class="num" type="number" inputmode="decimal" value="${i.stockZ??''}" placeholder="0" onchange="setIng('${i.id}','stockZ',this.value)" style="width:78px"></td>
     <td class="r"><input class="num" type="number" inputmode="decimal" value="${i.stockD??''}" placeholder="0" onchange="setIng('${i.id}','stockD',this.value)" style="width:78px"></td>
-    <td class="r num" style="font-weight:500;color:${hasStock&&tot>0?'#4aa3ff':'var(--muted)'}">${hasStock?(''+tot).replace('.',','):'—'}${(hasStock&&i.buyUnit&&+i.buySize>0)?` <span class="ucell">≈${(tot/(+i.buySize)).toFixed(1).replace('.',',')} ${i.buyUnit}</span>`:''}</td>
+    <td class="r num" style="font-weight:500;color:${hasStock&&tot>0?'#4aa3ff':'var(--muted)'}">${hasStock?(''+tot).replace('.',','):'—'}${(hasStock&&i.buyUnit&&+i.buySize>0)?` <span class="ucell">(= ${(''+(tot*(+i.buySize))).replace('.',',')} ${i.unit})</span>`:''}</td>
     <td class="r">${sem}</td>
     <td class="r"><input class="num" type="number" inputmode="decimal" value="${i.reposicion??''}" placeholder="${diff!=null&&diff>0?diff:0}" onchange="setIng('${i.id}','reposicion',this.value)" style="width:80px"></td>
-    <td class="ucell">${i.unit}</td></tr>`;}).join('')}
+    <td class="ucell">${i.buyUnit||i.unit}</td></tr>`;}).join('')}
   </tbody></table></div>`;
 }
 
@@ -598,13 +598,13 @@ function buildOrder(){
       const sup=supById(i.proveedorId);
       const key=i.proveedorId||'none';
       if(!map[key]) map[key]={name:sup?sup.name:'Sin proveedor', phone:sup?(sup.phone||''):'', items:[]};
-      map[key].items.push({name:i.name, qty, unit:i.unit, buyUnit:i.buyUnit||'', factor:+i.buySize||0});
+      map[key].items.push({name:i.name, qty, unit:(i.buyUnit||i.unit), baseUnit:i.unit, factor:+i.buySize||0, hasBuy:!!(i.buyUnit)});
     }
   });
   return Object.values(map).sort((a,b)=>a.name.localeCompare(b.name));
 }
 function orderQty(it){
-  if(it.buyUnit && it.factor>0){ const packs=Math.ceil((+it.qty||0)/it.factor); return `${packs} ${it.buyUnit} (${(''+it.qty).replace('.',',')} ${it.unit})`; }
+  if(it.hasBuy && it.factor>0){ return `${(''+it.qty).replace('.',',')} ${it.unit} (= ${(''+ (it.qty*it.factor)).replace('.',',')} ${it.baseUnit})`; }
   return `${(''+it.qty).replace('.',',')} ${it.unit}`;
 }
 function orderMessage(name, items){
