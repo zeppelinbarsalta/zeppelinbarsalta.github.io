@@ -392,7 +392,7 @@ function fillIngredients(list){
     + `</tbody></table></div>`;
 }
 function ingRow(i){ const uc=unitCost(i); const prep=i.kind==='prep';
-  return `<tr><td>${i.name}${prep?' <span class="badge" style="background:rgba(255,210,63,.16);color:#ffd23f">⚗ elaborado</span>':''}</td>
+  return `<tr><td><input type="text" value="${esc(i.name)}" onchange="setIng('${i.id}','name',this.value)" style="width:170px;text-align:left;font-weight:400">${prep?' <span class="badge" style="background:rgba(255,210,63,.16);color:#ffd23f">⚗</span>':''}</td>
     <td><span class="badge b-${i.area}">${i.area}</span></td>
     <td><input type="text" list="catlist" value="${esc(i.categoria)}" placeholder="—" onchange="setIng('${i.id}','categoria',this.value)" style="width:130px;text-align:left"></td>
     <td>${prep?`<span class="ucell">${i.unit}</span>`:`<select onchange="setIng('${i.id}','unit',this.value)">${['ml','g','u','cc'].map(u=>`<option ${i.unit===u?'selected':''}>${u}</option>`).join('')}</select>`}</td>
@@ -752,7 +752,7 @@ function toggle(id){ ui.open[id]=!ui.open[id]; render(); }
 function setPrice(id,v){ prodById(id).price = v===''?null:+v; save(); render(); }
 function setManual(id,v){ prodById(id).manualCost = v===''?null:+v; save(); render(); }
 function setQty(rid,v){ const r=state.recipes.find(x=>x.id===rid); r.qty = v===''?null:+v; save(); render(); }
-function setIng(id,f,v){ const i=ingById(id); const strF=(f==='unit'||f==='proveedor'||f==='buyUnit'||f==='categoria'); i[f] = strF? v : (v===''?null:+v); save(); render(); }
+function setIng(id,f,v){ const i=ingById(id); const strF=(f==='unit'||f==='proveedor'||f==='buyUnit'||f==='categoria'||f==='name'); if(f==='name'&&!(''+v).trim()) return; i[f] = strF? v : (v===''?null:+v); save(); render(); }
 function catOptions(){ const set=[...new Set(state.ingredients.map(i=>i.categoria).filter(c=>c&&(''+c).trim()))].sort((a,b)=>a.localeCompare(b)); return set.map(c=>`<option value="${esc(c)}">`).join(''); }
 function delLine(rid){ state.recipes=state.recipes.filter(x=>x.id!==rid); save(); render(); }
 function delProduct(id){ if(!confirm('¿Eliminar este producto?'))return; state.products=state.products.filter(p=>p.id!==id); state.recipes=state.recipes.filter(r=>r.productId!==id); save(); render(); }
