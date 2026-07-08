@@ -483,7 +483,7 @@ function removeElab(id){ if(!confirm('¿Volver este elaborado a ingrediente comp
 function renderStock(m){
   m.innerHTML = searchBar('Buscar ingrediente o proveedor…','Ingrediente','addIngredient()');
   const list=document.getElementById('list');
-  list.insertAdjacentHTML('beforebegin','<div style="margin:-2px 0 12px"><button class="addbtn" style="background:#4aa3ff;color:#04203f" onclick="showOrder()">🛒 Armar orden de compra</button></div>');
+  list.insertAdjacentHTML('beforebegin','<div style="margin:-2px 0 12px;display:flex;gap:8px;flex-wrap:wrap"><button class="addbtn" style="background:#4aa3ff;color:#04203f" onclick="showOrder()">🛒 Armar orden de compra</button><button class="addbtn" style="background:var(--surface);color:var(--text);border:1px solid var(--line)" onclick="clearStockCounts()">🧹 Vaciar conteo (Zeppelin y Depósito)</button></div>');
   fillStock(list);
 }
 function fillStock(list){
@@ -672,7 +672,13 @@ function applyImport(){
   window._imp=null;
 }
 
-/* orden de compra */
+function clearStockCounts(){
+  const n=state.ingredients.filter(i=>i.stockZ!=null||i.stockD!=null).length;
+  if(!n){ toast('No hay conteo cargado'); return; }
+  if(!confirm(`Vaciar las casillas Zeppelin y Depósito de ${n} ingrediente(s)?\n\nSe borra solo el conteo actual. NO se tocan el stock de piso, los precios ni la reposición.`)) return;
+  state.ingredients.forEach(i=>{ i.stockZ=null; i.stockD=null; });
+  save(); render(); toast('Conteo vaciado — listo para cargar');
+}
 function buildOrder(){
   const map={};
   state.ingredients.forEach(i=>{
