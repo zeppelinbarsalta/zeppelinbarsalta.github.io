@@ -328,6 +328,7 @@ function productCard(p, area){
         <input class="qty num" type="number" inputmode="decimal" placeholder="cant." id="nq_${p.id}">
         <button class="miniadd" onclick="addLine('${p.id}')">＋ Agregar</button>
       </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:8px"><button class="del" style="font-size:12px" onclick="delProduct('${p.id}')">Eliminar producto</button></div>
     </div></div>`;
 }
 function ingredientSelect(pid, area, excludeId){
