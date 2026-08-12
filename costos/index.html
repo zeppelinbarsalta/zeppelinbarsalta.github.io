@@ -42,7 +42,7 @@ header{position:sticky;top:0;z-index:30;background:linear-gradient(180deg,#0d0d0
 .syncchip.warn{color:#ffd23f;border-color:#4a431c}
 
 /* ---- tab bar ---- */
-nav{position:sticky;top:63px;z-index:25;background:#0a0a0a;border-bottom:1px solid var(--line);overflow-x:auto;-webkit-overflow-scrolling:touch}
+nav{position:sticky;top:var(--headerh,63px);z-index:25;background:#0a0a0a;border-bottom:1px solid var(--line);overflow-x:auto;-webkit-overflow-scrolling:touch}
 .tabs{display:flex;gap:0;max-width:1100px;margin:0 auto;min-width:max-content}
 .tab{background:none;border:none;border-bottom:3px solid transparent;color:var(--muted);padding:13px 18px;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;white-space:nowrap}
 .tab.active{color:var(--text);border-bottom-color:var(--orange)}
@@ -91,7 +91,7 @@ main{max-width:1100px;margin:0 auto;padding:16px}
 
 /* ingredient table */
 .itable{width:100%;border-collapse:collapse}
-.itable th{font-size:9px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;text-align:left;padding:8px 6px;font-weight:400;border-bottom:1px solid var(--line);background:#0a0a0a}
+.itable th{font-size:9px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;text-align:left;padding:8px 6px;font-weight:400;border-bottom:1px solid var(--line);background:#0a0a0a;position:sticky;top:var(--chromeh,111px);z-index:8}
 .itable td{padding:6px;border-bottom:1px solid #1a1a1a;font-size:13px}
 .itable td.r{text-align:right}
 .itable input{background:var(--yellow);border:1px solid #4a431c;color:#ffe7a3;padding:6px 8px;border-radius:6px;font-size:13px;width:96px;text-align:right}
@@ -388,9 +388,9 @@ function fillIngredients(list){
   const keyFn = mode==='categoria'?(i=>i.categoria):mode==='area'?(i=>i.area):null;
   list.innerHTML = `<div class="hint">Cargá precio de compra y tamaño (en la unidad base). La <b style="color:#ffd23f">merma %</b> es el desperdicio del ingrediente (cáscara, recorte, derrame): encarece el costo real. Típico: bebidas embotelladas 0% · destilados servidos 2-5% · cítricos y verdura 15-40% · cortes de carne 10-25%. El costo por unidad ya la incluye.</div>`
     + sortControl('ing', mode, [['name','Nombre (A-Z)'],['categoria','Categoría'],['area','Área']])
-    + `<div style="overflow-x:auto"><datalist id="catlist">${catOptions()}</datalist><table class="itable"><thead><tr><th>Ingrediente</th><th>Área</th><th>Categoría</th><th>Un.</th><th class="r">Precio compra</th><th class="r">Tamaño</th><th class="r">Merma %</th><th class="r">$/u real</th><th></th></tr></thead><tbody>`
+    + `<datalist id="catlist">${catOptions()}</datalist><table class="itable"><thead><tr><th>Ingrediente</th><th>Área</th><th>Categoría</th><th>Un.</th><th class="r">Precio compra</th><th class="r">Tamaño</th><th class="r">Merma %</th><th class="r">$/u real</th><th></th></tr></thead><tbody>`
     + renderRows(items, keyFn, 9, ingRow)
-    + `</tbody></table></div>`;
+    + `</tbody></table>`;
 }
 function ingRow(i){ const uc=unitCost(i); const prep=i.kind==='prep';
   return `<tr><td><input type="text" value="${esc(i.name)}" onchange="setIng('${i.id}','name',this.value)" style="width:170px;text-align:left;font-weight:400">${prep?' <span class="badge" style="background:rgba(255,210,63,.16);color:#ffd23f">⚗</span>':''}</td>
@@ -497,9 +497,9 @@ function fillStock(list){
   const keyFn = mode==='categoria'?(i=>i.categoria):mode==='proveedor'?(i=>supplierName(i)):mode==='area'?(i=>i.area):null;
   list.innerHTML = `<div class="hint">Control manual de stock. Se cuenta en la <b>unidad de compra</b> (cajón, botella) cuando la definiste en Ajustes → Unidades de compra; si no, en la unidad de medida. <b>Stock de piso</b> = tu mínimo. Contás en <b style="color:#4aa3ff">Zeppelin</b> y <b style="color:#4aa3ff">Depósito</b> (el total se suma solo). El <b>semáforo</b> = piso − total: <span style="color:#ff453a">rojo</span> si estás por debajo. En <b>Reposición</b> anotás cuánto pedir, y el pedido sale en esa misma unidad.</div>`
     + sortControl('stock', mode, [['name','Nombre (A-Z)'],['categoria','Categoría'],['proveedor','Proveedor'],['area','Área']])
-    + `<div style="overflow-x:auto"><table class="itable"><thead><tr><th>Ingrediente</th><th>Área</th><th>Categoría</th><th>Proveedor</th><th class="r">Stock de piso</th><th class="r">Zeppelin</th><th class="r">Depósito</th><th class="r">Total</th><th class="r">Piso − Total</th><th class="r">Reposición</th><th>Un.</th></tr></thead><tbody>`
+    + `<table class="itable"><thead><tr><th>Ingrediente</th><th>Área</th><th>Categoría</th><th>Proveedor</th><th class="r">Stock de piso</th><th class="r">Zeppelin</th><th class="r">Depósito</th><th class="r">Total</th><th class="r">Piso − Total</th><th class="r">Reposición</th><th>Un.</th></tr></thead><tbody>`
     + renderRows(items, keyFn, 11, stockRow)
-    + `</tbody></table></div>`;
+    + `</tbody></table>`;
 }
 function stockRow(i){
   const z=+i.stockZ||0, d=+i.stockD||0, tot=z+d, hasStock=(i.stockZ!=null||i.stockD!=null);
@@ -548,7 +548,7 @@ function fillUnits(list){
   const q=ui.search.toLowerCase();
   const items=state.ingredients.filter(i=>i.kind!=='prep' && i.name.toLowerCase().includes(q)).sort((a,b)=>a.area.localeCompare(b.area)||a.name.localeCompare(b.name));
   list.innerHTML=`<div class="hint">Definí cómo <b>comprás</b> cada ingrediente cuando difiere de cómo lo <b>medís</b>. Ej: <b>Salta Rubia</b> se mide en <b>u</b> y se compra por <b>cajón</b> de 12; <b>Fernet</b> se mide en <b>ml</b> y se compra por <b>botella</b> de 1000. El precio de compra (en Ingredientes) es el de <b>una</b> unidad de compra; el costo por unidad de medida se calcula solo, y los pedidos salen en cajones/botellas.</div>
-  <div style="overflow-x:auto"><table class="itable"><thead><tr><th>Ingrediente</th><th>Mide en</th><th>Unidad de compra</th><th class="r">Contenido</th><th>Equivalencia</th></tr></thead><tbody>
+  <table class="itable"><thead><tr><th>Ingrediente</th><th>Mide en</th><th>Unidad de compra</th><th class="r">Contenido</th><th>Equivalencia</th></tr></thead><tbody>
   ${items.map(i=>{const bu=i.buyUnit||'', bs=i.buySize;
     const eqv=(bu&&bs)?`1 ${bu} = ${(''+bs).replace('.',',')} ${i.unit}`:(bu?`1 ${bu} = ? ${i.unit}`:`—`);
     return `<tr><td>${i.name}</td>
@@ -556,7 +556,7 @@ function fillUnits(list){
     <td><input type="text" value="${esc(bu)}" placeholder="ej: cajón, botella" onchange="setIng('${i.id}','buyUnit',this.value)" style="width:130px;text-align:left"></td>
     <td class="r"><input class="num" type="number" inputmode="decimal" value="${i.buySize??''}" placeholder="1" onchange="setIng('${i.id}','buySize',this.value)" style="width:88px"></td>
     <td class="ucell" style="color:${(bu&&bs)?'#4aa3ff':'var(--muted)'}">${eqv}</td></tr>`;}).join('')}
-  </tbody></table></div>`;
+  </tbody></table>`;
 }
 
 function renderAjustesSuppliersSearchbar(){}
@@ -981,6 +981,7 @@ let _tt; function toast(msg){ const t=document.getElementById('toast'); t.textCo
 
 /* ---------- init ---------- */
 renderTabs(); refreshStats(); render();
+(function(){var hd=document.querySelector('header'),nv=document.querySelector('nav');function upd(){var hh=hd?hd.offsetHeight:63;document.documentElement.style.setProperty('--headerh',hh+'px');var nh=nv?nv.offsetHeight:0;document.documentElement.style.setProperty('--chromeh',(hh+nh)+'px');}if(window.ResizeObserver){var ro=new ResizeObserver(upd);if(hd)ro.observe(hd);if(nv)ro.observe(nv);}window.addEventListener('resize',upd);upd();setTimeout(upd,600);})();
 if(cfg && cfg.token){ setSync('cargando'); initialPull(false); } else { setSync('local'); }
 </script>
 </body>
