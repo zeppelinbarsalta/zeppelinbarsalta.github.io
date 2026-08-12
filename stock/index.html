@@ -67,6 +67,12 @@ td input{background:var(--yellow);border:1px solid #4a431c;color:#ffe7a3;padding
   </div>
   <div class="controls">
     <input class="search" id="q" placeholder="Buscar ingrediente, categoría o proveedor…" oninput="ui.q=this.value;refill()">
+    <select class="sortsel" id="area" onchange="ui.area=this.value;refill()">
+      <option value="">Área: todas</option>
+      <option value="barra">Barra</option>
+      <option value="cocina">Cocina</option>
+      <option value="ambos">Ambos</option>
+    </select>
     <select class="sortsel" id="sort" onchange="ui.sort=this.value;refill()">
       <option value="name">Ordenar: Nombre</option>
       <option value="categoria">Ordenar: Categoría</option>
@@ -80,7 +86,7 @@ td input{background:var(--yellow);border:1px solid #4a431c;color:#ffe7a3;padding
 
 <script>
 let data={suppliers:[],ingredients:[]};
-let ui={q:'',sort:'name'};
+let ui={q:'',sort:'name',area:''};
 let dirty=false,pushing=false,pushTimer=null;
 const ingById=id=>data.ingredients.find(i=>i.id===id);
 const supById=id=>data.suppliers.find(s=>s.id===id);
@@ -116,7 +122,7 @@ window.addEventListener('focus',()=>{ if(!dirty && !pushing && (Date.now()-(wind
 function render(){ refill(); }
 function refill(){
   const q=ui.q.toLowerCase();
-  let items=data.ingredients.filter(i=>i.name.toLowerCase().includes(q)||(i.categoria||'').toLowerCase().includes(q)||(supplierName(i)||'').toLowerCase().includes(q));
+  let items=data.ingredients.filter(i=>(!ui.area||i.area===ui.area)&&(i.name.toLowerCase().includes(q)||(i.categoria||'').toLowerCase().includes(q)||(supplierName(i)||'').toLowerCase().includes(q)));
   const byName=(a,b)=>a.name.localeCompare(b.name);
   const sorters={name:byName,categoria:(a,b)=>(a.categoria||'\uffff').localeCompare(b.categoria||'\uffff')||byName(a,b),proveedor:(a,b)=>(supplierName(a)||'\uffff').localeCompare(supplierName(b)||'\uffff')||byName(a,b)};
   items=items.slice().sort(sorters[ui.sort]||byName);
