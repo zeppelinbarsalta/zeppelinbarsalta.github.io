@@ -21,14 +21,15 @@ button{font-family:inherit;cursor:pointer}
 .num{font-variant-numeric:tabular-nums}
 input,select{font-family:'Oswald',sans-serif;font-weight:300}
 input:focus,select:focus{outline:2px solid var(--blue);outline-offset:-1px}
-header{background:linear-gradient(180deg,#0d0d0d,#0a0a0a);border-bottom:1px solid var(--line)}
+header{position:sticky;top:0;z-index:30;background:linear-gradient(180deg,#0d0d0d,#0a0a0a);border-bottom:1px solid var(--line)}
 .rail{display:flex;align-items:center;gap:14px;padding:12px 16px;max-width:1000px;margin:0 auto}
 .brand{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:1px;line-height:.9}
 .brand b{color:var(--orange)} .brand i{color:var(--blue);font-style:normal}
 .brand span{display:block;font-family:'Oswald';font-weight:300;font-size:10px;letter-spacing:3px;color:var(--muted);margin-top:2px}
 .chip{margin-left:auto;font-size:11px;padding:6px 11px;border-radius:7px;border:1px solid var(--line);color:var(--muted)}
 .chip.ok{color:var(--green);border-color:#1f4d2a}.chip.err{color:var(--red);border-color:#5a2420}.chip.warn{color:#ffd23f}
-.tools{display:flex;gap:8px;flex-wrap:wrap;padding:0 16px 12px;max-width:1000px;margin:0 auto}
+.tools{display:flex;gap:8px;flex-wrap:wrap;padding:0 16px 10px;max-width:1000px;margin:0 auto}
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:0 16px 12px;max-width:1000px;margin:0 auto}
 .tools button{border:none;padding:9px 14px;border-radius:8px;font-size:13px;letter-spacing:.5px;font-weight:500}
 .b-order{background:var(--blue);color:#04203f}.b-clear{background:var(--surface);color:var(--text);border:1px solid var(--line)!important}
 main{max-width:1000px;margin:0 auto;padding:14px 16px}
@@ -36,7 +37,7 @@ main{max-width:1000px;margin:0 auto;padding:14px 16px}
 .search{flex:1;min-width:150px;background:var(--surface);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:8px;font-size:15px}
 .sortsel{background:var(--surface2);border:1px solid var(--line);color:var(--text);padding:9px;border-radius:7px;font-size:13px}
 table{width:100%;border-collapse:collapse}
-th{font-size:9px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;text-align:left;padding:10px 6px;font-weight:400;border-bottom:1px solid var(--line);position:sticky;top:0;background:#0d0d0d;z-index:10}
+th{font-size:9px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;text-align:left;padding:10px 6px;font-weight:400;border-bottom:1px solid var(--line);position:sticky;top:var(--headh,0px);background:#0d0d0d;z-index:10}
 th.r,td.r{text-align:right}
 td{padding:6px;border-bottom:1px solid #1a1a1a;font-size:13px}
 td input{background:var(--yellow);border:1px solid #4a431c;color:#ffe7a3;padding:8px;border-radius:6px;font-size:15px;width:76px;text-align:right}
@@ -55,7 +56,7 @@ td input{background:var(--yellow);border:1px solid #4a431c;color:#ffe7a3;padding
 </style>
 </head>
 <body>
-<header>
+<header id="topbar">
   <div class="rail">
     <div class="brand"><b>ZEPPELIN</b> <i>STOCK</i><span>CONTEO Y PEDIDOS</span></div>
     <span class="chip" id="status">Cargando…</span>
@@ -64,8 +65,16 @@ td input{background:var(--yellow);border:1px solid #4a431c;color:#ffe7a3;padding
     <button class="b-order" onclick="showOrder()">🛒 Armar orden de compra</button>
     <button class="b-clear" onclick="clearCounts()">🧹 Vaciar conteo</button>
   </div>
+  <div class="controls">
+    <input class="search" id="q" placeholder="Buscar ingrediente, categoría o proveedor…" oninput="ui.q=this.value;refill()">
+    <select class="sortsel" id="sort" onchange="ui.sort=this.value;refill()">
+      <option value="name">Ordenar: Nombre</option>
+      <option value="categoria">Ordenar: Categoría</option>
+      <option value="proveedor">Ordenar: Proveedor</option>
+    </select>
+  </div>
 </header>
-<main id="main"><div class="hint">Cargando stock…</div></main>
+<main id="main"><table><thead><tr><th>Ingrediente</th><th>Categoría</th><th>Proveedor</th><th class="r">Piso</th><th class="r">Zeppelin</th><th class="r">Depósito</th><th class="r">Total</th><th class="r">Falta</th><th class="r">Reposición</th><th>Un.</th></tr></thead><tbody id="tb"><tr><td colspan="10" class="hint" style="padding:20px">Cargando…</td></tr></tbody></table></main>
 <div class="modal" id="modal"><div class="sheet" id="msheet"></div></div>
 <div class="toast" id="toast"></div>
 
@@ -104,25 +113,10 @@ async function runPush(){
 window.addEventListener('focus',()=>{ if(!dirty && !pushing && (Date.now()-(window._le||0))>4000) load(); });
 
 /* ---- render ---- */
-function render(){
-  const m=document.getElementById('main');
-  let items=data.ingredients.filter(i=>i.name.toLowerCase().includes(ui.q.toLowerCase())||(i.categoria||'').toLowerCase().includes(ui.q.toLowerCase())||(supplierName(i)||'').toLowerCase().includes(ui.q.toLowerCase()));
-  const byName=(a,b)=>a.name.localeCompare(b.name);
-  const sorters={name:byName,categoria:(a,b)=>(a.categoria||'\uffff').localeCompare(b.categoria||'\uffff')||byName(a,b),proveedor:(a,b)=>(supplierName(a)||'\uffff').localeCompare(supplierName(b)||'\uffff')||byName(a,b)};
-  items=items.slice().sort(sorters[ui.sort]||byName);
-  const keyFn=ui.sort==='categoria'?(i=>i.categoria):ui.sort==='proveedor'?(i=>supplierName(i)):null;
-  m.innerHTML=`<div class="hint">Contá existencias en <b style="color:var(--blue)">Zeppelin</b> y <b style="color:var(--blue)">Depósito</b>. El total y el semáforo (piso − total) se calculan solos. Se guarda solo. Después armá la orden de compra.</div>
-    <div class="bar"><input class="search" placeholder="Buscar ingrediente, categoría o proveedor…" value="${esc(ui.q)}" oninput="ui.q=this.value;refill()">
-    <select class="sortsel" onchange="ui.sort=this.value;render()">
-      <option value="name" ${ui.sort==='name'?'selected':''}>Ordenar: Nombre</option>
-      <option value="categoria" ${ui.sort==='categoria'?'selected':''}>Ordenar: Categoría</option>
-      <option value="proveedor" ${ui.sort==='proveedor'?'selected':''}>Ordenar: Proveedor</option>
-    </select></div>
-    <div style="overflow-x:auto"><table><thead><tr><th>Ingrediente</th><th>Categoría</th><th>Proveedor</th><th class="r">Piso</th><th class="r">Zeppelin</th><th class="r">Depósito</th><th class="r">Total</th><th class="r">Falta</th><th class="r">Reposición</th><th>Un.</th></tr></thead><tbody id="tb"></tbody></table></div>`;
-  fillBody(items,keyFn);
-}
+function render(){ refill(); }
 function refill(){
-  let items=data.ingredients.filter(i=>i.name.toLowerCase().includes(ui.q.toLowerCase())||(i.categoria||'').toLowerCase().includes(ui.q.toLowerCase())||(supplierName(i)||'').toLowerCase().includes(ui.q.toLowerCase()));
+  const q=ui.q.toLowerCase();
+  let items=data.ingredients.filter(i=>i.name.toLowerCase().includes(q)||(i.categoria||'').toLowerCase().includes(q)||(supplierName(i)||'').toLowerCase().includes(q));
   const byName=(a,b)=>a.name.localeCompare(b.name);
   const sorters={name:byName,categoria:(a,b)=>(a.categoria||'\uffff').localeCompare(b.categoria||'\uffff')||byName(a,b),proveedor:(a,b)=>(supplierName(a)||'\uffff').localeCompare(supplierName(b)||'\uffff')||byName(a,b)};
   items=items.slice().sort(sorters[ui.sort]||byName);
@@ -205,6 +199,7 @@ function closeM(){ document.getElementById('modal').classList.remove('show'); }
 document.getElementById('modal').addEventListener('click',e=>{ if(e.target.id==='modal') closeM(); });
 
 /* ---- init ---- */
+(function(){ const tb=document.getElementById('topbar'); const upd=()=>document.documentElement.style.setProperty('--headh', tb.offsetHeight+'px'); if(window.ResizeObserver){ new ResizeObserver(upd).observe(tb); } window.addEventListener('resize',upd); upd(); setTimeout(upd,600); })();
 load();
 </script>
 </body>
