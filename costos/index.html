@@ -182,7 +182,7 @@ function loadCfg(){ try{const c=JSON.parse(localStorage.getItem(CFGKEY)); if(c&&
 function saveCfg(c){ cfg=c; localStorage.setItem(CFGKEY, JSON.stringify(c)); }
 
 let dirty=false, pushing=false, pushTimer=null;
-function save(){ localStorage.setItem(KEY, JSON.stringify(state)); refreshStats(); if(cfg&&cfg.token){ dirty=true; schedulePush(); } }
+function save(){ localStorage.setItem(KEY, JSON.stringify(state)); window._lastEdit=Date.now(); refreshStats(); if(cfg&&cfg.token){ dirty=true; schedulePush(); } }
 function schedulePush(){ clearTimeout(pushTimer); setSync('pending'); pushTimer=setTimeout(runPush,1200); }
 async function runPush(){ if(!cfg||!cfg.token||pushing) return; pushing=true; setSync('saving'); try{ await cloudPush(); dirty=false; setSync('saved'); }catch(e){ setSync('error'); } pushing=false; if(dirty) schedulePush(); }
 
@@ -202,7 +202,7 @@ async function initialPull(silent){
     else { setSync(silent?'saved':'empty'); if(!silent) toast('La nube está vacía. Subí tus datos desde Conexión.'); }
   }catch(e){ setSync('error'); if(!silent) toast('No se pudo conectar a la nube'); }
 }
-window.addEventListener('focus', ()=>{ if(cfg && cfg.token && !dirty && !pushing) initialPull(true); });
+window.addEventListener('focus', ()=>{ if(cfg && cfg.token && !dirty && !pushing && (Date.now()-(window._lastEdit||0))>4000) initialPull(true); });
 
 let ui = { tab:'barra', search:'', open:{}, target:30 };
 
@@ -399,9 +399,9 @@ function ingRow(i){ const uc=unitCost(i); const prep=i.kind==='prep';
     <td>${prep?`<span class="ucell">${i.unit}</span>`:`<select onchange="setIng('${i.id}','unit',this.value)">${['ml','g','u','cc'].map(u=>`<option ${i.unit===u?'selected':''}>${u}</option>`).join('')}</select>`}</td>
     ${prep
       ? `<td class="r ucell" colspan="2" style="text-align:center"><span onclick="go('elab')" style="color:#ffd23f;cursor:pointer">receta en Elaborados →</span></td>`
-      : `<td class="r"><input class="num" type="number" inputmode="decimal" value="${i.buyPrice??''}" placeholder="0" onchange="setIng('${i.id}','buyPrice',this.value)"></td>
-         <td class="r"><input class="num" type="number" inputmode="decimal" value="${i.buySize??''}" placeholder="0" onchange="setIng('${i.id}','buySize',this.value)"></td>`}
-    <td class="r"><input class="num" type="number" inputmode="decimal" value="${i.merma??''}" placeholder="0" onchange="setIng('${i.id}','merma',this.value)" style="width:58px"></td>
+      : `<td class="r"><input class="num" type="number" inputmode="decimal" value="${i.buyPrice??''}" placeholder="0" onchange="setIngNum('${i.id}','buyPrice',this.value,this)"></td>
+         <td class="r"><input class="num" type="number" inputmode="decimal" value="${i.buySize??''}" placeholder="0" onchange="setIngNum('${i.id}','buySize',this.value,this)"></td>`}
+    <td class="r"><input class="num" type="number" inputmode="decimal" value="${i.merma??''}" placeholder="0" onchange="setIngNum('${i.id}','merma',this.value,this)" style="width:58px"></td>
     <td class="r num" style="color:${uc>0?'var(--text)':'var(--muted)'}">${uc>0?fmt2.format(uc):'—'}</td>
     <td><button class="del" onclick="delIngredient('${i.id}')">✕</button></td></tr>`;
 }
@@ -513,12 +513,12 @@ function stockRow(i){
     <td><span class="badge b-${i.area}">${i.area}</span></td>
     <td class="ucell">${i.categoria?esc(i.categoria):'—'}</td>
     <td>${supplierSelect(i)}</td>
-    <td class="r"><input class="num" type="number" inputmode="decimal" value="${i.stockPiso??''}" placeholder="0" onchange="setIng('${i.id}','stockPiso',this.value)" style="width:78px"></td>
-    <td class="r"><input class="num" type="number" inputmode="decimal" value="${i.stockZ??''}" placeholder="0" onchange="setIng('${i.id}','stockZ',this.value)" style="width:78px"></td>
-    <td class="r"><input class="num" type="number" inputmode="decimal" value="${i.stockD??''}" placeholder="0" onchange="setIng('${i.id}','stockD',this.value)" style="width:78px"></td>
+    <td class="r"><input class="num" type="number" inputmode="decimal" value="${i.stockPiso??''}" placeholder="0" onchange="setStockVal('${i.id}','stockPiso',this.value,this)" style="width:78px"></td>
+    <td class="r"><input class="num" type="number" inputmode="decimal" value="${i.stockZ??''}" placeholder="0" onchange="setStockVal('${i.id}','stockZ',this.value,this)" style="width:78px"></td>
+    <td class="r"><input class="num" type="number" inputmode="decimal" value="${i.stockD??''}" placeholder="0" onchange="setStockVal('${i.id}','stockD',this.value,this)" style="width:78px"></td>
     <td class="r num" style="font-weight:500;color:${hasStock&&tot>0?'#4aa3ff':'var(--muted)'}">${hasStock?(''+tot).replace('.',','):'—'}${(hasStock&&i.buyUnit&&+i.buySize>0)?` <span class="ucell">(= ${(''+(tot*(+i.buySize))).replace('.',',')} ${i.unit})</span>`:''}</td>
     <td class="r">${sem}</td>
-    <td class="r"><input class="num" type="number" inputmode="decimal" value="${i.reposicion??''}" placeholder="${diff!=null&&diff>0?diff:0}" onchange="setIng('${i.id}','reposicion',this.value)" style="width:80px"></td>
+    <td class="r"><input class="num" type="number" inputmode="decimal" value="${i.reposicion??''}" placeholder="${diff!=null&&diff>0?diff:0}" onchange="setStockVal('${i.id}','reposicion',this.value,this)" style="width:80px"></td>
     <td class="ucell">${i.buyUnit||i.unit}</td></tr>`;
 }
 
@@ -760,6 +760,36 @@ function setPrice(id,v){ prodById(id).price = v===''?null:+v; save(); render(); 
 function setManual(id,v){ prodById(id).manualCost = v===''?null:+v; save(); render(); }
 function setQty(rid,v){ const r=state.recipes.find(x=>x.id===rid); r.qty = v===''?null:+v; save(); render(); }
 function setIng(id,f,v){ const i=ingById(id); const strF=(f==='unit'||f==='proveedor'||f==='buyUnit'||f==='categoria'||f==='name'); if(f==='name'&&!(''+v).trim()) return; i[f] = strF? v : (v===''?null:+v); save(); render(); }
+
+/* Carga rápida: actualiza SOLO la fila editada, sin redibujar toda la tabla (evita perder lo cargado). La subida a la nube se agrupa. */
+function setStockVal(id, field, val, el){
+  const i=ingById(id); if(!i) return;
+  i[field] = (val===''? null : +val);
+  save();                    // persiste + agenda subida (NO redibuja)
+  updateStockRow(i, el);     // actualiza total y semáforo de esta fila
+}
+function updateStockRow(i, el){
+  const tr = el && el.closest ? el.closest('tr') : null; if(!tr || tr.children.length<11) return;
+  const z=+i.stockZ||0, d=+i.stockD||0, tot=z+d, hasStock=(i.stockZ!=null||i.stockD!=null);
+  const hasPiso=(i.stockPiso!=null&&i.stockPiso!==''), piso=+i.stockPiso||0, diff=hasPiso?(piso-tot):null;
+  const totCell=tr.children[7];
+  totCell.style.color = (hasStock&&tot>0)?'#4aa3ff':'var(--muted)';
+  totCell.innerHTML = (hasStock?(''+tot).replace('.',','):'—') + ((hasStock&&i.buyUnit&&+i.buySize>0)?` <span class="ucell">(= ${(''+(tot*(+i.buySize))).replace('.',',')} ${i.unit})</span>`:'');
+  let sem;
+  if(diff==null) sem='<span class="ucell">—</span>';
+  else if(diff>0) sem=`<span style="color:#ff453a">● <b class="num">-${(''+diff).replace('.',',')}</b></span>`;
+  else if(diff===0) sem='<span style="color:#ffd23f">● justo</span>';
+  else sem=`<span style="color:#35c759">● <b class="num">+${(''+(-diff)).replace('.',',')}</b></span>`;
+  tr.children[8].innerHTML = sem;
+  const rep=tr.children[9].querySelector('input'); if(rep) rep.placeholder = (diff!=null&&diff>0)? diff : 0;
+}
+function setIngNum(id, field, val, el){
+  const i=ingById(id); if(!i) return;
+  i[field] = (val===''? null : +val);
+  save();
+  const tr = el && el.closest ? el.closest('tr') : null;
+  if(tr && tr.children.length>=9){ const uc=unitCost(i); const cell=tr.children[7]; cell.style.color = uc>0?'var(--text)':'var(--muted)'; cell.textContent = uc>0?fmt2.format(uc):'—'; }
+}
 function catOptions(){ const set=[...new Set(state.ingredients.map(i=>i.categoria).filter(c=>c&&(''+c).trim()))].sort((a,b)=>a.localeCompare(b)); return set.map(c=>`<option value="${esc(c)}">`).join(''); }
 function delLine(rid){ state.recipes=state.recipes.filter(x=>x.id!==rid); save(); render(); }
 function delProduct(id){ if(!confirm('¿Eliminar este producto?'))return; state.products=state.products.filter(p=>p.id!==id); state.recipes=state.recipes.filter(r=>r.productId!==id); save(); render(); }
