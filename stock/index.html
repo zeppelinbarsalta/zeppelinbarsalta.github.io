@@ -36,7 +36,7 @@ main{max-width:1000px;margin:0 auto;padding:14px 16px}
 .search{flex:1;min-width:150px;background:var(--surface);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:8px;font-size:15px}
 .sortsel{background:var(--surface2);border:1px solid var(--line);color:var(--text);padding:9px;border-radius:7px;font-size:13px}
 table{width:100%;border-collapse:collapse}
-th{font-size:9px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;text-align:left;padding:8px 6px;font-weight:400;border-bottom:1px solid var(--line)}
+th{font-size:9px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;text-align:left;padding:8px 6px;font-weight:400;border-bottom:1px solid var(--line);position:sticky;top:var(--headh,0px);background:#0d0d0d;z-index:10}
 th.r,td.r{text-align:right}
 td{padding:6px;border-bottom:1px solid #1a1a1a;font-size:13px}
 td input{background:var(--yellow);border:1px solid #4a431c;color:#ffe7a3;padding:8px;border-radius:6px;font-size:15px;width:76px;text-align:right}
@@ -205,6 +205,9 @@ function closeM(){ document.getElementById('modal').classList.remove('show'); }
 document.getElementById('modal').addEventListener('click',e=>{ if(e.target.id==='modal') closeM(); });
 
 /* ---- init ---- */
+function setHeadH(){ const h=document.querySelector('header'); if(h) document.documentElement.style.setProperty('--headh', h.offsetHeight+'px'); }
+window.addEventListener('resize', setHeadH);
+setHeadH(); setTimeout(setHeadH,500);
 load();
 </script>
 </body>
