@@ -41,6 +41,8 @@ th{font-size:9px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;
 th.r,td.r{text-align:right}
 td{padding:6px;border-bottom:1px solid #1a1a1a;font-size:13px}
 td input{background:var(--yellow);border:1px solid #4a431c;color:#ffe7a3;padding:8px;border-radius:6px;font-size:15px;width:76px;text-align:right}
+td input::-webkit-outer-spin-button,td input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+td input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .ucell{color:var(--muted);font-size:12px}
 .ghdr td{background:var(--surface2);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--blue);padding:7px 9px;font-weight:600}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:flex-end;justify-content:center;z-index:50}
@@ -140,11 +142,11 @@ function row(i){
   const hasPiso=(i.stockPiso!=null&&i.stockPiso!==''),piso=+i.stockPiso||0,diff=hasPiso?(piso-tot):null;
   return `<tr><td>${esc(i.name)}</td><td class="ucell">${i.categoria?esc(i.categoria):'—'}</td><td class="ucell">${supplierName(i)?esc(supplierName(i)):'—'}</td>
     <td class="r ucell">${hasPiso?(''+piso).replace('.',','):'—'}</td>
-    <td class="r"><input type="number" inputmode="decimal" value="${i.stockZ??''}" placeholder="0" onchange="setCount('${i.id}','stockZ',this.value,this)"></td>
-    <td class="r"><input type="number" inputmode="decimal" value="${i.stockD??''}" placeholder="0" onchange="setCount('${i.id}','stockD',this.value,this)"></td>
+    <td class="r"><input type="number" inputmode="decimal" value="${i.stockZ??''}" placeholder="0" onchange="setCount('${i.id}','stockZ',this.value,this)" onfocus="this.select()"></td>
+    <td class="r"><input type="number" inputmode="decimal" value="${i.stockD??''}" placeholder="0" onchange="setCount('${i.id}','stockD',this.value,this)" onfocus="this.select()"></td>
     <td class="r num" style="font-weight:500;color:${hasStock&&tot>0?'var(--blue)':'var(--muted)'}">${hasStock?(''+tot).replace('.',','):'—'}${(hasStock&&i.buyUnit&&+i.buySize>0)?` <span class="ucell">(= ${(''+(tot*(+i.buySize))).replace('.',',')} ${i.unit})</span>`:''}</td>
     <td class="r">${semHTML(diff)}</td>
-    <td class="r"><input type="number" inputmode="decimal" value="${i.reposicion??''}" placeholder="${diff!=null&&diff>0?diff:0}" onchange="setCount('${i.id}','reposicion',this.value,this)"></td>
+    <td class="r"><input type="number" inputmode="decimal" value="${i.reposicion??''}" placeholder="${diff!=null&&diff>0?diff:0}" onchange="setCount('${i.id}','reposicion',this.value,this)" onfocus="this.select()"></td>
     <td class="ucell">${i.buyUnit||i.unit}</td></tr>`;
 }
 function semHTML(diff){
