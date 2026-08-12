@@ -21,7 +21,7 @@ button{font-family:inherit;cursor:pointer}
 .num{font-variant-numeric:tabular-nums}
 input,select{font-family:'Oswald',sans-serif;font-weight:300}
 input:focus,select:focus{outline:2px solid var(--blue);outline-offset:-1px}
-header{position:sticky;top:0;z-index:30;background:linear-gradient(180deg,#0d0d0d,#0a0a0a);border-bottom:1px solid var(--line)}
+header{background:linear-gradient(180deg,#0d0d0d,#0a0a0a);border-bottom:1px solid var(--line)}
 .rail{display:flex;align-items:center;gap:14px;padding:12px 16px;max-width:1000px;margin:0 auto}
 .brand{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:1px;line-height:.9}
 .brand b{color:var(--orange)} .brand i{color:var(--blue);font-style:normal}
@@ -36,7 +36,7 @@ main{max-width:1000px;margin:0 auto;padding:14px 16px}
 .search{flex:1;min-width:150px;background:var(--surface);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:8px;font-size:15px}
 .sortsel{background:var(--surface2);border:1px solid var(--line);color:var(--text);padding:9px;border-radius:7px;font-size:13px}
 table{width:100%;border-collapse:collapse}
-th{font-size:9px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;text-align:left;padding:8px 6px;font-weight:400;border-bottom:1px solid var(--line);position:sticky;top:var(--headh,0px);background:#0d0d0d;z-index:10}
+th{font-size:9px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;text-align:left;padding:10px 6px;font-weight:400;border-bottom:1px solid var(--line);position:sticky;top:0;background:#0d0d0d;z-index:10}
 th.r,td.r{text-align:right}
 td{padding:6px;border-bottom:1px solid #1a1a1a;font-size:13px}
 td input{background:var(--yellow);border:1px solid #4a431c;color:#ffe7a3;padding:8px;border-radius:6px;font-size:15px;width:76px;text-align:right}
@@ -205,9 +205,6 @@ function closeM(){ document.getElementById('modal').classList.remove('show'); }
 document.getElementById('modal').addEventListener('click',e=>{ if(e.target.id==='modal') closeM(); });
 
 /* ---- init ---- */
-function setHeadH(){ const h=document.querySelector('header'); if(h) document.documentElement.style.setProperty('--headh', h.offsetHeight+'px'); }
-window.addEventListener('resize', setHeadH);
-setHeadH(); setTimeout(setHeadH,500);
 load();
 </script>
 </body>
