@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Zeppelin · Stock</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script>
+/* ===== CONFIGURAR ANTES DE SUBIR ===== */
+const ENDPOINT   = 'https://script.google.com/macros/s/AKfycby2xWyn_9xAgSV7xsPaUYL7_NNj9yK60PL_DG3sWtuvCjiF8bTEewdE69qBnPSU9_yOHQ/exec';
+const STOCK_TOKEN = 'stock2026';   // el mismo STOCK_TOKEN del backend
+</script>
+<style>
+:root{--bg:#0A0A0A;--surface:#151515;--surface2:#1d1d1d;--line:#2a2a2a;--orange:#FF5A00;--blue:#4aa3ff;--text:#f4f4f4;--muted:#8c8c8c;--yellow:#3a3414;--green:#35c759;--red:#ff453a}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:'Oswald',system-ui,sans-serif;font-weight:300}
+body{padding-bottom:60px}
+button{font-family:inherit;cursor:pointer}
+.num{font-variant-numeric:tabular-nums}
+input,select{font-family:'Oswald',sans-serif;font-weight:300}
+input:focus,select:focus{outline:2px solid var(--blue);outline-offset:-1px}
+header{position:sticky;top:0;z-index:30;background:linear-gradient(180deg,#0d0d0d,#0a0a0a);border-bottom:1px solid var(--line)}
+.rail{display:flex;align-items:center;gap:14px;padding:12px 16px;max-width:1000px;margin:0 auto}
+.brand{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:1px;line-height:.9}
+.brand b{color:var(--orange)} .brand i{color:var(--blue);font-style:normal}
+.brand span{display:block;font-family:'Oswald';font-weight:300;font-size:10px;letter-spacing:3px;color:var(--muted);margin-top:2px}
+.chip{margin-left:auto;font-size:11px;padding:6px 11px;border-radius:7px;border:1px solid var(--line);color:var(--muted)}
+.chip.ok{color:var(--green);border-color:#1f4d2a}.chip.err{color:var(--red);border-color:#5a2420}.chip.warn{color:#ffd23f}
+.tools{display:flex;gap:8px;flex-wrap:wrap;padding:0 16px 12px;max-width:1000px;margin:0 auto}
+.tools button{border:none;padding:9px 14px;border-radius:8px;font-size:13px;letter-spacing:.5px;font-weight:500}
+.b-order{background:var(--blue);color:#04203f}.b-clear{background:var(--surface);color:var(--text);border:1px solid var(--line)!important}
+main{max-width:1000px;margin:0 auto;padding:14px 16px}
+.bar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.search{flex:1;min-width:150px;background:var(--surface);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:8px;font-size:15px}
+.sortsel{background:var(--surface2);border:1px solid var(--line);color:var(--text);padding:9px;border-radius:7px;font-size:13px}
+table{width:100%;border-collapse:collapse}
+th{font-size:9px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;text-align:left;padding:8px 6px;font-weight:400;border-bottom:1px solid var(--line)}
+th.r,td.r{text-align:right}
+td{padding:6px;border-bottom:1px solid #1a1a1a;font-size:13px}
+td input{background:var(--yellow);border:1px solid #4a431c;color:#ffe7a3;padding:8px;border-radius:6px;font-size:15px;width:76px;text-align:right}
+.ucell{color:var(--muted);font-size:12px}
+.ghdr td{background:var(--surface2);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--blue);padding:7px 9px;font-weight:600}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:flex-end;justify-content:center;z-index:50}
+.modal.show{display:flex}
+.sheet{background:var(--surface);border:1px solid var(--line);border-radius:16px 16px 0 0;width:100%;max-width:520px;padding:20px;max-height:88vh;overflow:auto}
+@media(min-width:560px){.modal{align-items:center}.sheet{border-radius:16px}}
+.sheet h3{font-family:'Bebas Neue';font-size:26px;margin:0 0 12px;letter-spacing:1px}
+.sa{display:flex;gap:10px;margin-top:16px}.sa button{flex:1;padding:12px;border-radius:8px;border:none;font-size:14px;font-weight:500}
+.btn-save{background:var(--blue);color:#04203f}.btn-cancel{background:var(--surface2);color:var(--text);border:1px solid var(--line)!important}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--blue);color:#04203f;padding:11px 20px;border-radius:30px;font-size:13px;font-weight:600;z-index:60;opacity:0;transition:opacity .25s;pointer-events:none}
+.toast.show{opacity:1}
+.hint{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:10px}
+</style>
+</head>
+<body>
+<header>
+  <div class="rail">
+    <div class="brand"><b>ZEPPELIN</b> <i>STOCK</i><span>CONTEO Y PEDIDOS</span></div>
+    <span class="chip" id="status">Cargando…</span>
+  </div>
+  <div class="tools">
+    <button class="b-order" onclick="showOrder()">🛒 Armar orden de compra</button>
+    <button class="b-clear" onclick="clearCounts()">🧹 Vaciar conteo</button>
+  </div>
+</header>
+<main id="main"><div class="hint">Cargando stock…</div></main>
+<div class="modal" id="modal"><div class="sheet" id="msheet"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+let data={suppliers:[],ingredients:[]};
+let ui={q:'',sort:'name'};
+let dirty=false,pushing=false,pushTimer=null;
+const ingById=id=>data.ingredients.find(i=>i.id===id);
+const supById=id=>data.suppliers.find(s=>s.id===id);
+const supplierName=i=>{const s=supById(i.proveedorId);return s?s.name:'';};
+const esc=s=>(''+(s==null?'':s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+let _tt;function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),1700);}
+function setStatus(t,c){const e=document.getElementById('status');e.textContent=t;e.className='chip '+(c||'');}
+
+/* ---- nube ---- */
+async function load(){
+  setStatus('Cargando…');
+  try{
+    const r=await fetch(ENDPOINT+'?token='+encodeURIComponent(STOCK_TOKEN)+'&t='+Date.now());
+    const d=await r.json(); if(d.error) throw new Error(d.error);
+    data={suppliers:d.suppliers||[],ingredients:d.ingredients||[]};
+    setStatus('Actualizado','ok'); render();
+  }catch(e){ setStatus('Sin conexión','err'); document.getElementById('main').innerHTML='<div class="hint">No se pudo cargar. Revisá la conexión o el token.</div>'; }
+}
+function schedulePush(){ clearTimeout(pushTimer); dirty=true; setStatus('Guardando…'); pushTimer=setTimeout(runPush,1200); }
+async function runPush(){
+  if(pushing) return; pushing=true;
+  try{
+    const updates=data.ingredients.map(i=>({id:i.id,stockZ:i.stockZ,stockD:i.stockD,reposicion:i.reposicion}));
+    const r=await fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({token:STOCK_TOKEN,updates})});
+    const d=await r.json(); if(d.error) throw new Error(d.error);
+    dirty=false; setStatus('Guardado','ok');
+  }catch(e){ setStatus('Error al guardar','err'); }
+  pushing=false; if(dirty) schedulePush();
+}
+window.addEventListener('focus',()=>{ if(!dirty && !pushing && (Date.now()-(window._le||0))>4000) load(); });
+
+/* ---- render ---- */
+function render(){
+  const m=document.getElementById('main');
+  let items=data.ingredients.filter(i=>i.name.toLowerCase().includes(ui.q.toLowerCase())||(i.categoria||'').toLowerCase().includes(ui.q.toLowerCase())||(supplierName(i)||'').toLowerCase().includes(ui.q.toLowerCase()));
+  const byName=(a,b)=>a.name.localeCompare(b.name);
+  const sorters={name:byName,categoria:(a,b)=>(a.categoria||'\uffff').localeCompare(b.categoria||'\uffff')||byName(a,b),proveedor:(a,b)=>(supplierName(a)||'\uffff').localeCompare(supplierName(b)||'\uffff')||byName(a,b)};
+  items=items.slice().sort(sorters[ui.sort]||byName);
+  const keyFn=ui.sort==='categoria'?(i=>i.categoria):ui.sort==='proveedor'?(i=>supplierName(i)):null;
+  m.innerHTML=`<div class="hint">Contá existencias en <b style="color:var(--blue)">Zeppelin</b> y <b style="color:var(--blue)">Depósito</b>. El total y el semáforo (piso − total) se calculan solos. Se guarda solo. Después armá la orden de compra.</div>
+    <div class="bar"><input class="search" placeholder="Buscar ingrediente, categoría o proveedor…" value="${esc(ui.q)}" oninput="ui.q=this.value;refill()">
+    <select class="sortsel" onchange="ui.sort=this.value;render()">
+      <option value="name" ${ui.sort==='name'?'selected':''}>Ordenar: Nombre</option>
+      <option value="categoria" ${ui.sort==='categoria'?'selected':''}>Ordenar: Categoría</option>
+      <option value="proveedor" ${ui.sort==='proveedor'?'selected':''}>Ordenar: Proveedor</option>
+    </select></div>
+    <div style="overflow-x:auto"><table><thead><tr><th>Ingrediente</th><th>Categoría</th><th>Proveedor</th><th class="r">Piso</th><th class="r">Zeppelin</th><th class="r">Depósito</th><th class="r">Total</th><th class="r">Falta</th><th class="r">Reposición</th><th>Un.</th></tr></thead><tbody id="tb"></tbody></table></div>`;
+  fillBody(items,keyFn);
+}
+function refill(){
+  let items=data.ingredients.filter(i=>i.name.toLowerCase().includes(ui.q.toLowerCase())||(i.categoria||'').toLowerCase().includes(ui.q.toLowerCase())||(supplierName(i)||'').toLowerCase().includes(ui.q.toLowerCase()));
+  const byName=(a,b)=>a.name.localeCompare(b.name);
+  const sorters={name:byName,categoria:(a,b)=>(a.categoria||'\uffff').localeCompare(b.categoria||'\uffff')||byName(a,b),proveedor:(a,b)=>(supplierName(a)||'\uffff').localeCompare(supplierName(b)||'\uffff')||byName(a,b)};
+  items=items.slice().sort(sorters[ui.sort]||byName);
+  const keyFn=ui.sort==='categoria'?(i=>i.categoria):ui.sort==='proveedor'?(i=>supplierName(i)):null;
+  fillBody(items,keyFn);
+}
+function fillBody(items,keyFn){
+  const tb=document.getElementById('tb'); if(!tb) return;
+  let html='',cur='\u0000';
+  items.forEach(i=>{ if(keyFn){const k=keyFn(i)||''; if(k!==cur){cur=k; html+=`<tr class="ghdr"><td colspan="10">${esc(k||'Sin asignar')}</td></tr>`;}} html+=row(i); });
+  tb.innerHTML=html||'<tr><td colspan="10" class="hint" style="padding:20px">Sin resultados.</td></tr>';
+}
+function row(i){
+  const z=+i.stockZ||0,d=+i.stockD||0,tot=z+d,hasStock=(i.stockZ!=null||i.stockD!=null);
+  const hasPiso=(i.stockPiso!=null&&i.stockPiso!==''),piso=+i.stockPiso||0,diff=hasPiso?(piso-tot):null;
+  return `<tr><td>${esc(i.name)}</td><td class="ucell">${i.categoria?esc(i.categoria):'—'}</td><td class="ucell">${supplierName(i)?esc(supplierName(i)):'—'}</td>
+    <td class="r ucell">${hasPiso?(''+piso).replace('.',','):'—'}</td>
+    <td class="r"><input type="number" inputmode="decimal" value="${i.stockZ??''}" placeholder="0" onchange="setCount('${i.id}','stockZ',this.value,this)"></td>
+    <td class="r"><input type="number" inputmode="decimal" value="${i.stockD??''}" placeholder="0" onchange="setCount('${i.id}','stockD',this.value,this)"></td>
+    <td class="r num" style="font-weight:500;color:${hasStock&&tot>0?'var(--blue)':'var(--muted)'}">${hasStock?(''+tot).replace('.',','):'—'}${(hasStock&&i.buyUnit&&+i.buySize>0)?` <span class="ucell">(= ${(''+(tot*(+i.buySize))).replace('.',',')} ${i.unit})</span>`:''}</td>
+    <td class="r">${semHTML(diff)}</td>
+    <td class="r"><input type="number" inputmode="decimal" value="${i.reposicion??''}" placeholder="${diff!=null&&diff>0?diff:0}" onchange="setCount('${i.id}','reposicion',this.value,this)"></td>
+    <td class="ucell">${i.buyUnit||i.unit}</td></tr>`;
+}
+function semHTML(diff){
+  if(diff==null) return '<span class="ucell">—</span>';
+  if(diff>0) return `<span style="color:var(--red)">● <b class="num">-${(''+diff).replace('.',',')}</b></span>`;
+  if(diff===0) return '<span style="color:#ffd23f">● justo</span>';
+  return `<span style="color:var(--green)">● <b class="num">+${(''+(-diff)).replace('.',',')}</b></span>`;
+}
+function setCount(id,field,val,el){
+  const i=ingById(id); if(!i) return;
+  i[field]=(val===''?null:+val); window._le=Date.now(); schedulePush();
+  const tr=el.closest('tr'); if(!tr||tr.children.length<10) return;
+  const z=+i.stockZ||0,d=+i.stockD||0,tot=z+d,hasStock=(i.stockZ!=null||i.stockD!=null);
+  const hasPiso=(i.stockPiso!=null&&i.stockPiso!==''),piso=+i.stockPiso||0,diff=hasPiso?(piso-tot):null;
+  const tc=tr.children[6]; tc.style.color=(hasStock&&tot>0)?'var(--blue)':'var(--muted)';
+  tc.innerHTML=(hasStock?(''+tot).replace('.',','):'—')+((hasStock&&i.buyUnit&&+i.buySize>0)?` <span class="ucell">(= ${(''+(tot*(+i.buySize))).replace('.',',')} ${i.unit})</span>`:'');
+  tr.children[7].innerHTML=semHTML(diff);
+  const rep=tr.children[8].querySelector('input'); if(rep) rep.placeholder=(diff!=null&&diff>0)?diff:0;
+}
+function clearCounts(){
+  const n=data.ingredients.filter(i=>i.stockZ!=null||i.stockD!=null).length;
+  if(!n){ toast('No hay conteo cargado'); return; }
+  if(!confirm(`Vaciar el conteo (Zeppelin y Depósito) de ${n} ingrediente(s)? No toca el stock de piso.`)) return;
+  data.ingredients.forEach(i=>{ i.stockZ=null; i.stockD=null; });
+  window._le=Date.now(); schedulePush(); render(); toast('Conteo vaciado');
+}
+
+/* ---- orden ---- */
+function buildOrder(){
+  const map={};
+  data.ingredients.forEach(i=>{
+    const tot=(+i.stockZ||0)+(+i.stockD||0), hasPiso=(i.stockPiso!=null&&i.stockPiso!=='');
+    const sf=hasPiso?((+i.stockPiso)-tot):0, rep=+i.reposicion||0;
+    const qty=rep>0?rep:(sf>0?sf:0), inc=rep>0||(hasPiso&&sf>0);
+    if(inc&&qty>0){ const sup=supById(i.proveedorId), key=i.proveedorId||'none';
+      if(!map[key]) map[key]={name:sup?sup.name:'Sin proveedor',phone:sup?(sup.phone||''):'',items:[]};
+      map[key].items.push({name:i.name,qty,unit:(i.buyUnit||i.unit),baseUnit:i.unit,factor:+i.buySize||0,hasBuy:!!(i.buyUnit)}); }
+  });
+  return Object.values(map).sort((a,b)=>a.name.localeCompare(b.name));
+}
+function oq(it){ return (it.hasBuy&&it.factor>0)?`${(''+it.qty).replace('.',',')} ${it.unit} (= ${(''+(it.qty*it.factor)).replace('.',',')} ${it.baseUnit})`:`${(''+it.qty).replace('.',',')} ${it.unit}`; }
+function orderMsg(name,items){ const f=new Date().toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'}); let m=`*ORDEN DE COMPRA · ZEPPELIN*\n*Proveedor:* ${name}\n${f}\n\n`; items.forEach(it=>m+=`• ${it.name}: ${oq(it)}\n`); return m.trim(); }
+function showOrder(){
+  const g=buildOrder(); let h=`<h3>Orden de compra</h3>`;
+  if(!g.length){ h+=`<div class="hint">No hay nada que reponer. Todo por encima del piso 🎉</div><div class="sa"><button class="btn-cancel" onclick="closeM()">Cerrar</button></div>`; openM(h); return; }
+  h+=`<div class="hint">Ítems por debajo del piso o con reposición cargada, agrupados por proveedor.</div>`;
+  g.forEach((x,idx)=>{ h+=`<div style="border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:10px">
+    <div style="font-weight:500;color:var(--blue);margin-bottom:8px">${esc(x.name)} <span class="ucell">· ${x.items.length} ítem${x.items.length!==1?'s':''}</span></div>
+    ${x.items.map(it=>`<div style="display:flex;justify-content:space-between;gap:12px;padding:4px 0;font-size:14px;border-bottom:1px solid #202020"><span>${esc(it.name)}</span><span class="num" style="color:var(--blue);white-space:nowrap">${oq(it)}</span></div>`).join('')}
+    <div style="display:flex;gap:8px;margin-top:11px"><button class="btn-cancel" style="flex:1;padding:9px;border-radius:7px" onclick="cpO(${idx})">📋 Copiar</button><button class="btn-save" style="flex:1;padding:9px;border-radius:7px" onclick="waO(${idx})">📲 WhatsApp</button></div></div>`; });
+  h+=`<div class="sa"><button class="btn-cancel" onclick="closeM()">Cerrar</button></div>`; openM(h); window._og=g;
+}
+function cpO(i){ const g=window._og[i],m=orderMsg(g.name,g.items); if(navigator.clipboard) navigator.clipboard.writeText(m).then(()=>toast('Copiado'),()=>toast('No se pudo copiar')); }
+function waO(i){ const g=window._og[i],m=orderMsg(g.name,g.items),ph=(g.phone||'').replace(/[^0-9]/g,''); window.open(ph?('https://wa.me/'+ph+'?text='+encodeURIComponent(m)):('https://api.whatsapp.com/send?text='+encodeURIComponent(m)),'_blank'); }
+
+function openM(h){ document.getElementById('msheet').innerHTML=h; document.getElementById('modal').classList.add('show'); }
+function closeM(){ document.getElementById('modal').classList.remove('show'); }
+document.getElementById('modal').addEventListener('click',e=>{ if(e.target.id==='modal') closeM(); });
+
+/* ---- init ---- */
+load();
+</script>
+</body>
+</html>
