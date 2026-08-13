@@ -122,6 +122,32 @@ main{max-width:1100px;margin:0 auto;padding:16px}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--orange);color:#0a0a0a;padding:11px 20px;border-radius:30px;font-size:13px;font-weight:500;z-index:60;opacity:0;transition:opacity .25s;pointer-events:none;letter-spacing:.5px}
 .toast.show{opacity:1}
 .hint{font-size:11px;color:var(--muted);line-height:1.5;margin:2px 0 12px}
+
+/* fichas */
+.ficha{background:var(--surface);border:1px solid var(--line);border-left:3px solid #c77dff;border-radius:10px;padding:16px 18px;margin-bottom:14px}
+.ficha-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:8px}
+.ficha-nom{font-family:'Bebas Neue';font-size:26px;letter-spacing:1px;line-height:1}
+.ficha-desc{color:var(--muted);font-size:13px;margin-top:3px}
+.ficha-meta{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:13px;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:8px}
+.ficha-inp{background:var(--surface2);border:1px solid var(--line);color:var(--text);padding:5px 8px;border-radius:6px;font-size:13px;width:180px}
+.ficha-sec{margin-top:10px}
+.ficha-sec h4{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#c77dff;margin:0 0 6px;font-weight:600}
+.ficha-arm{width:100%;min-height:80px;background:var(--surface2);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:10px;font-size:13px;font-family:'Oswald',sans-serif;line-height:1.5}
+.ficha-pasos{margin:0;padding-left:20px;font-size:13px;line-height:1.6}
+.print-only{display:none}
+@media print{
+  header,nav,.searchbar,.hint,.no-print,.addbtn,.sortsel,.del{display:none!important}
+  body{background:#fff!important;color:#000!important}
+  main{padding:0!important;max-width:none!important}
+  .print-only{display:block!important}
+  .ficha{border:1px solid #ccc;border-left:3px solid #c77dff;background:#fff;color:#000;break-inside:avoid;page-break-inside:avoid;margin-bottom:12px}
+  .ficha-nom,.ficha-sec h4{color:#000!important}
+  .ficha-inp{border:none;background:transparent;color:#000;width:auto}
+  .ficha-meta,.ficha-desc,.ucell{color:#333!important}
+  .lines td{color:#000!important}
+  .badge{border:1px solid #999;color:#000!important}
+}
+
 </style>
 </head>
 <body>
@@ -160,6 +186,7 @@ const fmt2 = new Intl.NumberFormat('es-AR',{minimumFractionDigits:0,maximumFract
 function normalize(s){
   if(!s||!s.ingredients) return null;
   s.products=s.products||[]; s.recipes=s.recipes||[]; s.suppliers=s.suppliers||[];
+  s.products.forEach(p=>{ if(p.fichaOn===undefined) p.fichaOn=false; if(p.rinde===undefined) p.rinde=null; if(p.steps===undefined) p.steps=null; if(p.vaso===undefined) p.vaso=null; });
   s.ingredients.forEach(i=>{
     if(i.merma===undefined) i.merma=null; if(!i.kind) i.kind='buy'; if(i.yield===undefined) i.yield=null;
     if(i.proveedor===undefined) i.proveedor=null; if(i.stockZ===undefined) i.stockZ=null; if(i.stockD===undefined) i.stockD=null;
@@ -204,7 +231,7 @@ async function initialPull(silent){
 }
 window.addEventListener('focus', ()=>{ if(cfg && cfg.token && !dirty && !pushing && (Date.now()-(window._lastEdit||0))>4000) initialPull(true); });
 
-let ui = { tab:'barra', search:'', open:{}, target:30 };
+let ui = { tab:'barra', search:'', open:{}, target:30, fichaArea:'' };
 
 /* ---------- helpers ---------- */
 const ingById = id => state.ingredients.find(i=>i.id===id);
@@ -247,7 +274,7 @@ function refreshStats(){
 }
 
 /* ---------- tabs ---------- */
-const TABS=[['barra','Barra','var(--barra)'],['cocina','Cocina','var(--cocina)'],['promo','Promos','var(--promo)'],['elab','Elaborados','#ffd23f'],['ing','Ingredientes',''],['stock','Stock','#4aa3ff'],['resumen','Resumen',''],['ajustes','Ajustes','']];
+const TABS=[['barra','Barra','var(--barra)'],['cocina','Cocina','var(--cocina)'],['promo','Promos','var(--promo)'],['ficha','Fichas','#c77dff'],['elab','Elaborados','#ffd23f'],['ing','Ingredientes',''],['stock','Stock','#4aa3ff'],['resumen','Resumen',''],['ajustes','Ajustes','']];
 function renderTabs(){
   document.getElementById('tabs').innerHTML = TABS.map(([k,l,c])=>
     `<button class="tab ${ui.tab===k?'active':''}" onclick="go('${k}')">${c?`<span class="dot" style="background:${c}"></span>`:''}${l}</button>`).join('');
@@ -263,6 +290,7 @@ function render(){
   if(ui.tab==='ajustes') return renderAjustes(m);
   if(ui.tab==='resumen') return renderResumen(m);
   if(ui.tab==='promo') return renderPromos(m);
+  if(ui.tab==='ficha') return renderFicha(m);
   renderProducts(m, ui.tab);
 }
 
@@ -278,6 +306,7 @@ function rerenderList(){
   else if(ui.tab==='stock') fillStock(list);
   else if(ui.tab==='ajustes') fillAj();
   else if(ui.tab==='promo') fillPromos(list);
+  else if(ui.tab==='ficha') fillFicha(list);
   else fillProducts(list, ui.tab);
 }
 
@@ -328,7 +357,10 @@ function productCard(p, area){
         <input class="qty num" type="number" inputmode="decimal" placeholder="cant." id="nq_${p.id}">
         <button class="miniadd" onclick="addLine('${p.id}')">＋ Agregar</button>
       </div>
-      <div style="display:flex;justify-content:flex-end;margin-top:8px"><button class="del" style="font-size:12px" onclick="delProduct('${p.id}')">Eliminar producto</button></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:${p.fichaOn?'#c77dff':'var(--muted)'};cursor:pointer"><input type="checkbox" ${p.fichaOn?'checked':''} onchange="setFichaOn('${p.id}',this.checked)" style="width:16px;height:16px;accent-color:#c77dff"> Ficha técnica ${p.fichaOn?'activada':''}</label>
+        <button class="del" style="font-size:12px" onclick="delProduct('${p.id}')">Eliminar producto</button>
+      </div>
     </div></div>`;
 }
 function ingredientSelect(pid, area, excludeId){
@@ -404,6 +436,98 @@ function ingRow(i){ const uc=unitCost(i); const prep=i.kind==='prep';
     <td class="r"><input class="num" type="number" inputmode="decimal" value="${i.merma??''}" placeholder="0" onchange="setIngNum('${i.id}','merma',this.value,this)" style="width:58px"></td>
     <td class="r num" style="color:${uc>0?'var(--text)':'var(--muted)'}">${uc>0?fmt2.format(uc):'—'}</td>
     <td><button class="del" onclick="delIngredient('${i.id}')">✕</button></td></tr>`;
+}
+
+/* ===== FICHAS TÉCNICAS ===== */
+const PIZZA_FICHAS = [{"nombre": "De música ligera", "tag": "Mozzarella · Clásica", "rinde": "Pizza entera", "desc": "Mozzarella sobre salsa de tomate, con ají dulce, aceitunas verdes y orégano.", "items": [{"n": "Masa de pizza", "c": 1, "u": "u"}, {"n": "Mozzarella", "c": 250, "u": "g"}, {"n": "Salsa de tomate", "c": 150, "u": "g"}, {"n": "Ají dulce cortado de 0.5cm", "c": 8, "u": "u"}, {"n": "Aceitunas Verdes en Rodaja", "c": 60, "u": "g"}, {"n": "Orégano", "c": 2, "u": "g"}], "armado": ["Estirar la masa y prehornear la base. Distribuir la salsa de tomate pareja hasta 1 cm del borde.", "Cubrir con la mozzarella, sumar ají dulce y aceitunas, y hornear hasta gratinar.", "Terminar con orégano. Cortar en 8 porciones y salir apenas horneada."]}, {"nombre": "Mil horas", "tag": "Jamón cocido", "rinde": "Pizza entera", "desc": "Jamón cocido y mozzarella, con morrón, aceitunas verdes y orégano.", "items": [{"n": "Masa de pizza", "c": 1, "u": "u"}, {"n": "Mozzarella", "c": 250, "u": "g"}, {"n": "Jamón cocido 6 fetas", "c": 130, "u": "g"}, {"n": "Aceitunas verdes", "c": 8, "u": "u"}, {"n": "Salsa de tomate", "c": 150, "u": "g"}, {"n": "Morrón ancho 1 cm", "c": 8, "u": "u"}, {"n": "Orégano", "c": 2, "u": "g"}], "armado": ["Estirar y prehornear la base. Distribuir la salsa de tomate pareja hasta 1 cm del borde.", "Cubrir con mozzarella, sumar jamón cocido, morrón y aceitunas, y hornear hasta gratinar.", "Terminar con orégano. Cortar en 8 porciones y salir apenas horneada."]}, {"nombre": "Viejas Locas", "tag": "Tomate · Morrón", "rinde": "Pizza entera", "desc": "Mozzarella y tomate fresco en rodajas, con morrón y aceitunas verdes.", "items": [{"n": "Masa de pizza", "c": 1, "u": "u"}, {"n": "Mozzarella", "c": 250, "u": "g"}, {"n": "Tomate cortado de 0.5 cm ancho", "c": 250, "u": "g"}, {"n": "Aceitunas verdes", "c": 8, "u": "u"}, {"n": "Salsa de tomate", "c": 150, "u": "g"}, {"n": "Morrón ancho 1 cm", "c": 8, "u": "u"}], "armado": ["Estirar y prehornear la base. Salsa pareja hasta 1 cm del borde.", "Cubrir con mozzarella, sumar el tomate en rodajas, el morrón y las aceitunas, y hornear hasta gratinar.", "Cortar en 8 porciones y salir apenas horneada."]}, {"nombre": "Jijiji", "tag": "Fugazzeta · Sin salsa", "rinde": "Pizza entera", "desc": "Fugazzeta: mucha cebolla y mozzarella, sin salsa de tomate. Con aceitunas y orégano.", "items": [{"n": "Masa de pizza", "c": 1, "u": "u"}, {"n": "Mozzarella", "c": 250, "u": "g"}, {"n": "Aceitunas verdes", "c": 8, "u": "u"}, {"n": "Orégano", "c": 2, "u": "g"}, {"n": "Cebolla cortada fina en rodajas", "c": 400, "u": "g"}], "armado": ["Estirar y prehornear la base. NO lleva salsa de tomate: la mozzarella va directa sobre la masa.", "Cubrir con mozzarella, coronar con la cebolla bien distribuida y hornear hasta gratinar.", "Terminar con orégano y aceitunas. Cortar en 8 porciones."], "notaFria": "Sin salsa de tomate"}, {"nombre": "Panic Show", "tag": "Calabresa", "rinde": "Pizza entera", "pendiente": true, "desc": "Calabresa: salame calabrés ahumado con mozzarella y orégano.", "items": [{"n": "Masa de pizza", "c": 1, "u": "u"}, {"n": "Mozzarella", "c": 250, "u": "g"}, {"n": "Salsa de tomate", "c": 150, "u": "g"}, {"n": "Salame calabrés", "c": 100, "u": "g"}, {"n": "Orégano", "c": 2, "u": "g"}], "armado": ["Estirar y prehornear la base. Salsa pareja hasta 1 cm del borde.", "Cubrir con mozzarella, distribuir el salame calabrés y hornear hasta gratinar.", "Terminar con orégano. Cortar en 8 porciones."]}, {"nombre": "Rasguña las Piedras", "tag": "Roquefort · Nuez", "rinde": "Pizza entera", "desc": "Roquefort y nuez sobre mozzarella, con morrón y aceitunas negras.", "items": [{"n": "Masa de pizza", "c": 1, "u": "u"}, {"n": "Roquefort rayado", "c": 100, "u": "g"}, {"n": "Nueces molidas pequeña", "c": 40, "u": "g"}, {"n": "Mozzarella", "c": 250, "u": "g"}, {"n": "Salsa de tomate", "c": 150, "u": "g"}, {"n": "Aceitunas Negras", "c": 8, "u": "u"}, {"n": "Morrón ancho 1 cm", "c": 8, "u": "u"}], "armado": ["Estirar y prehornear la base. Salsa pareja hasta 1 cm del borde.", "Cubrir con mozzarella, distribuir el roquefort en trozos, morrón y aceitunas, y hornear hasta gratinar.", "Sumar las nueces al salir del horno. Cortar en 8 porciones."]}, {"nombre": "Persiana Americana", "tag": "Pepperoni", "rinde": "Pizza entera", "desc": "Pepperoni sobre mozzarella y salsa de tomate.", "items": [{"n": "Masa de pizza", "c": 1, "u": "u"}, {"n": "Mozzarella", "c": 250, "u": "g"}, {"n": "Pepperoni", "c": 80, "u": "g"}, {"n": "Salsa de tomate", "c": 150, "u": "g"}], "armado": ["Estirar y prehornear la base. Salsa pareja hasta 1 cm del borde.", "Cubrir con mozzarella, distribuir el pepperoni cubriendo la superficie y hornear hasta gratinar.", "Cortar en 8 porciones y salir apenas horneada."]}, {"nombre": "Alta Suciedad", "tag": "Ternera premium", "rinde": "Pizza entera", "desc": "Ternera y ají dulce sobre mozzarella, con toque de salsa inglesa y aceitunas.", "items": [{"n": "Masa de pizza", "c": 1, "u": "u"}, {"n": "Mozzarella", "c": 250, "u": "g"}, {"n": "Ternera", "c": 100, "u": "g"}, {"n": "Ají dulce", "c": 8, "u": "u"}, {"n": "Salsa inglesa", "c": 0, "u": "g"}, {"n": "Salsa de tomate", "c": 150, "u": "g"}, {"n": "Aceitunas verdes", "c": 8, "u": "u"}, {"n": "lluvia de perejil", "c": 0, "u": "g"}], "armado": ["Estirar y prehornear la base. Salsa pareja hasta 1 cm del borde.", "Cubrir con mozzarella, distribuir el ají dulce y las aceitunas, y hornear hasta gratinar.", "Sumar la ternera sellada en salsa inglesa previamente al salir. Cortar en 8 porciones."]}, {"nombre": "Cuando Pase el Temblor", "tag": "Rúcula · Jamón crudo", "rinde": "Pizza entera", "desc": "Jamón crudo y rúcula sobre mozzarella, con tomates disecados y sardo. Rúcula y jamón crudo se montan en frío.", "items": [{"n": "Masa de pizza", "c": 1, "u": "u"}, {"n": "Mozzarella", "c": 250, "u": "g"}, {"n": "Jamón crudo", "c": 80, "u": "g"}, {"n": "Rúcula", "c": 100, "u": "g"}, {"n": "Tomates Disecados", "c": 40, "u": "g"}, {"n": "Sardo rallado", "c": 20, "u": "g"}, {"n": "Salsa de tomate", "c": 150, "u": "g"}], "armado": ["Estirar y prehornear la base. Salsa pareja hasta 1 cm del borde.", "Cubrir con mozzarella y sardo, y hornear hasta gratinar (sin rúcula ni jamón crudo).", "Al salir del horno, montar en frío el jamón crudo, la rúcula y los tomates disecados. Cortar en 8 porciones."], "notaFria": "Jamón crudo y rúcula se agregan en frío"}];
+function setFichaOn(id,on){ const p=prodById(id); if(p){ p.fichaOn=!!on; save(); render(); } }
+function setRinde(id,v){ const p=prodById(id); if(p){ p.rinde=(v||'').trim()||null; save(); } }
+function setSteps(id,v){ const p=prodById(id); if(p){ p.steps=(v||'').trim()||null; save(); } }
+function setVaso(id,v){ const p=prodById(id); if(p){ p.vaso=(v||'').trim()||null; save(); } }
+function setComp(id,v){ const p=prodById(id); if(p){ p.composition=(v||'').trim()||null; save(); } }
+
+function renderFicha(m){
+  const fichas=state.products.filter(p=>p.fichaOn).length;
+  m.innerHTML = `<div class="searchbar"><input id="search" placeholder="Buscar ficha…" value="${(ui.search||'').replace(/"/g,'&quot;')}" oninput="ui.search=this.value;rerenderList()"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin:-2px 0 12px">
+      <select class="sortsel" style="background:var(--surface2);border:1px solid var(--line);color:var(--text);padding:9px;border-radius:7px;font-size:13px" onchange="ui.fichaArea=this.value;rerenderList()">
+        <option value="">Área: todas</option><option value="barra" ${ui.fichaArea==='barra'?'selected':''}>Barra</option><option value="cocina" ${ui.fichaArea==='cocina'?'selected':''}>Cocina</option>
+      </select>
+      <button class="addbtn" style="background:var(--surface);color:var(--text);border:1px solid var(--line)" onclick="printFichas()">🖨️ Imprimir</button>
+      <button class="addbtn" style="background:#c77dff;color:#1a0a2a" onclick="openPizzaImport()">⬆ Importar fichas de pizzas (${PIZZA_FICHAS.length})</button>
+    </div><div id="list"></div>`;
+  fillFicha(document.getElementById('list'));
+}
+function fillFicha(list){
+  const q=(ui.search||'').toLowerCase(), fa=ui.fichaArea||'';
+  const items=state.products.filter(p=>p.fichaOn && (!fa||p.area===fa) && p.name.toLowerCase().includes(q)).sort((a,b)=>a.area.localeCompare(b.area)||a.name.localeCompare(b.name));
+  list.innerHTML = `<div class="hint no-print">Cada ficha se arma sola con la receta viva (ingredientes + gramajes) y la elaboración. Activá la ficha en Barra/Cocina con el tilde «Ficha técnica». Editá acá el rinde y el armado; los ingredientes y gramajes se editan en la receta del producto.</div>`
+    + (items.length? `<div id="fichas-print">`+items.map(fichaCard).join('')+`</div>` : '<div class="empty">No hay fichas activadas. Andá a Barra o Cocina, abrí un producto y tildá «Ficha técnica».</div>');
+}
+function fichaCard(p){
+  const lines=recipesOf(p.id);
+  const pesoG=lines.filter(r=>{const i=ingById(r.ingredientId);return i&&i.unit==='g';}).reduce((a,r)=>a+(+r.qty||0),0);
+  const armado=(p.steps||'').split('\n').filter(x=>x.trim());
+  return `<div class="ficha">
+    <div class="ficha-head">
+      <div><div class="ficha-nom">${esc(p.name)}</div>${p.composition?`<div class="ficha-desc">${esc(p.composition)}</div>`:''}</div>
+      <span class="badge b-${p.area}">${p.area}</span>
+    </div>
+    <div class="ficha-meta"><span>Rinde: <input class="ficha-inp" value="${esc(p.rinde)}" placeholder="ej: pizza entera, 1 vaso" onchange="setRinde('${p.id}',this.value)"></span>${pesoG>0?`<span class="ucell">${pesoG} g aprox.</span>`:''}</div>
+    ${p.area==='barra'?`<div class="ficha-meta"><span>🥃 Vaso / cristalería: <input class="ficha-inp" value="${esc(p.vaso)}" placeholder="ej: copa martini, old fashioned, highball" onchange="setVaso('${p.id}',this.value)"></span></div>`:''}
+    <div class="ficha-sec"><h4>Ingredientes</h4>
+      <table class="lines"><tbody>
+      ${lines.length? lines.map(r=>{const ing=ingById(r.ingredientId);return `<tr><td>${ing?esc(ing.name):'?'}</td><td class="r" style="width:90px"><input class="qty num" type="number" inputmode="decimal" value="${r.qty??''}" placeholder="0" onchange="setQty('${r.id}',this.value)"></td><td class="ucell" style="width:40px">${r.unit||(ing?ing.unit:'')}</td></tr>`;}).join('') : '<tr><td class="ucell">Sin ingredientes cargados. Agregalos en la receta del producto (Barra/Cocina).</td></tr>'}
+      </tbody></table>
+    </div>
+    <div class="ficha-sec"><h4>Armado y elaboración</h4>
+      <textarea class="ficha-arm no-print" placeholder="Un paso por línea…" onchange="setSteps('${p.id}',this.value)">${esc(p.steps)}</textarea>
+      ${armado.length?`<ol class="ficha-pasos print-only">${armado.map(x=>`<li>${esc(x)}</li>`).join('')}</ol>`:''}
+    </div>
+  </div>`;
+}
+function printFichas(){ window.print(); }
+
+/* importador de fichas de pizzas */
+function openPizzaImport(){
+  const cocina=state.products.filter(p=>p.area==='cocina');
+  let matchP=0, newI=0, matchI=0;
+  const plan=[];
+  PIZZA_FICHAS.forEach(pz=>{
+    const prod=cocina.find(p=>normTight(p.name)===normTight(pz.nombre));
+    const items=pz.items.map(it=>{ const ing=state.ingredients.find(i=>normTight(i.name)===normTight(it.n)); if(ing) matchI++; else newI++; return {it, ing}; });
+    if(prod) matchP++;
+    plan.push({pz, prod, items});
+  });
+  window._pzplan=plan;
+  const noProd=plan.filter(x=>!x.prod).map(x=>x.pz.nombre);
+  showModal(`<h3>Importar fichas de pizzas</h3>
+    <div class="hint" style="margin-top:-6px">Carga los gramajes y el armado de las ${PIZZA_FICHAS.length} pizzas en los productos de Cocina, y activa su ficha técnica.</div>
+    <div style="display:flex;gap:10px;margin-bottom:8px">
+      <div style="flex:1;background:var(--surface2);border-radius:8px;padding:10px;text-align:center"><div class="num" style="font-size:24px;color:var(--green)">${matchP}/${PIZZA_FICHAS.length}</div><div class="ucell">pizzas encontradas</div></div>
+      <div style="flex:1;background:var(--surface2);border-radius:8px;padding:10px;text-align:center"><div class="num" style="font-size:24px;color:#4aa3ff">${matchI}</div><div class="ucell">ingredientes ok</div></div>
+      <div style="flex:1;background:var(--surface2);border-radius:8px;padding:10px;text-align:center"><div class="num" style="font-size:24px;color:var(--orange)">${newI}</div><div class="ucell">se crean</div></div>
+    </div>
+    ${noProd.length?`<div class="hint" style="color:#ffd23f">No encontré producto en Cocina para: ${noProd.map(esc).join(', ')}. Esas se omiten (creá el producto primero si las querés).</div>`:''}
+    <div class="hint">Setea gramajes y unidad de cada ingrediente, el armado (elaboración) y el rinde, y activa la ficha. Ingredientes que no existan se crean en Cocina.</div>
+    <div class="sheet-actions"><button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+    <button class="btn-save" onclick="applyPizzaImport()">Aplicar</button></div>`);
+}
+function applyPizzaImport(){
+  const plan=window._pzplan; if(!plan) return; let done=0;
+  plan.forEach(({pz,prod,items})=>{
+    if(!prod) return;
+    items.forEach(({it,ing})=>{
+      let target=ing;
+      if(!target){ target={id:newId('i'),name:it.n,area:'cocina',categoria:'Ingrediente Cocina',unit:(it.u||'u'),buyPrice:null,buySize:null,buyUnit:null,merma:null,kind:'buy',yield:null,proveedor:null,proveedorId:null,stockPiso:null,stockZ:null,stockD:null,reposicion:null}; state.ingredients.push(target); }
+      let line=state.recipes.find(r=>r.productId===prod.id && r.ingredientId===target.id);
+      if(line){ line.qty=it.c; line.unit=it.u; }
+      else state.recipes.push({id:newId('r'),productId:prod.id,ingredientId:target.id,qty:it.c,unit:it.u});
+    });
+    prod.steps=(pz.armado||[]).join('\n'); prod.rinde=pz.rinde||null; prod.fichaOn=true;
+    done++;
+  });
+  window._pzplan=null; save(); closeModal(); ui.tab='ficha'; renderTabs(); render(); toast(`${done} fichas de pizza cargadas`);
 }
 
 /* elaborados (sub-recetas) */
