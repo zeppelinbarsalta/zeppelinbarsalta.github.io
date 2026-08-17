@@ -452,7 +452,6 @@ const PIZZA_FICHAS = [{"nombre": "De música ligera", "tag": "Mozzarella · Clá
 function setFichaOn(id,on){ const p=prodById(id); if(p){ p.fichaOn=!!on; save(); render(); } }
 function setRinde(id,v){ const p=prodById(id); if(p){ p.rinde=(v||'').trim()||null; save(); } }
 function setSteps(id,v){ const p=prodById(id); if(p){ p.steps=(v||'').trim()||null; save(); } }
-function setVaso(id,v){ const p=prodById(id); if(p){ p.vaso=(v||'').trim()||null; save(); } }
 function setComp(id,v){ const p=prodById(id); if(p){ p.composition=(v||'').trim()||null; save(); } }
 
 function renderFicha(m){
@@ -483,7 +482,6 @@ function fichaCard(p){
       <span class="badge b-${p.area}">${p.area}</span>
     </div>
     <div class="ficha-meta"><span>Rinde: <input class="ficha-inp" value="${esc(p.rinde)}" placeholder="ej: pizza entera, 1 vaso" onchange="setRinde('${p.id}',this.value)"></span>${pesoG>0?`<span class="ucell">${pesoG} g aprox.</span>`:''}</div>
-    ${p.area==='barra'?`<div class="ficha-meta"><span>🥃 Vaso / cristalería: <input class="ficha-inp" value="${esc(p.vaso)}" placeholder="ej: copa martini, old fashioned, highball" onchange="setVaso('${p.id}',this.value)"></span></div>`:''}
     <div class="ficha-sec"><h4>Ingredientes</h4>
       <table class="lines"><tbody>
       ${lines.length? lines.map(r=>{const ing=ingById(r.ingredientId);return `<tr><td>${ing?esc(ing.name):'?'}</td><td class="r" style="width:90px"><input class="qty num" type="number" inputmode="decimal" value="${r.qty??''}" placeholder="0" onchange="setQty('${r.id}',this.value)"></td><td class="ucell" style="width:40px">${r.unit||(ing?ing.unit:'')}</td></tr>`;}).join('') : '<tr><td class="ucell">Sin ingredientes cargados. Agregalos en la receta del producto (Barra/Cocina).</td></tr>'}
