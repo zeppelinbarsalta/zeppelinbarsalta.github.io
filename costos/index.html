@@ -192,6 +192,7 @@ function normalize(s){
     if(i.merma===undefined) i.merma=null; if(!i.kind) i.kind='buy'; if(i.yield===undefined) i.yield=null;
     if(i.proveedor===undefined) i.proveedor=null; if(i.stockZ===undefined) i.stockZ=null; if(i.stockD===undefined) i.stockD=null;
     if(i.stockPiso===undefined) i.stockPiso=null; if(i.reposicion===undefined) i.reposicion=null;
+    if(i.noCost===undefined) i.noCost=false;
     if(i.proveedorId===undefined) i.proveedorId=null; if(i.buyUnit===undefined) i.buyUnit=null; if(i.categoria===undefined) i.categoria=null;
     if(!i.proveedorId && i.proveedor && (''+i.proveedor).trim()){
       const nm=(''+i.proveedor).trim();
@@ -248,6 +249,7 @@ const supplierName = i => { const s=supById(i.proveedorId); return s? s.name : (
 const esc = s => (''+(s==null?'':s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
 function unitCost(ing, path){
   if(!ing) return 0;
+  if(ing.noCost) return 0;   // insumo de stock que no suma al costo (ej. cristalería)
   path = path || [];
   if(path.indexOf(ing.id) >= 0) return 0; // corta ciclos
   const m = Math.min(Math.max(+ing.merma||0,0),95);
@@ -441,7 +443,7 @@ function ingRow(i){ const uc=unitCost(i); const prep=i.kind==='prep';
       : `<td class="r"><input class="num" type="number" inputmode="decimal" value="${i.buyPrice??''}" placeholder="0" onchange="setIngNum('${i.id}','buyPrice',this.value,this)"></td>
          <td class="r"><input class="num" type="number" inputmode="decimal" value="${i.buySize??''}" placeholder="0" onchange="setIngNum('${i.id}','buySize',this.value,this)"></td>`}
     <td class="r"><input class="num" type="number" inputmode="decimal" value="${i.merma??''}" placeholder="0" onchange="setIngNum('${i.id}','merma',this.value,this)" style="width:58px"></td>
-    <td class="r num" style="color:${uc>0?'var(--text)':'var(--muted)'}">${uc>0?fmt2.format(uc):'—'}</td>
+    <td class="r num" style="color:${uc>0?'var(--text)':'var(--muted)'}"><label style="display:inline-flex;align-items:center;gap:5px;justify-content:flex-end;cursor:pointer" title="Sin costo: cuenta para stock pero no suma al costo del producto (ej. cristalería)"><input type="checkbox" ${i.noCost?'checked':''} onchange="setNoCost('${i.id}',this.checked)" style="accent-color:#c77dff;width:14px;height:14px">${i.noCost?'<span class="ucell" style="font-size:11px">sin costo</span>':(uc>0?fmt2.format(uc):'—')}</label></td>
     <td><button class="del" onclick="delIngredient('${i.id}')">✕</button></td></tr>`;
 }
 
@@ -919,8 +921,9 @@ function setIngNum(id, field, val, el){
   i[field] = (val===''? null : +val);
   save();
   const tr = el && el.closest ? el.closest('tr') : null;
-  if(tr && tr.children.length>=9){ const uc=unitCost(i); const cell=tr.children[7]; cell.style.color = uc>0?'var(--text)':'var(--muted)'; cell.textContent = uc>0?fmt2.format(uc):'—'; }
+  if(tr && tr.children.length>=9 && !i.noCost){ const uc=unitCost(i); const cell=tr.children[7]; cell.style.color = uc>0?'var(--text)':'var(--muted)'; cell.textContent = uc>0?fmt2.format(uc):'—'; }
 }
+function setNoCost(id,on){ const i=ingById(id); if(i){ i.noCost=!!on; save(); render(); } }
 function catOptions(){ const set=[...new Set(state.ingredients.map(i=>i.categoria).filter(c=>c&&(''+c).trim()))].sort((a,b)=>a.localeCompare(b)); return set.map(c=>`<option value="${esc(c)}">`).join(''); }
 function delLine(rid){ state.recipes=state.recipes.filter(x=>x.id!==rid); save(); render(); }
 function delProduct(id){ if(!confirm('¿Eliminar este producto?'))return; state.products=state.products.filter(p=>p.id!==id); state.recipes=state.recipes.filter(r=>r.productId!==id); save(); render(); }
