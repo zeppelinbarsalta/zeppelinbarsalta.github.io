@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Reservas · Zeppelin Bar</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -312,7 +315,7 @@
 /* ============================================================
    Reservas Zeppelin — v4.0 (mesas editables por sector)
    ============================================================ */
-const VERSION="5.3";
+const VERSION="5.5";
 
 /* Metadatos fijos de sector (nombre, zona, reglas de combinación). */
 const SECTORES_META=[
@@ -439,6 +442,9 @@ function api(action,data){
 function applyServer(d){
   if(!d||!d.ok) return;
   const server=Array.isArray(d.reservas)?d.reservas:[];
+  // SALVAGUARDA: si el servidor responde vacío pero tenemos reservas locales y no
+  // borramos nada a propósito, es un hipo del backend → NO pisar nada.
+  if(server.length===0 && RESERVAS.length>0 && localDeleted.size===0){ setSync('off'); return; }
   const sIds=new Set(server.map(r=>r.id));
   // confirmaciones: lo que ya está en el servidor deja de estar pendiente
   pendingSync.forEach(id=>{ if(sIds.has(id)) pendingSync.delete(id); });
@@ -467,7 +473,7 @@ async function initData(){
     setInterval(()=>{ if(PENDING||focoEnInput()) return; api('load').then(d=>{ if(d){ applyServer(d); resyncPendientes(); } }); },20000);
   }
 }
-function reservasNoche(){return RESERVAS.filter(r=>r.fecha===fechaSel);}
+function reservasNoche(){return RESERVAS.filter(r=>String(r.fecha).slice(0,10)===fechaSel);}
 function ocupadasSet(){const s=new Set();reservasNoche().forEach(r=>r.mesasIds.forEach(id=>s.add(id)));return s;}
 function reservadasEnTodas(){const s=new Set();RESERVAS.forEach(r=>r.mesasIds.forEach(id=>s.add(id)));return s;}
 
