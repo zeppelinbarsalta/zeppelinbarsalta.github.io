@@ -16,6 +16,7 @@
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{-webkit-text-size-adjust:100%}
+  body{overflow-x:hidden}
   body{background:var(--void);color:var(--text);font-family:'Oswald',sans-serif;font-weight:300;line-height:1.5;
     background-image:linear-gradient(rgba(255,90,0,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,90,0,.035) 1px,transparent 1px);
     background-size:34px 34px;min-height:100vh;}
@@ -182,6 +183,37 @@
   #tooltip .tt-h{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
 
   @media(max-width:760px){.dash{grid-template-columns:repeat(2,1fr)}.floor{grid-template-columns:1fr}.sector.span2{grid-column:auto}}
+  @media(max-width:600px){
+    .wrap{padding:22px 14px 60px}
+    h1{font-size:46px}
+    .sub{font-size:14px}
+    .dash{grid-template-columns:repeat(2,1fr)}
+    .stat{padding:14px 14px}
+    .stat .n{font-size:34px}
+    .nightbar{padding:10px 14px}
+    .nb-right{width:100%}
+    .nb-right button{flex:1}
+    .asig-head,.rv-head,.ed-head{padding:14px 16px}
+    .asig-out,.rv-out{padding:12px 16px 18px}
+    .asig-input{width:100%;gap:10px}
+    .asig-input .f{flex:1 1 46%}
+    .asig-input .f:first-child{flex:0 0 72px}
+    .asig-input input{width:100%!important}
+    /* filas de resultado en 2 renglones: (rango+lugar) / (datos+boton) */
+    .res{display:grid;grid-template-columns:auto 1fr auto;grid-template-areas:"rk loc loc" "rk meta btn";gap:6px 10px;align-items:center;padding:11px 12px}
+    .res .rk{grid-area:rk;align-self:start}
+    .res .loc{grid-area:loc;min-width:0}
+    .res .meta{grid-area:meta;text-align:left;white-space:normal;align-self:center}
+    .res>button{grid-area:btn;justify-self:end;white-space:nowrap;align-self:center}
+    .rv{padding:14px 16px}
+    .rv-title{font-size:18px;gap:8px}
+    .rv-actions{width:100%;justify-content:flex-start}
+    .rv-info{gap:5px 16px;font-size:13px}
+    .tiles{gap:6px;padding:12px 14px}
+    .tile{width:56px;height:50px}
+    .reubic{padding:12px 12px}
+    #tooltip{max-width:210px}
+  }
   @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -280,7 +312,7 @@
 /* ============================================================
    Reservas Zeppelin — v4.0 (mesas editables por sector)
    ============================================================ */
-const VERSION="5.0";
+const VERSION="5.2";
 
 /* Metadatos fijos de sector (nombre, zona, reglas de combinación). */
 const SECTORES_META=[
@@ -373,7 +405,7 @@ let OCUP=new Set(), LAST=[], OCUPINFO={};
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 
 /* ===== Backend (Google Apps Script + Sheet): sincroniza entre dispositivos ===== */
-const BACKEND_URL = "https://script.google.com/macros/s/AKfycbx_qtjFgXCoGO3RHRrU87d4mA54sDoZ7Tj7dcXAJ0mBXv-Z8psrqkjhehuRoi2qwcOPng/exec"; // <<<<< PEGÁ ACÁ la URL /exec del Apps Script. Vacío = solo este equipo.
+const BACKEND_URL = ""; // <<<<< PEGÁ ACÁ la URL /exec del Apps Script. Vacío = solo este equipo.
 const API_TOKEN   = "zeppelin-reservas"; // debe coincidir con TOKEN del Apps Script
 let SYNC="local";
 function setSync(s){ SYNC=s; const el=document.getElementById('syncLbl'); if(el){ el.textContent=s==='ok'?'● Sincronizado':s==='off'?'● Sin conexión':'● Solo este equipo'; el.className='sync '+s; } }
@@ -388,39 +420,31 @@ function jsonp(params){
     s.onerror=()=>{if(!done)reject(new Error('net'));cleanup();};
     s.src=BACKEND_URL+(BACKEND_URL.includes('?')?'&':'?')+q;
     document.body.appendChild(s);
-    setTimeout(()=>{if(!done){reject(new Error('timeout'));cleanup();}},12000);
+    setTimeout(()=>{if(!done){reject(new Error('timeout'));cleanup();}},15000);
   });
 }
-function apiPost(action,payload){
-  if(!BACKEND_URL) return Promise.resolve(null);
-  return fetch(BACKEND_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,token:API_TOKEN,payload})})
-    .then(r=>r.json()).then(d=>{setSync('ok');return d;})
-    .catch(()=>{setSync('ok');return null;}); // el POST se ejecuta igual aunque no podamos leer la respuesta
+// Toda operación (leer y escribir) va por JSONP y devuelve el estado completo del servidor.
+function api(action,data){
+  if(!BACKEND_URL){ setSync('local'); return Promise.resolve(null); }
+  const params={action,token:API_TOKEN};
+  if(data!==undefined) params.data=JSON.stringify(data);
+  return jsonp(params).then(d=>{ if(d&&d.ok){setSync('ok');return d;} setSync('off'); return null; })
+    .catch(()=>{ setSync('off'); return null; });
 }
-async function loadFromBackend(){
-  if(!BACKEND_URL){ setSync('local'); return false; }
-  try{
-    const d=await jsonp({action:'load',token:API_TOKEN});
-    if(d&&d.ok){
-      RESERVAS=Array.isArray(d.reservas)?d.reservas:[];
-      if(d.config) CFG={counts:{...defCounts(),...(d.config.counts||{})},sillon:{...defSillon(),...(d.config.sillon||{})}};
-      SECTORES=buildMapa(); saveReservas(); saveCfg(); setSync('ok'); return true;
-    }
-  }catch(_){ setSync('off'); }
-  return false;
+// Aplica el estado autoritativo del servidor sin pisar una edición en curso.
+function applyServer(d){
+  if(!d||!d.ok) return;
+  RESERVAS=Array.isArray(d.reservas)?d.reservas:RESERVAS;
+  if(d.config) CFG={counts:{...defCounts(),...(d.config.counts||{})},sillon:{...defSillon(),...(d.config.sillon||{})}};
+  SECTORES=buildMapa(); saveReservas(); saveCfg();
+  if(!(PENDING||focoEnInput())){ renderAll(); renderEditor(); }
 }
-function focoEnInput(){
-  const ae=document.activeElement;
-  return ae && (ae.tagName==='INPUT') ;
-}
+function focoEnInput(){ const ae=document.activeElement; return !!(ae&&ae.tagName==='INPUT'); }
 async function initData(){
   renderAll(); renderEditor();
-  if(await loadFromBackend()){ renderAll(); renderEditor(); }
+  const d=await api('load'); if(d) applyServer(d);
   if(BACKEND_URL){
-    setInterval(async()=>{
-      if(PENDING||focoEnInput()) return; // no pisar una edición en curso
-      if(await loadFromBackend()) renderAll();
-    },20000);
+    setInterval(()=>{ if(PENDING||focoEnInput()) return; api('load').then(applyServer); },20000);
   }
 }
 function reservasNoche(){return RESERVAS.filter(r=>r.fecha===fechaSel);}
@@ -473,10 +497,10 @@ function reservar(i){
   }
   const nueva={id:'r'+Date.now(),fecha:fechaSel,nombre,dni,wa,pax,sectorId:o.sectorId,sector:o.sector,bloque:o.nombre,mesasIds:o.usarIds,hora_limite:'23:00',estado:'pendiente',creada:new Date().toISOString()};
   RESERVAS.push(nueva);
-  saveReservas(); apiPost('add',nueva); PENDING=null; $n.value='';$d.value='';$t.value=''; renderAll();
+  saveReservas(); PENDING=null; $n.value='';$d.value='';$t.value=''; renderAll(); api('add',nueva).then(applyServer);
 }
-function liberar(id){PENDING=null;RESERVAS=RESERVAS.filter(r=>r.id!==id);saveReservas();apiPost('delete',{id});renderAll();}
-function toggleEstado(id){const r=RESERVAS.find(x=>x.id===id);if(r){r.estado=r.estado==='llego'?'pendiente':'llego';saveReservas();apiPost('update',r);renderAll();}}
+function liberar(id){PENDING=null;RESERVAS=RESERVAS.filter(r=>r.id!==id);saveReservas();renderAll();api('delete',{id}).then(applyServer);}
+function toggleEstado(id){const r=RESERVAS.find(x=>x.id===id);if(r){r.estado=r.estado==='llego'?'pendiente':'llego';saveReservas();renderAll();api('update',r).then(applyServer);}}
 function flashRv(msg){const el=document.getElementById('rvMsg');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),4000);}
 let PENDING=null;
 function editPax(id,nuevoRaw){
@@ -505,11 +529,11 @@ function moverReserva(id,i){
   const o=PENDING.list[i], r=RESERVAS.find(x=>x.id===id);
   if(!o||!r) return;
   r.pax=PENDING.pax; r.sectorId=o.sectorId; r.sector=o.sector; r.bloque=o.nombre; r.mesasIds=o.usarIds;
-  PENDING=null; saveReservas(); apiPost('update',r); renderAll();
+  PENDING=null; saveReservas(); renderAll(); api('update',r).then(applyServer);
 }
 function cancelReubic(){ PENDING=null; renderReservas(); }
 window.moverReserva=moverReserva; window.cancelReubic=cancelReubic;
-function resetNoche(){if(confirm('¿Liberar todas las reservas de esta noche?')){PENDING=null;RESERVAS=RESERVAS.filter(r=>r.fecha!==fechaSel);saveReservas();apiPost('clearNight',{fecha:fechaSel});renderAll();}}
+function resetNoche(){if(confirm('¿Liberar todas las reservas de esta noche?')){PENDING=null;RESERVAS=RESERVAS.filter(r=>r.fecha!==fechaSel);saveReservas();renderAll();api('clearNight',{fecha:fechaSel}).then(applyServer);}}
 window.reservar=reservar;window.liberar=liberar;window.toggleEstado=toggleEstado;window.editPax=editPax;
 
 /* Edición de mesas. */
@@ -522,10 +546,10 @@ function setCount(id,key,delta){
     if(reservadasEnTodas().has(rmId)){flashEd('La mesa '+rmId+' tiene una reserva. Liberала antes de quitarla.');return;}
   }
   CFG.counts[key]=Math.max(0,cur+delta);
-  saveCfg(); apiPost('setConfig',CFG); rebuild();
+  saveCfg(); rebuild(); api('setConfig',CFG).then(applyServer);
 }
-function toggleSillon(id){ if(CFG.sillon[id] && reservadasEnTodas().has(id+'-SL')){flashEd('El sillón tiene una reserva. Liberала antes de quitarlo.');return;} CFG.sillon[id]=!CFG.sillon[id]; saveCfg(); apiPost('setConfig',CFG); rebuild(); }
-function restablecer(){ if(confirm('¿Volver a la configuración de mesas original?')){ CFG={counts:defCounts(),sillon:defSillon()}; saveCfg(); apiPost('setConfig',CFG); rebuild(); } }
+function toggleSillon(id){ if(CFG.sillon[id] && reservadasEnTodas().has(id+'-SL')){flashEd('El sillón tiene una reserva. Liberала antes de quitarlo.');return;} CFG.sillon[id]=!CFG.sillon[id]; saveCfg(); rebuild(); api('setConfig',CFG).then(applyServer); }
+function restablecer(){ if(confirm('¿Volver a la configuración de mesas original?')){ CFG={counts:defCounts(),sillon:defSillon()}; saveCfg(); rebuild(); api('setConfig',CFG).then(applyServer); } }
 window.setCount=setCount;window.toggleSillon=toggleSillon;
 
 function rebuild(){ SECTORES=buildMapa(); renderAll(); renderEditor(); }
