@@ -312,7 +312,7 @@
 /* ============================================================
    Reservas Zeppelin — v4.0 (mesas editables por sector)
    ============================================================ */
-const VERSION="5.2";
+const VERSION="5.3";
 
 /* Metadatos fijos de sector (nombre, zona, reglas de combinación). */
 const SECTORES_META=[
@@ -408,6 +408,10 @@ function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','
 const BACKEND_URL = "https://script.google.com/macros/s/AKfycbx_qtjFgXCoGO3RHRrU87d4mA54sDoZ7Tj7dcXAJ0mBXv-Z8psrqkjhehuRoi2qwcOPng/exec"; // <<<<< PEGÁ ACÁ la URL /exec del Apps Script. Vacío = solo este equipo.
 const API_TOKEN   = "zeppelin-reservas"; // debe coincidir con TOKEN del Apps Script
 let SYNC="local";
+let pendingSync=new Set();  // ids con alta/cambio local NO confirmado por el servidor
+let localDeleted=new Set(); // ids borrados local NO confirmados por el servidor
+function marcarPendiente(id){ pendingSync.add(id); localDeleted.delete(id); }
+function marcarBorrado(id){ localDeleted.add(id); pendingSync.delete(id); }
 function setSync(s){ SYNC=s; const el=document.getElementById('syncLbl'); if(el){ el.textContent=s==='ok'?'● Sincronizado':s==='off'?'● Sin conexión':'● Solo este equipo'; el.className='sync '+s; } }
 function jsonp(params){
   return new Promise((resolve,reject)=>{
@@ -431,20 +435,36 @@ function api(action,data){
   return jsonp(params).then(d=>{ if(d&&d.ok){setSync('ok');return d;} setSync('off'); return null; })
     .catch(()=>{ setSync('off'); return null; });
 }
-// Aplica el estado autoritativo del servidor sin pisar una edición en curso.
+// Fusiona el estado del servidor con lo local SIN perder reservas no confirmadas.
 function applyServer(d){
   if(!d||!d.ok) return;
-  RESERVAS=Array.isArray(d.reservas)?d.reservas:RESERVAS;
+  const server=Array.isArray(d.reservas)?d.reservas:[];
+  const sIds=new Set(server.map(r=>r.id));
+  // confirmaciones: lo que ya está en el servidor deja de estar pendiente
+  pendingSync.forEach(id=>{ if(sIds.has(id)) pendingSync.delete(id); });
+  localDeleted.forEach(id=>{ if(!sIds.has(id)) localDeleted.delete(id); }); // borrado confirmado
+  // base: lo del servidor, quitando lo que borramos local y aún no se confirmó
+  let merged=server.filter(r=>!localDeleted.has(r.id));
+  const mIds=new Set(merged.map(r=>r.id));
+  // sumar reservas locales que el servidor todavía no tiene (altas/cambios en vuelo)
+  RESERVAS.forEach(r=>{ if(!mIds.has(r.id) && pendingSync.has(r.id)) merged.push(r); });
+  RESERVAS=merged;
   if(d.config) CFG={counts:{...defCounts(),...(d.config.counts||{})},sillon:{...defSillon(),...(d.config.sillon||{})}};
   SECTORES=buildMapa(); saveReservas(); saveCfg();
   if(!(PENDING||focoEnInput())){ renderAll(); renderEditor(); }
 }
+// Reintenta enviar lo que quedó pendiente o borrado sin confirmar.
+function resyncPendientes(){
+  if(!BACKEND_URL) return;
+  RESERVAS.forEach(r=>{ if(pendingSync.has(r.id)) api('update',r).then(applyServer); });
+  localDeleted.forEach(id=>{ api('delete',{id}).then(applyServer); });
+}
 function focoEnInput(){ const ae=document.activeElement; return !!(ae&&ae.tagName==='INPUT'); }
 async function initData(){
   renderAll(); renderEditor();
-  const d=await api('load'); if(d) applyServer(d);
+  const d=await api('load'); if(d){ applyServer(d); resyncPendientes(); }
   if(BACKEND_URL){
-    setInterval(()=>{ if(PENDING||focoEnInput()) return; api('load').then(applyServer); },20000);
+    setInterval(()=>{ if(PENDING||focoEnInput()) return; api('load').then(d=>{ if(d){ applyServer(d); resyncPendientes(); } }); },20000);
   }
 }
 function reservasNoche(){return RESERVAS.filter(r=>r.fecha===fechaSel);}
@@ -497,10 +517,11 @@ function reservar(i){
   }
   const nueva={id:'r'+Date.now(),fecha:fechaSel,nombre,dni,wa,pax,sectorId:o.sectorId,sector:o.sector,bloque:o.nombre,mesasIds:o.usarIds,hora_limite:'23:00',estado:'pendiente',creada:new Date().toISOString()};
   RESERVAS.push(nueva);
+  marcarPendiente(nueva.id);
   saveReservas(); PENDING=null; $n.value='';$d.value='';$t.value=''; renderAll(); api('add',nueva).then(applyServer);
 }
-function liberar(id){PENDING=null;RESERVAS=RESERVAS.filter(r=>r.id!==id);saveReservas();renderAll();api('delete',{id}).then(applyServer);}
-function toggleEstado(id){const r=RESERVAS.find(x=>x.id===id);if(r){r.estado=r.estado==='llego'?'pendiente':'llego';saveReservas();renderAll();api('update',r).then(applyServer);}}
+function liberar(id){PENDING=null;marcarBorrado(id);RESERVAS=RESERVAS.filter(r=>r.id!==id);saveReservas();renderAll();api('delete',{id}).then(applyServer);}
+function toggleEstado(id){const r=RESERVAS.find(x=>x.id===id);if(r){r.estado=r.estado==='llego'?'pendiente':'llego';marcarPendiente(r.id);saveReservas();renderAll();api('update',r).then(applyServer);}}
 function flashRv(msg){const el=document.getElementById('rvMsg');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),4000);}
 let PENDING=null;
 function editPax(id,nuevoRaw){
@@ -529,11 +550,12 @@ function moverReserva(id,i){
   const o=PENDING.list[i], r=RESERVAS.find(x=>x.id===id);
   if(!o||!r) return;
   r.pax=PENDING.pax; r.sectorId=o.sectorId; r.sector=o.sector; r.bloque=o.nombre; r.mesasIds=o.usarIds;
+  marcarPendiente(r.id);
   PENDING=null; saveReservas(); renderAll(); api('update',r).then(applyServer);
 }
 function cancelReubic(){ PENDING=null; renderReservas(); }
 window.moverReserva=moverReserva; window.cancelReubic=cancelReubic;
-function resetNoche(){if(confirm('¿Liberar todas las reservas de esta noche?')){PENDING=null;RESERVAS=RESERVAS.filter(r=>r.fecha!==fechaSel);saveReservas();renderAll();api('clearNight',{fecha:fechaSel}).then(applyServer);}}
+function resetNoche(){if(confirm('¿Liberar todas las reservas de esta noche?')){PENDING=null;reservasNoche().forEach(r=>marcarBorrado(r.id));RESERVAS=RESERVAS.filter(r=>r.fecha!==fechaSel);saveReservas();renderAll();api('clearNight',{fecha:fechaSel}).then(applyServer);}}
 window.reservar=reservar;window.liberar=liberar;window.toggleEstado=toggleEstado;window.editPax=editPax;
 
 /* Edición de mesas. */
