@@ -405,7 +405,7 @@ let OCUP=new Set(), LAST=[], OCUPINFO={};
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 
 /* ===== Backend (Google Apps Script + Sheet): sincroniza entre dispositivos ===== */
-const BACKEND_URL = ""; // <<<<< PEGÁ ACÁ la URL /exec del Apps Script. Vacío = solo este equipo.
+const BACKEND_URL = "https://script.google.com/macros/s/AKfycbx_qtjFgXCoGO3RHRrU87d4mA54sDoZ7Tj7dcXAJ0mBXv-Z8psrqkjhehuRoi2qwcOPng/exec"; // <<<<< PEGÁ ACÁ la URL /exec del Apps Script. Vacío = solo este equipo.
 const API_TOKEN   = "zeppelin-reservas"; // debe coincidir con TOKEN del Apps Script
 let SYNC="local";
 function setSync(s){ SYNC=s; const el=document.getElementById('syncLbl'); if(el){ el.textContent=s==='ok'?'● Sincronizado':s==='off'?'● Sin conexión':'● Solo este equipo'; el.className='sync '+s; } }
