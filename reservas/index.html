@@ -266,7 +266,7 @@
     <div class="asig-head">
       <div><div class="eyebrow">Buscar y reservar</div><h2 class="asig-title">Nueva reserva</h2></div>
       <div class="asig-input">
-        <div class="f"><label for="pax">Personas *</label><input id="pax" type="number" min="1" max="60" value="8" inputmode="numeric"></div>
+        <div class="f"><label for="pax">Personas *</label><input id="pax" type="number" min="1" max="60" placeholder="—" inputmode="numeric"></div>
         <div class="f"><label for="rnom">Nombre y apellido *</label><input id="rnom" type="text" placeholder="Juan Pérez"></div>
         <div class="f"><label for="rdni">DNI *</label><input id="rdni" type="text" placeholder="30123456" inputmode="numeric"></div>
         <div class="f"><label for="rtel">WhatsApp *</label><input id="rtel" type="text" placeholder="387 545-8204" inputmode="tel"></div>
@@ -315,7 +315,7 @@
 /* ============================================================
    Reservas Zeppelin — v4.0 (mesas editables por sector)
    ============================================================ */
-const VERSION="5.5";
+const VERSION="5.7";
 
 /* Metadatos fijos de sector (nombre, zona, reglas de combinación). */
 const SECTORES_META=[
@@ -625,13 +625,15 @@ function sectorHTML(s){
       <div class="sec-cap"><b>${seats}</b> asientos · ${nMesas} mesas</div></div>${body}${combi}</div>`;
 }
 function renderAsig(){
-  const N=Math.max(1,parseInt(document.getElementById('pax').value||'0',10));
+  const raw=(document.getElementById('pax').value||'').trim();
   const out=document.getElementById('asigOut'), MAX=REGLAS.max_grupo_auto;
+  const N=parseInt(raw,10);
+  if(!raw || !(N>=1)){ out.innerHTML=`<div class="res-empty">Ingresá la cantidad de personas para ver las mesas disponibles.</div>`; LAST=[]; return; }
   if(N>MAX){out.innerHTML=`<div class="res-empty">Grupo de <b>${N}</b> personas → <b>respuesta manual</b>.<br>Los grupos de más de ${MAX} los coordina una persona.</div>`;LAST=[];return;}
   LAST=asignar(N);
   if(!LAST.length){out.innerHTML=`<div class="res-empty">No hay mesas libres para ${N} personas esta noche.<br>Probá otra fecha o liberá alguna reserva.</div>`;return;}
   out.innerHTML=LAST.slice(0,6).map((o,i)=>`
-    <div class="res ${i===0?'best':''}"><span class="rk">${i+1}</span>
+    <div class="res ${i===0?'best':''}"><span class="rk">${o.sectorId.replace('S','')}</span>
       <div class="loc"><div class="s">${o.sector}${i===0?'<span class="res-tag">Mejor ajuste</span>':''}</div>
         <div class="b">${o.nombre}${o.tipo==='fijo'?' · fijo':''} · ${o.usarIds.join(', ')}</div></div>
       <div class="meta"><b>${o.mesas} ${o.mesas>1?'mesas':'mesa'}</b> · cap ${o.cap} · sobran ${o.sobran}</div>
@@ -646,7 +648,7 @@ function reubicHTML(r){
     : `No hay lugar en ningún sector para ${PENDING.pax} personas esta noche.`;
   const rows=list.map((o,i)=>{
     const stay=PENDING.hasStay&&i===0;
-    return `<div class="res ${stay?'best':''}"><span class="rk">${stay?'✓':i+1}</span>
+    return `<div class="res ${stay?'best':''}"><span class="rk">${stay?'✓':o.sectorId.replace('S','')}</span>
       <div class="loc"><div class="s">${esc(o.sector)}${stay?'<span class="res-tag">Permanece</span>':''}</div>
         <div class="b">${esc(o.nombre)} · ${esc(o.usarIds.join(', '))}</div></div>
       <div class="meta"><b>${o.mesas} ${o.mesas>1?'mesas':'mesa'}</b> · cap ${o.cap} · sobran ${o.sobran}</div>
