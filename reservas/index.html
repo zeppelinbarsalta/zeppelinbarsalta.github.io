@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reservas · Zeppelin Bar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#0A0A0A; --panel:#141414; --panel-2:#1a1a1a;
+    --orange:#FF5A00; --orange-dim:rgba(255,90,0,.14); --orange-line:rgba(255,90,0,.28);
+    --text:#EDEDED; --muted:#8a8a8a; --stroke:rgba(255,255,255,.08);
+    --alta:#3aa0ff; --sillon:#c07cff; --red:#e0433a; --green:#4fd07a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{background:var(--void);color:var(--text);font-family:'Oswald',sans-serif;font-weight:300;line-height:1.5;
+    background-image:linear-gradient(rgba(255,90,0,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,90,0,.035) 1px,transparent 1px);
+    background-size:34px 34px;min-height:100vh;}
+  .wrap{max-width:1240px;margin:0 auto;padding:32px 20px 80px}
+
+  header{border-bottom:1px solid var(--orange-line);padding-bottom:22px;margin-bottom:22px}
+  .eyebrow{font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--orange);font-weight:500;display:flex;gap:10px;align-items:center}
+  .eyebrow::before{content:"";width:26px;height:2px;background:var(--orange);display:inline-block}
+  h1{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:clamp(44px,8vw,84px);line-height:.9;letter-spacing:.01em;margin:8px 0 6px;text-transform:uppercase}
+  h1 span{color:var(--orange)}
+  .sub{color:var(--muted);font-size:15px;max-width:660px}
+
+  .dash{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--stroke);border:1px solid var(--stroke);margin:22px 0 14px}
+  .stat{background:var(--panel);padding:18px 20px}
+  .stat .n{font-family:'Bebas Neue',sans-serif;font-size:42px;line-height:1;color:var(--orange)}
+  .stat.alt .n{color:var(--text)}
+  .stat .l{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+  .stat .brk{font-size:11.5px;color:var(--muted);margin-top:6px;letter-spacing:.02em}
+
+  .nightbar{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--stroke);padding:12px 18px;margin-bottom:14px}
+  .nb-left{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .nb-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .nb-lbl{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--orange)}
+  #fecha{color-scheme:dark;background:var(--void);border:1px solid var(--stroke);color:var(--text);font-family:'Oswald',sans-serif;font-size:14px;padding:7px 10px;border-radius:2px}
+  #fecha:focus{outline:none;border-color:var(--orange)}
+  .nb-date{font-size:13px;color:var(--muted);text-transform:capitalize;letter-spacing:.03em}
+  .sync{font-size:11px;letter-spacing:.05em;white-space:nowrap}
+  .sync.ok{color:var(--green)}
+  .sync.off{color:var(--red)}
+  .sync.local{color:var(--muted)}
+
+  .legend{display:flex;flex-wrap:wrap;gap:16px;margin:0 0 20px;font-size:12.5px;color:var(--muted)}
+  .legend .k{display:flex;align-items:center;gap:7px;letter-spacing:.04em}
+  .swatch{width:14px;height:14px;border-radius:2px;border:1px solid}
+  .sw-baja{border-color:var(--orange);background:var(--orange-dim)}
+  .sw-alta{border-color:var(--alta);background:rgba(58,160,255,.14)}
+  .sw-sillon{border-color:var(--sillon);background:rgba(192,124,255,.14)}
+  .sw-oc{border-color:#3d3d3d;background:rgba(255,255,255,.03)}
+
+  /* editor */
+  .editor{background:var(--panel);border:1px solid var(--orange-line);margin:0 0 20px}
+  .editor[hidden]{display:none}
+  .ed-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:16px 20px;border-bottom:1px dashed var(--orange-line)}
+  .ed-head h2{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:28px;letter-spacing:.02em;text-transform:uppercase;line-height:.9}
+  .ed-actions{display:flex;gap:10px}
+  .ed-msg{height:0;overflow:hidden;color:var(--red);font-size:12.5px}
+  .ed-msg.show{height:auto;padding:8px 20px 0}
+  .ed-body{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--stroke);padding:1px}
+  .ed-sector{background:var(--panel);padding:14px 18px}
+  .ed-stitle{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.02em;text-transform:uppercase;color:var(--orange);margin-bottom:8px}
+  .ed-grupo{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:7px 0;border-top:1px solid var(--stroke)}
+  .eg-name{font-size:13.5px;color:var(--text)}
+  .eg-name em{font-style:normal;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-left:6px}
+  .stepper{display:flex;align-items:center;gap:10px}
+  .eg-n{font-family:'Bebas Neue',sans-serif;font-size:24px;min-width:28px;text-align:center;color:var(--text)}
+  .step{width:32px;height:32px;padding:0;font-size:20px;line-height:1;background:var(--panel-2);color:var(--orange);border:1px solid var(--orange-line);border-radius:2px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .step:hover{background:var(--orange);color:#0A0A0A}
+  @media(max-width:760px){.ed-body{grid-template-columns:1fr}}
+
+  .asignador,.reservas{background:var(--panel);border:1px solid var(--orange-line);margin:0 0 16px}
+  .asig-head,.rv-head{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;flex-wrap:wrap;padding:16px 20px;border-bottom:1px dashed var(--orange-line)}
+  .asig-title{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:30px;letter-spacing:.02em;text-transform:uppercase;line-height:.85;margin-top:2px}
+  .asig-input{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap}
+  .asig-input .f{display:flex;flex-direction:column;gap:5px}
+  .asig-input label{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+  .asig-input input{background:var(--void);border:1px solid var(--stroke);color:var(--text);font-family:'Oswald',sans-serif;font-size:16px;padding:7px 10px;border-radius:2px}
+  .asig-input input#pax{width:74px;font-family:'Bebas Neue',sans-serif;font-size:26px;text-align:center;padding:2px 6px}
+  .asig-input input#rnom{width:170px}
+  .asig-input input#rdni{width:110px}
+  .asig-input input#rtel{width:140px}
+  .asig-input input:focus{outline:none;border-color:var(--orange)}
+  .asig-input input.err{border-color:var(--red)}
+  .rmsg{height:0;overflow:hidden;color:var(--red);font-size:12.5px}
+  .rmsg.show{height:auto;padding:8px 20px 0}
+  .asig-out,.rv-out{padding:14px 20px 20px}
+
+  .res{display:flex;align-items:center;gap:14px;padding:11px 14px;margin-bottom:8px;background:var(--panel-2);border:1px solid var(--stroke);border-left:3px solid var(--stroke)}
+  .res.best{border-left-color:var(--orange);background:rgba(255,90,0,.06)}
+  .res .rk{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--muted);min-width:18px}
+  .res.best .rk{color:var(--orange)}
+  .res .loc{flex:1;min-width:150px}
+  .res .loc .s{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.02em;text-transform:uppercase;line-height:1}
+  .res .loc .b{font-size:12px;color:var(--muted);letter-spacing:.04em;margin-top:2px}
+  .res .meta{text-align:right;font-size:12.5px;color:#cfcfcf;white-space:nowrap}
+  .res .meta b{color:var(--orange)}
+  .res-empty{color:var(--muted);font-size:13.5px;padding:6px 0;line-height:1.6}
+  .res-tag{display:inline-block;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--orange);border:1px solid var(--orange-line);border-radius:2px;padding:1px 6px;margin-left:8px;vertical-align:middle}
+
+  .rv-count{font-size:13px;color:var(--muted);letter-spacing:.05em}
+  .rv{display:flex;flex-direction:column;gap:9px;padding:16px 20px;margin-bottom:10px;background:var(--panel-2);border:1px solid var(--stroke);border-left:3px solid var(--orange)}
+  .rv.llego{border-left-color:var(--green)}
+  .rv-top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+  .rv-title{font-size:20px;color:var(--text);font-weight:500;letter-spacing:.01em;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .rv-pax,.rv-mesas{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:22px;letter-spacing:.04em}
+  .rv-paxwrap{font-size:13px;color:var(--muted);letter-spacing:.03em;display:inline-flex;align-items:baseline;gap:5px}
+  .pax-edit{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--orange);background:transparent;border:none;border-bottom:1px dashed var(--orange-line);width:46px;text-align:center;padding:0 2px;cursor:text}
+  .pax-edit:focus{outline:none;border-bottom-color:var(--orange);color:#fff}
+  .pax-edit::-webkit-inner-spin-button,.pax-edit::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+  .pax-edit{-moz-appearance:textfield}
+  .rv-pax{color:var(--orange)}
+  .rv-mesas{color:var(--alta)}
+  .rv-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .rv-hold{font-size:12.5px;color:var(--muted);letter-spacing:.05em;white-space:nowrap}
+  .rv-info{display:flex;flex-wrap:wrap;gap:7px 26px;font-size:14px;color:var(--muted);letter-spacing:.02em}
+  .rv-info b{color:#dcdcdc;font-weight:500}
+  .rv-made{color:var(--muted)}
+  .reubic{background:rgba(255,90,0,.06);border:1px solid var(--orange-line);border-left:3px solid var(--orange);padding:14px 16px;margin:-2px 0 12px}
+  .reubic-h{font-size:13.5px;color:var(--orange);margin-bottom:10px;letter-spacing:.02em}
+  .rv-info a.wa{color:var(--green);text-decoration:none;border-bottom:1px dotted rgba(79,208,122,.4)}
+  .rv-info a.wa:hover{filter:brightness(1.2)}
+
+  button{font-family:'Oswald',sans-serif;font-weight:500;font-size:13px;letter-spacing:.14em;text-transform:uppercase;background:var(--orange);color:#0A0A0A;border:none;padding:13px 22px;cursor:pointer;border-radius:2px;transition:filter .15s}
+  button:hover{filter:brightness(1.12)}
+  button.ghost{background:transparent;color:var(--orange);border:1px solid var(--orange-line)}
+  button.mini{padding:7px 12px;font-size:11px;letter-spacing:.1em}
+  button.mini.on{background:var(--green)}
+  button.mini.danger{background:transparent;color:var(--red);border:1px solid rgba(224,67,58,.4)}
+  button:focus-visible{outline:2px solid var(--text);outline-offset:2px}
+
+  .floor{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px}
+  .sector{background:var(--panel);border:1px solid var(--stroke);position:relative}
+  .sector.span2{grid-column:1 / -1}
+  .sector::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--orange)}
+  .sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:16px 20px 12px;border-bottom:1px dashed var(--orange-line);flex-wrap:wrap}
+  .sec-title{display:flex;align-items:baseline;gap:12px}
+  .sec-num{font-family:'Bebas Neue',sans-serif;font-size:34px;line-height:.8;color:var(--orange)}
+  .sec-name{font-family:'Bebas Neue',sans-serif;font-size:26px;line-height:.9;letter-spacing:.02em;text-transform:uppercase}
+  .sec-tag{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .sec-cap{text-align:right;font-size:12px;color:var(--muted);letter-spacing:.05em}
+  .sec-cap b{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--text);display:block;line-height:1}
+  .sub-label{padding:12px 20px 2px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+  .tiles{display:flex;flex-wrap:wrap;gap:8px;padding:14px 20px}
+  .tiles.empty{color:var(--muted);font-size:12.5px;padding:16px 20px}
+  .tile{width:64px;height:56px;border-radius:3px;position:relative;border:1px solid var(--orange);background:var(--orange-dim);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+  .tile.alta{border-color:var(--alta);background:rgba(58,160,255,.12)}
+  .tile.sillon{border-color:var(--sillon);background:rgba(192,124,255,.12);width:auto;padding:0 14px}
+  .tile.ocupada{border-color:#3d3d3d;background:rgba(255,255,255,.025);opacity:.5;cursor:help}
+  .tile.ocupada .id{color:#5a5a5a}
+  .tile .id{font-size:11px;color:var(--muted);letter-spacing:.06em}
+  .tile .cap{font-family:'Bebas Neue',sans-serif;font-size:22px;line-height:.8;color:var(--text)}
+  .tile.ocupada .cap{color:#6a6a6a}
+  .tile .type-dot{position:absolute;top:5px;right:6px;width:6px;height:6px;border-radius:50%}
+  .tile.baja .type-dot{background:var(--orange)}
+  .tile.alta .type-dot{background:var(--alta)}
+  .tile.sillon .type-dot{background:var(--sillon)}
+  .tile.ocupada .type-dot{background:#5a5a5a}
+  .combi{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;padding:12px 20px;border-top:1px dashed var(--stroke);font-size:13px;color:#cfcfcf}
+  .combi .cl{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--orange)}
+  .combi .cr{flex:1;min-width:180px}
+  .combi .cs{font-size:11px;letter-spacing:.05em;white-space:nowrap;color:var(--green)}
+
+  .notes{margin-top:26px;background:var(--panel);border:1px solid var(--orange-line);padding:22px}
+  .notes h3{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:.03em;text-transform:uppercase;margin-bottom:12px;color:var(--orange)}
+  .notes ul{list-style:none;display:grid;gap:10px}
+  .notes li{padding-left:22px;position:relative;font-size:14px;color:#cfcfcf}
+  .notes li::before{content:"›";position:absolute;left:4px;color:var(--orange);font-size:16px;top:-1px}
+  .notes b{color:var(--text);font-weight:500}
+
+  .actions{display:flex;gap:12px;margin-top:22px;flex-wrap:wrap;align-items:center}
+  .hint{font-size:12px;color:var(--muted)}
+  footer{margin-top:34px;padding-top:18px;border-top:1px solid var(--stroke);color:var(--muted);font-size:11.5px;letter-spacing:.08em;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+  #tooltip{position:absolute;z-index:60;display:none;pointer-events:none;background:#000;border:1px solid var(--orange-line);color:var(--text);font-size:12.5px;line-height:1.55;padding:9px 12px;border-radius:3px;max-width:250px;box-shadow:0 8px 24px rgba(0,0,0,.55)}
+  #tooltip b{color:var(--orange)}
+  #tooltip .tt-h{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+
+  @media(max-width:760px){.dash{grid-template-columns:repeat(2,1fr)}.floor{grid-template-columns:1fr}.sector.span2{grid-column:auto}}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Sistema de Reservas · Fase 3 — Disponibilidad</div>
+    <h1>Mapa <span>&amp; Reservas</span></h1>
+    <p class="sub">Asignación de mesas por noche para Zeppelin Bar. La reserva ocupa la mesa toda la noche; llegada del 100% hasta las 23:00. Cantidad de mesas editable por sector.</p>
+  </header>
+
+  <div class="dash" id="dash"></div>
+
+  <div class="nightbar">
+    <div class="nb-left">
+      <span class="nb-lbl">Noche</span>
+      <input type="date" id="fecha">
+      <span id="fechaLbl" class="nb-date"></span>
+      <span id="syncLbl" class="sync local">● Solo este equipo</span>
+    </div>
+    <div class="nb-right">
+      <button class="ghost" id="cfgBtn">⚙ Configurar mesas</button>
+      <button class="ghost" id="resetBtn">Vaciar noche</button>
+    </div>
+  </div>
+
+  <section class="editor" id="editor" hidden>
+    <div class="ed-head">
+      <h2>Configurar mesas por sector</h2>
+      <div class="ed-actions">
+        <button class="ghost mini" id="edReset">Restablecer</button>
+        <button class="mini" id="edClose">Listo</button>
+      </div>
+    </div>
+    <div id="edMsg" class="ed-msg"></div>
+    <div class="ed-body" id="edBody"></div>
+  </section>
+
+  <div class="legend">
+    <span class="k"><span class="swatch sw-baja"></span> Mesa baja (4)</span>
+    <span class="k"><span class="swatch sw-alta"></span> Mesa alta</span>
+    <span class="k"><span class="swatch sw-sillon"></span> Sillón</span>
+    <span class="k"><span class="swatch sw-oc"></span> Ocupada</span>
+  </div>
+
+  <section class="asignador">
+    <div class="asig-head">
+      <div><div class="eyebrow">Buscar y reservar</div><h2 class="asig-title">Nueva reserva</h2></div>
+      <div class="asig-input">
+        <div class="f"><label for="pax">Personas *</label><input id="pax" type="number" min="1" max="60" value="8" inputmode="numeric"></div>
+        <div class="f"><label for="rnom">Nombre y apellido *</label><input id="rnom" type="text" placeholder="Juan Pérez"></div>
+        <div class="f"><label for="rdni">DNI *</label><input id="rdni" type="text" placeholder="30123456" inputmode="numeric"></div>
+        <div class="f"><label for="rtel">WhatsApp *</label><input id="rtel" type="text" placeholder="387 545-8204" inputmode="tel"></div>
+      </div>
+    </div>
+    <div id="rmsg" class="rmsg"></div>
+    <div id="asigOut" class="asig-out"></div>
+  </section>
+
+  <section class="reservas">
+    <div class="rv-head"><h2 class="asig-title">Reservas de la noche</h2><span id="rvCount" class="rv-count"></span></div>
+    <div id="rvMsg" class="rmsg"></div>
+    <div id="rvOut" class="rv-out"></div>
+  </section>
+
+  <div class="floor" id="floor"></div>
+
+  <div class="notes">
+    <h3>Reglas del sistema</h3>
+    <ul>
+      <li><b>Mesas editables:</b> desde "Configurar mesas" sumás o restás mesas por sector. Todo se recalcula solo. No hace falta tocar código.</li>
+      <li><b>Sincronización:</b> con el backend conectado, reservas y configuración se comparten entre todos los dispositivos (refresca cada 20 s); el indicador de la barra muestra el estado. Sin backend, funciona solo en este equipo.</li>
+      <li><b>Ocupación:</b> una reserva toma la mesa <b>toda la noche</b> (sin turnos). Llegada del 100% hasta las <b>23:00</b>; pasada esa hora, staff puede liberar.</li>
+      <li><b>Combinación:</b> grupos dentro de un solo sector. S1 mesas entre sí (sillón fijo) · S2 altas y bajas por separado · S3/S4 todas las variantes · S5 aire libre y techado sin cruzarse.</li>
+      <li><b>Agrupamiento de mesas:</b> las bajas siguen la tabla operativa (grupos de 3 mesas por 10 pers en los tramos grandes: 20→6 mesas, 30→9). Las altas del DJ tienen su propia tabla (10→2, 15→3, 20→4, 25–30→6). Guitarras: 3 pers por mesa alta.</li>
+      <li><b>Personas editables:</b> el día de la reserva cambiás la cantidad en cada fila. Al hacerlo, elegís si <b>permanece</b> en el sector actual (con las mesas reajustadas) o la <b>mudás</b> a otro sector con lugar. Aplica tanto al subir como al bajar.</li>
+      <li><b>Una reserva por persona:</b> por noche, no se admite una segunda reserva si coincide nombre y apellido, DNI o WhatsApp con una ya cargada.</li>
+      <li><b>Datos obligatorios:</b> nombre y apellido, DNI y WhatsApp (se normaliza a 549 + área + número, queda como link al chat).</li>
+    </ul>
+  </div>
+
+  <div class="actions">
+    <button id="exportBtn">Exportar mapa (JSON)</button>
+    <button class="ghost" id="expResBtn">Exportar reservas</button>
+    <span class="hint">El JSON del mapa es el modelo que consumirá el bot.</span>
+  </div>
+
+  <footer>
+    <span>ZEPPELIN BAR · 25 DE MAYO 340 · SALTA</span>
+    <span id="verLine"></span>
+  </footer>
+</div>
+<div id="tooltip"></div>
+
+<script>
+/* ============================================================
+   Reservas Zeppelin — v4.0 (mesas editables por sector)
+   ============================================================ */
+const VERSION="5.0";
+
+/* Metadatos fijos de sector (nombre, zona, reglas de combinación). */
+const SECTORES_META=[
+  {id:"S1",nombre:"Adelante",zona:"interior",
+   combinacion:{regla:"Mesas combinables entre sí. Sillón fijo, no se une a ninguna mesa."}},
+  {id:"S2",nombre:"DJ",zona:"interior",
+   combinacion:{regla:"Altas combinan entre sí (hasta 30) y bajas entre sí. Los dos bloques no se mezclan."}},
+  {id:"S3",nombre:"Guitarras",tag:"Mesas altas",zona:"interior",
+   combinacion:{regla:"Todas las combinaciones posibles (1=3, 2=6, 3=9). Tope 9."}},
+  {id:"S4",nombre:"Patio interno",zona:"interior",
+   combinacion:{regla:"Todas las combinaciones posibles."}},
+  {id:"S5",nombre:"Sector 5",tag:"Exterior",zona:"exterior",
+   combinacion:{regla:"Aire libre y techado, cada uno todas las variantes. No se cruzan entre sí."}}
+];
+
+/* Definición canónica de grupos por sector (cap y estructura fijas en código).
+   El usuario solo edita las CANTIDADES; eso es lo que se persiste. */
+const GRUPOS_DEF={
+  S1:[{key:"S1",nombre:"Mesas",tipo:"baja",cap:4,def:12}],
+  S2:[{key:"S2A",nombre:"Mesas altas",tipo:"alta",cap:5,def:6},{key:"S2B",nombre:"Mesas bajas",tipo:"baja",cap:4,def:8}],
+  S3:[{key:"S3",nombre:"Mesas altas",tipo:"alta",cap:3,def:3}],
+  S4:[{key:"S4",nombre:"Mesas",tipo:"baja",cap:4,def:3}],
+  S5:[{key:"S5AL",nombre:"Al aire libre",tipo:"baja",cap:4,def:8},{key:"S5TE",nombre:"Techado",tipo:"baja",cap:4,def:9}]
+};
+function defCounts(){const c={};Object.values(GRUPOS_DEF).flat().forEach(g=>c[g.key]=g.def);return c;}
+function defSillon(){return {S1:true};}
+const CFG_KEY="zeppelin_config_v2";
+function loadCfg(){
+  try{const s=JSON.parse(localStorage.getItem(CFG_KEY));if(s&&s.counts)return {counts:{...defCounts(),...s.counts},sillon:{...defSillon(),...s.sillon}};}catch(_){}
+  // migración desde configuración vieja (v1): conservo las cantidades
+  try{const s1=JSON.parse(localStorage.getItem("zeppelin_config_v1"));
+    if(s1&&s1.grupos){const counts=defCounts();Object.values(s1.grupos).flat().forEach(g=>{if(g.key in counts)counts[g.key]=g.n;});
+      return {counts,sillon:{...defSillon(),...(s1.sillon||{})}};}}catch(_){}
+  return {counts:defCounts(),sillon:defSillon()};
+}
+function saveCfg(){try{localStorage.setItem(CFG_KEY,JSON.stringify(CFG));}catch(_){}}
+let CFG=loadCfg();
+
+const REGLAS={max_grupo_auto:30,hora_limite_llegada:"23:00"};
+
+/* Construcción del mapa desde la configuración. */
+function gmesas(g){const a=[];for(let i=1;i<=g.n;i++)a.push({id:g.key+"-"+String(i).padStart(2,"0"),tipo:g.tipo,cap:g.cap});return a;}
+function buildMapa(){
+  return SECTORES_META.map(meta=>{
+    const grupos=(GRUPOS_DEF[meta.id]||[]).map(d=>{
+      const n=(CFG.counts[d.key]??d.def);
+      return {key:d.key,nombre:d.nombre,tipo:d.tipo,cap:d.cap,n,mesas:gmesas({key:d.key,tipo:d.tipo,cap:d.cap,n})};
+    });
+    return {...meta,sillon:!!CFG.sillon[meta.id],grupos};
+  });
+}
+let SECTORES=buildMapa();
+
+function sillonMesa(s){return {id:s.id+"-SL",tipo:"sillon",cap:4};}
+function mesasDe(s){let m=s.grupos.flatMap(g=>g.mesas);if(s.sillon)m=m.concat([sillonMesa(s)]);return m;}
+function asientosDe(s){return mesasDe(s).reduce((t,m)=>t+m.cap,0);}
+function inventory(){
+  const all=SECTORES.flatMap(mesasDe);
+  return {all,totalAsientos:all.reduce((t,m)=>t+m.cap,0),totalMesas:all.filter(m=>m.tipo!=="sillon").length,totalUnidades:all.length,
+    CAPOF:Object.fromEntries(all.map(m=>[m.id,m.cap]))};
+}
+
+/* Bloques combinables (cada grupo = un bloque; sillón = bloque fijo). */
+function bloquesDe(s){
+  const out=[];
+  s.grupos.forEach(g=>{ if(g.mesas.length) out.push({sector:s.nombre,sectorId:s.id,nombre:g.nombre,tipo:g.tipo,combinable:true,capMesa:g.cap,n:g.mesas.length,ids:g.mesas.map(m=>m.id)}); });
+  if(s.sillon) out.push({sector:s.nombre,sectorId:s.id,nombre:"Sillón",tipo:"sillon",combinable:false,capMesa:4,n:1,ids:[s.id+"-SL"]});
+  return out;
+}
+
+/* Tablas operativas: cuántas mesas ocupa un grupo según la cantidad de personas.
+   Mesas bajas: se agrupan de a 3 mesas (10 pers c/u) en los grupos grandes.
+   Mesas altas DJ: 5 pers/mesa, con saltos en los tramos altos. */
+function fillRanges(ranges){const o={};ranges.forEach(([lo,hi,v])=>{for(let n=lo;n<=hi;n++)o[n]=v;});return o;}
+const TABLA_BAJAS=fillRanges([[1,4,1],[5,8,2],[9,12,3],[13,16,4],[17,18,5],[19,24,6],[25,28,7],[29,29,8],[30,32,9]]);
+const TABLA_ALTAS_DJ=fillRanges([[1,5,1],[6,10,2],[11,15,3],[16,20,4],[21,24,5],[25,30,6]]);
+function mesasNecesarias(b,N){
+  if(b.tipo==='baja') return TABLA_BAJAS[N] || Math.ceil(N/4);
+  if(b.tipo==='alta' && b.sectorId==='S2') return TABLA_ALTAS_DJ[N] || Math.ceil(N/5);
+  return Math.ceil(N/b.capMesa); // Guitarras altas (cap 3) y demás
+}
+
+/* Reservas. */
+const STORE_KEY="zeppelin_reservas_v3";
+function loadReservas(){try{return JSON.parse(localStorage.getItem(STORE_KEY))||[];}catch(_){return [];}}
+function saveReservas(){try{localStorage.setItem(STORE_KEY,JSON.stringify(RESERVAS));}catch(_){}}
+let RESERVAS=loadReservas();
+let fechaSel=new Date().toISOString().slice(0,10);
+let OCUP=new Set(), LAST=[], OCUPINFO={};
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+/* ===== Backend (Google Apps Script + Sheet): sincroniza entre dispositivos ===== */
+const BACKEND_URL = "https://script.google.com/macros/s/AKfycbx_qtjFgXCoGO3RHRrU87d4mA54sDoZ7Tj7dcXAJ0mBXv-Z8psrqkjhehuRoi2qwcOPng/exec"; // <<<<< PEGÁ ACÁ la URL /exec del Apps Script. Vacío = solo este equipo.
+const API_TOKEN   = "zeppelin-reservas"; // debe coincidir con TOKEN del Apps Script
+let SYNC="local";
+function setSync(s){ SYNC=s; const el=document.getElementById('syncLbl'); if(el){ el.textContent=s==='ok'?'● Sincronizado':s==='off'?'● Sin conexión':'● Solo este equipo'; el.className='sync '+s; } }
+function jsonp(params){
+  return new Promise((resolve,reject)=>{
+    const cb='cb'+Date.now()+Math.floor(Math.random()*1e4);
+    const s=document.createElement('script');
+    const q=new URLSearchParams({...params,callback:cb}).toString();
+    let done=false;
+    const cleanup=()=>{try{delete window[cb];}catch(_){}if(s.parentNode)s.parentNode.removeChild(s);};
+    window[cb]=d=>{done=true;resolve(d);cleanup();};
+    s.onerror=()=>{if(!done)reject(new Error('net'));cleanup();};
+    s.src=BACKEND_URL+(BACKEND_URL.includes('?')?'&':'?')+q;
+    document.body.appendChild(s);
+    setTimeout(()=>{if(!done){reject(new Error('timeout'));cleanup();}},12000);
+  });
+}
+function apiPost(action,payload){
+  if(!BACKEND_URL) return Promise.resolve(null);
+  return fetch(BACKEND_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,token:API_TOKEN,payload})})
+    .then(r=>r.json()).then(d=>{setSync('ok');return d;})
+    .catch(()=>{setSync('ok');return null;}); // el POST se ejecuta igual aunque no podamos leer la respuesta
+}
+async function loadFromBackend(){
+  if(!BACKEND_URL){ setSync('local'); return false; }
+  try{
+    const d=await jsonp({action:'load',token:API_TOKEN});
+    if(d&&d.ok){
+      RESERVAS=Array.isArray(d.reservas)?d.reservas:[];
+      if(d.config) CFG={counts:{...defCounts(),...(d.config.counts||{})},sillon:{...defSillon(),...(d.config.sillon||{})}};
+      SECTORES=buildMapa(); saveReservas(); saveCfg(); setSync('ok'); return true;
+    }
+  }catch(_){ setSync('off'); }
+  return false;
+}
+function focoEnInput(){
+  const ae=document.activeElement;
+  return ae && (ae.tagName==='INPUT') ;
+}
+async function initData(){
+  renderAll(); renderEditor();
+  if(await loadFromBackend()){ renderAll(); renderEditor(); }
+  if(BACKEND_URL){
+    setInterval(async()=>{
+      if(PENDING||focoEnInput()) return; // no pisar una edición en curso
+      if(await loadFromBackend()) renderAll();
+    },20000);
+  }
+}
+function reservasNoche(){return RESERVAS.filter(r=>r.fecha===fechaSel);}
+function ocupadasSet(){const s=new Set();reservasNoche().forEach(r=>r.mesasIds.forEach(id=>s.add(id)));return s;}
+function reservadasEnTodas(){const s=new Set();RESERVAS.forEach(r=>r.mesasIds.forEach(id=>s.add(id)));return s;}
+
+/* Motor de asignación (disponibilidad). */
+/* Opciones de ubicación para N personas en una fecha, excluyendo opcionalmente una reserva
+   (para que sus propias mesas cuenten como disponibles al reubicarla). */
+function opcionesPara(N,fecha,excluirId){
+  const oc=new Set();
+  RESERVAS.filter(x=>x.fecha===fecha&&x.id!==excluirId).forEach(x=>x.mesasIds.forEach(m=>oc.add(m)));
+  const res=[];
+  SECTORES.forEach(s=>bloquesDe(s).forEach(b=>{
+    const libres=b.ids.filter(id=>!oc.has(id));
+    if(!b.combinable){
+      if(N<=b.capMesa && libres.length>=1)
+        res.push({sector:b.sector,sectorId:b.sectorId,nombre:b.nombre,mesas:1,cap:b.capMesa,sobran:b.capMesa-N,usarIds:[libres[0]],tipo:'fijo'});
+    }else{
+      const need=mesasNecesarias(b,N);
+      if(need>=1 && need<=libres.length){const cap=need*b.capMesa;
+        res.push({sector:b.sector,sectorId:b.sectorId,nombre:b.nombre,mesas:need,cap,sobran:cap-N,usarIds:libres.slice(0,need),tipo:'combi'});}
+    }
+  }));
+  res.sort((a,b)=>a.sobran-b.sobran||a.mesas-b.mesas);
+  return res;
+}
+function asignar(N){ return opcionesPara(N,fechaSel,null); }
+
+/* Acciones de reserva. */
+function flash(msg){const el=document.getElementById('rmsg');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2400);}
+function normWa(raw){let d=(raw||'').replace(/\D/g,'');if(d.startsWith('549'))return d;if(d.startsWith('54'))d=d.slice(2);if(d.startsWith('0'))d=d.slice(1);if(d.length>=10&&d.slice(3,5)==='15')d=d.slice(0,3)+d.slice(5);return d.length>=10?'549'+d:'';}
+function fmtWa(w){return w.length>=13?w.slice(3,6)+' '+w.slice(6,9)+'-'+w.slice(9):w;}
+function normName(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim();}
+function reservar(i){
+  const o=LAST[i]; if(!o) return;
+  const $n=document.getElementById('rnom'),$d=document.getElementById('rdni'),$t=document.getElementById('rtel');
+  [$n,$d,$t].forEach(el=>el.classList.remove('err'));
+  const nombre=($n.value||'').trim(), dni=($d.value||'').replace(/\D/g,''), wa=normWa($t.value);
+  const pax=Math.max(1,parseInt(document.getElementById('pax').value||'0',10));
+  if(nombre.split(/\s+/).filter(Boolean).length<2){$n.classList.add('err');flash('Falta nombre y apellido (los dos).');$n.focus();return;}
+  if(dni.length<7||dni.length>8){$d.classList.add('err');flash('DNI inválido: 7 u 8 dígitos.');$d.focus();return;}
+  if(!wa){$t.classList.add('err');flash('WhatsApp inválido: código de área + número.');$t.focus();return;}
+  const nomN=normName(nombre);
+  const dup=reservasNoche().find(r=>normName(r.nombre)===nomN || (r.dni&&r.dni===dni) || (r.wa&&r.wa===wa));
+  if(dup){
+    let campo = normName(dup.nombre)===nomN?'nombre' : (dup.dni===dni?'DNI':'WhatsApp');
+    flash('Ya hay una reserva de esta persona esta noche ('+campo+' coincide): '+dup.nombre+' · '+dup.mesasIds.join(', ')+'. Una reserva por persona.');
+    return;
+  }
+  const nueva={id:'r'+Date.now(),fecha:fechaSel,nombre,dni,wa,pax,sectorId:o.sectorId,sector:o.sector,bloque:o.nombre,mesasIds:o.usarIds,hora_limite:'23:00',estado:'pendiente',creada:new Date().toISOString()};
+  RESERVAS.push(nueva);
+  saveReservas(); apiPost('add',nueva); PENDING=null; $n.value='';$d.value='';$t.value=''; renderAll();
+}
+function liberar(id){PENDING=null;RESERVAS=RESERVAS.filter(r=>r.id!==id);saveReservas();apiPost('delete',{id});renderAll();}
+function toggleEstado(id){const r=RESERVAS.find(x=>x.id===id);if(r){r.estado=r.estado==='llego'?'pendiente':'llego';saveReservas();apiPost('update',r);renderAll();}}
+function flashRv(msg){const el=document.getElementById('rvMsg');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),4000);}
+let PENDING=null;
+function editPax(id,nuevoRaw){
+  PENDING=null;
+  const r=RESERVAS.find(x=>x.id===id); if(!r) return;
+  const nuevo=Math.max(1,parseInt(nuevoRaw||'0',10));
+  if(nuevo===r.pax){ renderReservas(); return; }
+  const all=opcionesPara(nuevo,r.fecha,r.id);
+  const si=all.findIndex(o=>o.sectorId===r.sectorId&&o.nombre===r.bloque);
+  let stay=null, ops=all;
+  if(si>=0){
+    stay=all[si]; ops=all.filter((_,i)=>i!==si);
+    // al permanecer, conservar las mesas que ya tenía cuando alcanza
+    const s=SECTORES.find(x=>x.id===r.sectorId), b=bloquesDe(s).find(x=>x.nombre===r.bloque);
+    const otras=new Set(); RESERVAS.filter(x=>x.fecha===r.fecha&&x.id!==r.id).forEach(x=>x.mesasIds.forEach(m=>otras.add(m)));
+    const disp=b.ids.filter(m=>!otras.has(m));
+    let keep=r.mesasIds.filter(m=>disp.includes(m)).slice(0,stay.mesas);
+    if(keep.length<stay.mesas) keep=keep.concat(disp.filter(m=>!keep.includes(m)).slice(0,stay.mesas-keep.length));
+    stay.usarIds=keep;
+  }
+  PENDING={id:r.id,pax:nuevo,list:(stay?[stay].concat(ops):ops),hasStay:!!stay};
+  renderReservas();
+}
+function moverReserva(id,i){
+  if(!PENDING||PENDING.id!==id) return;
+  const o=PENDING.list[i], r=RESERVAS.find(x=>x.id===id);
+  if(!o||!r) return;
+  r.pax=PENDING.pax; r.sectorId=o.sectorId; r.sector=o.sector; r.bloque=o.nombre; r.mesasIds=o.usarIds;
+  PENDING=null; saveReservas(); apiPost('update',r); renderAll();
+}
+function cancelReubic(){ PENDING=null; renderReservas(); }
+window.moverReserva=moverReserva; window.cancelReubic=cancelReubic;
+function resetNoche(){if(confirm('¿Liberar todas las reservas de esta noche?')){PENDING=null;RESERVAS=RESERVAS.filter(r=>r.fecha!==fechaSel);saveReservas();apiPost('clearNight',{fecha:fechaSel});renderAll();}}
+window.reservar=reservar;window.liberar=liberar;window.toggleEstado=toggleEstado;window.editPax=editPax;
+
+/* Edición de mesas. */
+function flashEd(msg){const el=document.getElementById('edMsg');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),3000);}
+function setCount(id,key,delta){
+  const cur=(CFG.counts[key]??0);
+  if(delta<0){
+    if(cur<=0) return;
+    const rmId=key+'-'+String(cur).padStart(2,'0');
+    if(reservadasEnTodas().has(rmId)){flashEd('La mesa '+rmId+' tiene una reserva. Liberала antes de quitarla.');return;}
+  }
+  CFG.counts[key]=Math.max(0,cur+delta);
+  saveCfg(); apiPost('setConfig',CFG); rebuild();
+}
+function toggleSillon(id){ if(CFG.sillon[id] && reservadasEnTodas().has(id+'-SL')){flashEd('El sillón tiene una reserva. Liberала antes de quitarlo.');return;} CFG.sillon[id]=!CFG.sillon[id]; saveCfg(); apiPost('setConfig',CFG); rebuild(); }
+function restablecer(){ if(confirm('¿Volver a la configuración de mesas original?')){ CFG={counts:defCounts(),sillon:defSillon()}; saveCfg(); apiPost('setConfig',CFG); rebuild(); } }
+window.setCount=setCount;window.toggleSillon=toggleSillon;
+
+function rebuild(){ SECTORES=buildMapa(); renderAll(); renderEditor(); }
+
+/* Render. */
+function fmtFecha(iso){try{return new Date(iso+'T00:00:00').toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'});}catch(_){return iso;}}
+function renderDash(){
+  const inv=inventory();
+  const mesasOc=OCUP.size, mesasLib=inv.totalUnidades-mesasOc;
+  const seatsOc=[...OCUP].reduce((t,id)=>t+(inv.CAPOF[id]||0),0), seatsLib=inv.totalAsientos-seatsOc;
+  document.getElementById('dash').innerHTML=[
+    {n:SECTORES.length,l:'Sectores',alt:true},
+    {n:seatsLib,l:'Asientos libres',brk:seatsOc+' ocupados · '+inv.totalAsientos+' total'},
+    {n:mesasLib,l:'Mesas libres',brk:mesasOc+' ocupadas · '+inv.totalUnidades+' total'},
+    {n:reservasNoche().length,l:'Reservas',alt:true}
+  ].map(s=>`<div class="stat ${s.alt?'alt':''}"><div class="n">${s.n}</div><div class="l">${s.l}</div>${s.brk?`<div class="brk">${s.brk}</div>`:''}</div>`).join('');
+}
+function tileHTML(m){
+  const oc=OCUP.has(m.id);
+  let info='';
+  if(oc && OCUPINFO[m.id]){
+    const r=OCUPINFO[m.id];
+    const html=`<div class="tt-h">${esc(m.id)} · ocupada</div><b>${esc(r.nombre)}</b> · ${r.pax}p<br>${esc(r.bloque)} · ${esc(r.mesasIds.join(', '))}<br>retiene hasta ${esc(r.hora_limite)} · DNI ${esc(r.dni||'—')}`;
+    info=` data-info="${esc(html)}"`;
+  }
+  return `<div class="tile ${m.tipo} ${oc?'ocupada':''}"${info}><span class="type-dot"></span><span class="id">${m.tipo==='sillon'?'SILLÓN':m.id.split('-').pop()}</span><span class="cap">${m.cap}</span></div>`;
+}
+function tilesBlock(mesas){return mesas.length?`<div class="tiles">${mesas.map(tileHTML).join("")}</div>`:`<div class="tiles empty">— sin mesas —</div>`;}
+function sectorHTML(s){
+  const seats=asientosDe(s), multi=s.grupos.length>1;
+  let body;
+  if(multi){
+    body=s.grupos.map(g=>`<div class="sub-label">${g.nombre} · ${g.mesas.length} mesas · ${g.mesas.length*g.cap} asientos</div>${tilesBlock(g.mesas)}`).join('');
+    if(s.sillon) body+=`<div class="sub-label">Sillón</div>${tilesBlock([sillonMesa(s)])}`;
+  }else{
+    let tiles=s.grupos[0]?s.grupos[0].mesas.slice():[];
+    if(s.sillon) tiles=tiles.concat([sillonMesa(s)]);
+    body=tilesBlock(tiles);
+  }
+  const nMesas=mesasDe(s).filter(m=>m.tipo!=='sillon').length;
+  const combi=`<div class="combi"><span class="cl">Combinación</span><span class="cr">${s.combinacion.regla}</span><span class="cs">✓</span></div>`;
+  return `<div class="sector ${s.zona==='exterior'?'span2':''}">
+    <div class="sec-head"><div class="sec-title"><span class="sec-num">${s.id.replace('S','')}</span>
+      <div><div class="sec-name">${s.nombre}</div>${s.tag?`<span class="sec-tag">${s.tag}</span>`:''}</div></div>
+      <div class="sec-cap"><b>${seats}</b> asientos · ${nMesas} mesas</div></div>${body}${combi}</div>`;
+}
+function renderAsig(){
+  const N=Math.max(1,parseInt(document.getElementById('pax').value||'0',10));
+  const out=document.getElementById('asigOut'), MAX=REGLAS.max_grupo_auto;
+  if(N>MAX){out.innerHTML=`<div class="res-empty">Grupo de <b>${N}</b> personas → <b>respuesta manual</b>.<br>Los grupos de más de ${MAX} los coordina una persona.</div>`;LAST=[];return;}
+  LAST=asignar(N);
+  if(!LAST.length){out.innerHTML=`<div class="res-empty">No hay mesas libres para ${N} personas esta noche.<br>Probá otra fecha o liberá alguna reserva.</div>`;return;}
+  out.innerHTML=LAST.slice(0,6).map((o,i)=>`
+    <div class="res ${i===0?'best':''}"><span class="rk">${i+1}</span>
+      <div class="loc"><div class="s">${o.sector}${i===0?'<span class="res-tag">Mejor ajuste</span>':''}</div>
+        <div class="b">${o.nombre}${o.tipo==='fijo'?' · fijo':''} · ${o.usarIds.join(', ')}</div></div>
+      <div class="meta"><b>${o.mesas} ${o.mesas>1?'mesas':'mesa'}</b> · cap ${o.cap} · sobran ${o.sobran}</div>
+      <button class="mini" onclick="reservar(${i})">Reservar</button></div>`).join('');
+}
+function fmtHecha(iso){try{return new Date(iso).toLocaleString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});}catch(_){return iso;}}
+function reubicHTML(r){
+  if(!(PENDING&&PENDING.id===r.id)) return '';
+  const list=PENDING.list;
+  const head = list.length
+    ? `${PENDING.pax} personas (antes ${r.pax}). ¿Dónde ubico la reserva?`
+    : `No hay lugar en ningún sector para ${PENDING.pax} personas esta noche.`;
+  const rows=list.map((o,i)=>{
+    const stay=PENDING.hasStay&&i===0;
+    return `<div class="res ${stay?'best':''}"><span class="rk">${stay?'✓':i+1}</span>
+      <div class="loc"><div class="s">${esc(o.sector)}${stay?'<span class="res-tag">Permanece</span>':''}</div>
+        <div class="b">${esc(o.nombre)} · ${esc(o.usarIds.join(', '))}</div></div>
+      <div class="meta"><b>${o.mesas} ${o.mesas>1?'mesas':'mesa'}</b> · cap ${o.cap} · sobran ${o.sobran}</div>
+      <button class="mini" onclick="moverReserva('${r.id}',${i})">${stay?'Mantener acá':'Mover acá'}</button></div>`;
+  }).join('');
+  return `<div class="reubic"><div class="reubic-h">${head}</div>${rows}<button class="mini danger" onclick="cancelReubic()">Cancelar cambio</button></div>`;
+}
+function renderReservas(){
+  const list=reservasNoche().slice().sort((a,b)=>a.creada<b.creada?-1:1);
+  document.getElementById('rvCount').textContent=list.length?`${list.length} reservas · ${list.reduce((t,r)=>t+r.pax,0)} personas`:'';
+  const out=document.getElementById('rvOut');
+  if(!list.length){out.innerHTML=`<div class="res-empty">Sin reservas para esta noche. Cargá una arriba.</div>`;return;}
+  out.innerHTML=list.map(r=>{
+    const nM=r.mesasIds.length;
+    const showPax=(PENDING&&PENDING.id===r.id)?PENDING.pax:r.pax;
+    return `<div class="rv ${r.estado}">
+      <div class="rv-top">
+        <div class="rv-title">${esc(r.nombre)}<span class="rv-paxwrap"><input class="pax-edit" type="number" min="1" value="${showPax}" onchange="editPax('${r.id}',this.value)" onclick="this.select()"> personas</span><span class="rv-mesas">${nM} ${nM>1?'mesas':'mesa'}</span></div>
+        <div class="rv-actions">
+          <span class="rv-hold">retiene hasta ${r.hora_limite}</span>
+          <button class="mini ${r.estado==='llego'?'on':''}" onclick="toggleEstado('${r.id}')">${r.estado==='llego'?'Llegó ✓':'Pendiente'}</button>
+          <button class="mini danger" onclick="liberar('${r.id}')">Liberar</button>
+        </div>
+      </div>
+      <div class="rv-info">
+        <span><b>${esc(r.sector)}</b> · ${esc(r.bloque)}</span>
+        <span>Mesas: ${esc(r.mesasIds.join(', '))}</span>
+        <span>DNI ${esc(r.dni||'—')}</span>
+        <span>${r.wa?`<a class="wa" href="https://wa.me/${r.wa}" target="_blank" rel="noopener">${fmtWa(r.wa)}</a>`:'—'}</span>
+        <span class="rv-made">Reservado: ${fmtHecha(r.creada)}</span>
+      </div>
+    </div>${reubicHTML(r)}`;
+  }).join('');
+}
+function renderEditor(){
+  const body=document.getElementById('edBody');
+  body.innerHTML=SECTORES_META.map(meta=>{
+    const grupos=(GRUPOS_DEF[meta.id]||[]).map(d=>{
+      const n=(CFG.counts[d.key]??d.def);
+      return `<div class="ed-grupo"><span class="eg-name">${d.nombre}<em>${d.tipo} · ${d.cap}p</em></span>
+        <div class="stepper"><button class="step" onclick="setCount('${meta.id}','${d.key}',-1)">−</button>
+          <span class="eg-n">${n}</span>
+          <button class="step" onclick="setCount('${meta.id}','${d.key}',1)">+</button></div></div>`;
+    }).join('');
+    const sillon=(meta.id in CFG.sillon)?`
+      <div class="ed-grupo"><span class="eg-name">Sillón<em>fijo · 4p</em></span>
+        <button class="mini ${CFG.sillon[meta.id]?'on':''}" onclick="toggleSillon('${meta.id}')">${CFG.sillon[meta.id]?'Sí ✓':'No'}</button></div>`:'';
+    return `<div class="ed-sector"><div class="ed-stitle">${meta.id.replace('S','')} · ${meta.nombre}</div>${grupos}${sillon}</div>`;
+  }).join('');
+}
+function renderAll(){
+  OCUP=ocupadasSet();
+  OCUPINFO={}; reservasNoche().forEach(r=>r.mesasIds.forEach(id=>OCUPINFO[id]=r));
+  renderDash();
+  document.getElementById('floor').innerHTML=SECTORES.map(sectorHTML).join('');
+  renderReservas(); renderAsig();
+  document.getElementById('fechaLbl').textContent=fmtFecha(fechaSel);
+  const inv=inventory();
+  document.getElementById('verLine').textContent=`Reservas v${VERSION} · ${inv.totalMesas} mesas · ${inv.totalAsientos} asientos`;
+}
+
+/* Tooltip de mesa ocupada. */
+const tip=document.getElementById('tooltip');
+const floorEl=document.getElementById('floor');
+floorEl.addEventListener('mousemove',e=>{
+  const t=e.target.closest('.tile.ocupada');
+  if(t&&t.dataset.info){tip.innerHTML=t.dataset.info;tip.style.display='block';
+    let x=e.pageX+14,y=e.pageY+14;
+    const w=tip.offsetWidth;if(x+w>window.scrollX+document.documentElement.clientWidth-8)x=e.pageX-w-14;
+    tip.style.left=x+'px';tip.style.top=y+'px';
+  }else tip.style.display='none';
+});
+floorEl.addEventListener('mouseleave',()=>{tip.style.display='none';});
+
+/* Wiring. */
+const fechaInput=document.getElementById('fecha');
+fechaInput.value=fechaSel;
+fechaInput.addEventListener('change',()=>{PENDING=null;fechaSel=fechaInput.value||fechaSel;renderAll();});
+document.getElementById('resetBtn').addEventListener('click',resetNoche);
+document.getElementById('cfgBtn').addEventListener('click',()=>{const e=document.getElementById('editor');e.hidden=!e.hidden;if(!e.hidden)renderEditor();});
+document.getElementById('edClose').addEventListener('click',()=>{document.getElementById('editor').hidden=true;});
+document.getElementById('edReset').addEventListener('click',restablecer);
+document.getElementById('pax').addEventListener('input',renderAsig);
+document.getElementById('pax').addEventListener('keydown',e=>{if(e.key==='Enter')renderAsig();});
+document.getElementById('exportBtn').addEventListener('click',()=>{const blob=new Blob([JSON.stringify({version:VERSION,reglas:REGLAS,config:CFG,sectores:SECTORES},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='mapa_mesas_zeppelin_v'+VERSION+'.json';a.click();});
+document.getElementById('expResBtn').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(RESERVAS,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='reservas_zeppelin.json';a.click();});
+initData();
+</script>
+</body>
+</html>
