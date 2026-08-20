@@ -128,6 +128,12 @@
   .rv-made{color:var(--muted)}
   .reubic{background:rgba(255,90,0,.06);border:1px solid var(--orange-line);border-left:3px solid var(--orange);padding:14px 16px;margin:-2px 0 12px}
   .reubic-h{font-size:13.5px;color:var(--orange);margin-bottom:10px;letter-spacing:.02em}
+  .ed-fields{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+  .ef{display:flex;flex-direction:column;gap:4px}
+  .ef label{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .ef input{background:var(--void);border:1px solid var(--stroke);color:var(--text);font-family:'Oswald',sans-serif;font-size:14px;padding:8px 10px;border-radius:2px;min-width:150px}
+  .ef input:focus{outline:none;border-color:var(--orange)}
+  .ed-actions2{display:flex;gap:10px;flex-wrap:wrap}
   .rv-info a.wa{color:var(--green);text-decoration:none;border-bottom:1px dotted rgba(79,208,122,.4)}
   .rv-info a.wa:hover{filter:brightness(1.2)}
 
@@ -315,7 +321,7 @@
 /* ============================================================
    Reservas Zeppelin — v4.0 (mesas editables por sector)
    ============================================================ */
-const VERSION="5.7";
+const VERSION="5.8";
 
 /* Metadatos fijos de sector (nombre, zona, reglas de combinación). */
 const SECTORES_META=[
@@ -457,7 +463,7 @@ function applyServer(d){
   RESERVAS=merged;
   if(d.config) CFG={counts:{...defCounts(),...(d.config.counts||{})},sillon:{...defSillon(),...(d.config.sillon||{})}};
   SECTORES=buildMapa(); saveReservas(); saveCfg();
-  if(!(PENDING||focoEnInput())){ renderAll(); renderEditor(); }
+  if(!(PENDING||EDITING||focoEnInput())){ renderAll(); renderEditor(); }
 }
 // Reintenta enviar lo que quedó pendiente o borrado sin confirmar.
 function resyncPendientes(){
@@ -470,7 +476,7 @@ async function initData(){
   renderAll(); renderEditor();
   const d=await api('load'); if(d){ applyServer(d); resyncPendientes(); }
   if(BACKEND_URL){
-    setInterval(()=>{ if(PENDING||focoEnInput()) return; api('load').then(d=>{ if(d){ applyServer(d); resyncPendientes(); } }); },20000);
+    setInterval(()=>{ if(PENDING||EDITING||focoEnInput()) return; api('load').then(d=>{ if(d){ applyServer(d); resyncPendientes(); } }); },20000);
   }
 }
 function reservasNoche(){return RESERVAS.filter(r=>String(r.fecha).slice(0,10)===fechaSel);}
@@ -524,23 +530,19 @@ function reservar(i){
   const nueva={id:'r'+Date.now(),fecha:fechaSel,nombre,dni,wa,pax,sectorId:o.sectorId,sector:o.sector,bloque:o.nombre,mesasIds:o.usarIds,hora_limite:'23:00',estado:'pendiente',creada:new Date().toISOString()};
   RESERVAS.push(nueva);
   marcarPendiente(nueva.id);
-  saveReservas(); PENDING=null; $n.value='';$d.value='';$t.value=''; renderAll(); api('add',nueva).then(applyServer);
+  saveReservas(); PENDING=null; $n.value='';$d.value='';$t.value='';document.getElementById('pax').value=''; renderAll(); api('add',nueva).then(applyServer);
 }
 function liberar(id){PENDING=null;marcarBorrado(id);RESERVAS=RESERVAS.filter(r=>r.id!==id);saveReservas();renderAll();api('delete',{id}).then(applyServer);}
 function toggleEstado(id){const r=RESERVAS.find(x=>x.id===id);if(r){r.estado=r.estado==='llego'?'pendiente':'llego';marcarPendiente(r.id);saveReservas();renderAll();api('update',r).then(applyServer);}}
 function flashRv(msg){const el=document.getElementById('rvMsg');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),4000);}
-let PENDING=null;
-function editPax(id,nuevoRaw){
-  PENDING=null;
-  const r=RESERVAS.find(x=>x.id===id); if(!r) return;
-  const nuevo=Math.max(1,parseInt(nuevoRaw||'0',10));
-  if(nuevo===r.pax){ renderReservas(); return; }
-  const all=opcionesPara(nuevo,r.fecha,r.id);
+let PENDING=null, EDITING=null;
+// Arma opciones de ubicación (permanecer + alternativas) para una reserva con cierta cantidad.
+function construirReubic(r,pax){
+  const all=opcionesPara(pax,r.fecha,r.id);
   const si=all.findIndex(o=>o.sectorId===r.sectorId&&o.nombre===r.bloque);
   let stay=null, ops=all;
   if(si>=0){
     stay=all[si]; ops=all.filter((_,i)=>i!==si);
-    // al permanecer, conservar las mesas que ya tenía cuando alcanza
     const s=SECTORES.find(x=>x.id===r.sectorId), b=bloquesDe(s).find(x=>x.nombre===r.bloque);
     const otras=new Set(); RESERVAS.filter(x=>x.fecha===r.fecha&&x.id!==r.id).forEach(x=>x.mesasIds.forEach(m=>otras.add(m)));
     const disp=b.ids.filter(m=>!otras.has(m));
@@ -548,7 +550,15 @@ function editPax(id,nuevoRaw){
     if(keep.length<stay.mesas) keep=keep.concat(disp.filter(m=>!keep.includes(m)).slice(0,stay.mesas-keep.length));
     stay.usarIds=keep;
   }
-  PENDING={id:r.id,pax:nuevo,list:(stay?[stay].concat(ops):ops),hasStay:!!stay};
+  return {list:(stay?[stay].concat(ops):ops), hasStay:!!stay};
+}
+function editPax(id,nuevoRaw){
+  PENDING=null;
+  const r=RESERVAS.find(x=>x.id===id); if(!r) return;
+  const nuevo=Math.max(1,parseInt(nuevoRaw||'0',10));
+  if(nuevo===r.pax){ renderReservas(); return; }
+  const {list,hasStay}=construirReubic(r,nuevo);
+  PENDING={id:r.id,pax:nuevo,list,hasStay,modo:'pax',antes:r.pax};
   renderReservas();
 }
 function moverReserva(id,i){
@@ -557,10 +567,31 @@ function moverReserva(id,i){
   if(!o||!r) return;
   r.pax=PENDING.pax; r.sectorId=o.sectorId; r.sector=o.sector; r.bloque=o.nombre; r.mesasIds=o.usarIds;
   marcarPendiente(r.id);
-  PENDING=null; saveReservas(); renderAll(); api('update',r).then(applyServer);
+  PENDING=null; EDITING=null; saveReservas(); renderAll(); api('update',r).then(applyServer);
 }
 function cancelReubic(){ PENDING=null; renderReservas(); }
+// --- Edición de datos de una reserva ---
+function editarReserva(id){ EDITING=id; PENDING=null; renderReservas(); }
+function cancelEdit(){ EDITING=null; PENDING=null; renderReservas(); }
+function guardarEdicion(id){
+  const r=RESERVAS.find(x=>x.id===id); if(!r) return;
+  const nombre=(document.getElementById('ednom-'+id).value||'').trim();
+  const dni=(document.getElementById('eddni-'+id).value||'').replace(/\D/g,'');
+  const wa=normWa(document.getElementById('edwa-'+id).value);
+  if(nombre.split(/\s+/).filter(Boolean).length<2){ flashRv('Falta nombre y apellido (los dos).'); return; }
+  if(dni.length<7||dni.length>8){ flashRv('DNI inválido: 7 u 8 dígitos.'); return; }
+  if(!wa){ flashRv('WhatsApp inválido: código de área + número.'); return; }
+  r.nombre=nombre; r.dni=dni; r.wa=wa;
+  marcarPendiente(r.id); saveReservas(); EDITING=null; renderAll(); api('update',r).then(applyServer);
+}
+function pedirCambioSector(id){
+  const r=RESERVAS.find(x=>x.id===id); if(!r) return;
+  const {list,hasStay}=construirReubic(r,r.pax);
+  PENDING={id:r.id,pax:r.pax,list,hasStay,modo:'sector',antes:r.pax};
+  renderReservas();
+}
 window.moverReserva=moverReserva; window.cancelReubic=cancelReubic;
+window.editarReserva=editarReserva; window.cancelEdit=cancelEdit; window.guardarEdicion=guardarEdicion; window.pedirCambioSector=pedirCambioSector;
 function resetNoche(){if(confirm('¿Liberar todas las reservas de esta noche?')){PENDING=null;reservasNoche().forEach(r=>marcarBorrado(r.id));RESERVAS=RESERVAS.filter(r=>r.fecha!==fechaSel);saveReservas();renderAll();api('clearNight',{fecha:fechaSel}).then(applyServer);}}
 window.reservar=reservar;window.liberar=liberar;window.toggleEstado=toggleEstado;window.editPax=editPax;
 
@@ -643,9 +674,11 @@ function fmtHecha(iso){try{return new Date(iso).toLocaleString('es-AR',{day:'2-d
 function reubicHTML(r){
   if(!(PENDING&&PENDING.id===r.id)) return '';
   const list=PENDING.list;
-  const head = list.length
-    ? `${PENDING.pax} personas (antes ${r.pax}). ¿Dónde ubico la reserva?`
-    : `No hay lugar en ningún sector para ${PENDING.pax} personas esta noche.`;
+  const head = !list.length
+    ? `No hay lugar en ningún sector para ${PENDING.pax} personas esta noche.`
+    : PENDING.modo==='sector'
+      ? `¿A qué sector movés la reserva? (${PENDING.pax} personas)`
+      : `${PENDING.pax} personas (antes ${PENDING.antes}). ¿Dónde ubico la reserva?`;
   const rows=list.map((o,i)=>{
     const stay=PENDING.hasStay&&i===0;
     return `<div class="res ${stay?'best':''}"><span class="rk">${stay?'✓':o.sectorId.replace('S','')}</span>
@@ -655,6 +688,22 @@ function reubicHTML(r){
       <button class="mini" onclick="moverReserva('${r.id}',${i})">${stay?'Mantener acá':'Mover acá'}</button></div>`;
   }).join('');
   return `<div class="reubic"><div class="reubic-h">${head}</div>${rows}<button class="mini danger" onclick="cancelReubic()">Cancelar cambio</button></div>`;
+}
+function editFormHTML(r){
+  if(EDITING!==r.id) return '';
+  return `<div class="reubic">
+    <div class="reubic-h">Editar datos de la reserva</div>
+    <div class="ed-fields">
+      <div class="ef"><label>Nombre y apellido</label><input id="ednom-${r.id}" value="${esc(r.nombre)}"></div>
+      <div class="ef"><label>DNI</label><input id="eddni-${r.id}" value="${esc(r.dni||'')}" inputmode="numeric"></div>
+      <div class="ef"><label>WhatsApp</label><input id="edwa-${r.id}" value="${esc(fmtWa(r.wa||''))}" inputmode="tel"></div>
+    </div>
+    <div class="ed-actions2">
+      <button class="mini" onclick="guardarEdicion('${r.id}')">Guardar datos</button>
+      <button class="mini ghost" onclick="pedirCambioSector('${r.id}')">Cambiar de sector</button>
+      <button class="mini danger" onclick="cancelEdit()">Cerrar</button>
+    </div>
+  </div>`;
 }
 function renderReservas(){
   const list=reservasNoche().slice().sort((a,b)=>a.creada<b.creada?-1:1);
@@ -670,6 +719,7 @@ function renderReservas(){
         <div class="rv-actions">
           <span class="rv-hold">retiene hasta ${r.hora_limite}</span>
           <button class="mini ${r.estado==='llego'?'on':''}" onclick="toggleEstado('${r.id}')">${r.estado==='llego'?'Llegó ✓':'Pendiente'}</button>
+          <button class="mini ghost" onclick="editarReserva('${r.id}')">Editar</button>
           <button class="mini danger" onclick="liberar('${r.id}')">Liberar</button>
         </div>
       </div>
@@ -680,7 +730,7 @@ function renderReservas(){
         <span>${r.wa?`<a class="wa" href="https://wa.me/${r.wa}" target="_blank" rel="noopener">${fmtWa(r.wa)}</a>`:'—'}</span>
         <span class="rv-made">Reservado: ${fmtHecha(r.creada)}</span>
       </div>
-    </div>${reubicHTML(r)}`;
+    </div>${editFormHTML(r)}${reubicHTML(r)}`;
   }).join('');
 }
 function renderEditor(){
