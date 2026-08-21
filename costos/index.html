@@ -143,6 +143,12 @@ main{max-width:1100px;margin:0 auto;padding:16px}
 .ftec-steps li{margin-bottom:5px}
 .ftec-arm{width:100%;min-height:130px;border:1px solid #ccc;border-radius:6px;padding:10px;font-family:'Oswald';font-size:14px;line-height:1.6;color:#111;margin-top:6px}
 .ftec-foot{display:flex;justify-content:space-between;border-top:1px solid #e3e3e3;margin-top:22px;padding-top:8px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#999}
+.ftec-cris{margin:2px 0 6px}
+.ftec-cris .lbl2{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#999;display:block;margin-bottom:5px}
+.ftec-imgs{display:flex;gap:14px;flex-wrap:wrap}
+.ftec-imgs figure{margin:0;text-align:center;width:90px}
+.ftec-imgs img{width:90px;height:90px;object-fit:contain;border:1px solid #e3e3e3;border-radius:6px;background:#fafafa}
+.ftec-imgs figcaption{font-size:11px;color:#666;margin-top:3px;line-height:1.2}
 .ftec-edit{font-size:11px;color:#FF5A00;border:1px solid #FF5A00;background:#fff;border-radius:5px;padding:3px 10px;cursor:pointer;letter-spacing:1px}
 @media print{
   header,nav,.searchbar,.hint,.no-print,.addbtn,.sortsel,.del,.ftec-edit,.ftec-arm{display:none!important}
@@ -198,6 +204,7 @@ function normalize(s){
     if(i.proveedor===undefined) i.proveedor=null; if(i.stockZ===undefined) i.stockZ=null; if(i.stockD===undefined) i.stockD=null;
     if(i.stockPiso===undefined) i.stockPiso=null; if(i.reposicion===undefined) i.reposicion=null;
     if(i.noCost===undefined) i.noCost=false;
+    if(i.img===undefined) i.img=null;
     if(i.proveedorId===undefined) i.proveedorId=null; if(i.buyUnit===undefined) i.buyUnit=null; if(i.categoria===undefined) i.categoria=null;
     if(!i.proveedorId && i.proveedor && (''+i.proveedor).trim()){
       const nm=(''+i.proveedor).trim();
@@ -439,7 +446,7 @@ function fillIngredients(list){
     + `</tbody></table>`;
 }
 function ingRow(i){ const uc=unitCost(i); const prep=i.kind==='prep';
-  return `<tr><td><input type="text" value="${esc(i.name)}" onchange="setIng('${i.id}','name',this.value)" style="width:170px;text-align:left;font-weight:400">${prep?' <span class="badge" style="background:rgba(255,210,63,.16);color:#ffd23f">⚗</span>':''}</td>
+  return `<tr><td><div style="display:flex;align-items:center;gap:6px"><input type="text" value="${esc(i.name)}" onchange="setIng('${i.id}','name',this.value)" style="width:150px;text-align:left;font-weight:400">${prep?'<span class="badge" style="background:rgba(255,210,63,.16);color:#ffd23f">⚗</span>':''}${i.img?`<span style="position:relative;display:inline-flex"><img src="${i.img}" onclick="pickImg('${i.id}')" title="Cambiar imagen" style="width:26px;height:26px;object-fit:cover;border-radius:5px;border:1px solid var(--line);cursor:pointer"><span onclick="removeImg('${i.id}')" title="Quitar" style="position:absolute;top:-6px;right:-6px;background:var(--red);color:#fff;border-radius:50%;width:15px;height:15px;font-size:10px;line-height:15px;text-align:center;cursor:pointer">✕</span></span>`:`<button onclick="pickImg('${i.id}')" title="Agregar imagen (para cristalería)" style="background:var(--surface2);border:1px solid var(--line);color:var(--muted);border-radius:5px;padding:3px 6px;font-size:12px;cursor:pointer">📷</button>`}</div></td>
     <td><span class="badge b-${i.area}">${i.area}</span></td>
     <td><input type="text" list="catlist" value="${esc(i.categoria)}" placeholder="—" onchange="setIng('${i.id}','categoria',this.value)" style="width:130px;text-align:left"></td>
     <td>${prep?`<span class="ucell">${i.unit}</span>`:`<select onchange="setIng('${i.id}','unit',this.value)">${['ml','g','u','cc'].map(u=>`<option ${i.unit===u?'selected':''}>${u}</option>`).join('')}</select>`}</td>
@@ -491,6 +498,7 @@ function fichaCard(p, num, total){
       ${pesoG>0?`<div><span class="lbl">Aprox.</span><span class="val">${pesoG} g</span></div>`:''}
     </div>
     <div class="ftec-h"><span>Ingredientes</span><span>Cantidad</span></div>
+    ${(()=>{const imgs=lines.map(r=>ingById(r.ingredientId)).filter(i=>i&&i.img);return imgs.length?`<div class="ftec-cris"><span class="lbl2">Cristalería / presentación</span><div class="ftec-imgs">${imgs.map(i=>`<figure><img src="${i.img}"><figcaption>${esc(i.name)}</figcaption></figure>`).join('')}</div></div>`:'';})()}
     <table class="ftec-ing"><tbody>
     ${lines.length? lines.map(r=>{const ing=ingById(r.ingredientId);return `<tr><td>${ing?esc(ing.name):'?'}</td><td class="q"><input class="ftec-qin" type="number" inputmode="decimal" value="${r.qty??''}" placeholder="0" onchange="setQty('${r.id}',this.value)"> ${r.unit||(ing?ing.unit:'')}</td></tr>`;}).join('') : '<tr><td colspan="2" style="color:#999">Sin ingredientes. Cargalos en la receta del producto (Barra/Cocina).</td></tr>'}
     </tbody></table>
@@ -930,6 +938,25 @@ function setIngNum(id, field, val, el){
   if(tr && tr.children.length>=9 && !i.noCost){ const uc=unitCost(i); const cell=tr.children[7]; cell.style.color = uc>0?'var(--text)':'var(--muted)'; cell.textContent = uc>0?fmt2.format(uc):'—'; }
 }
 function setNoCost(id,on){ const i=ingById(id); if(i){ i.noCost=!!on; save(); render(); } }
+function pickImg(id){
+  const inp=document.createElement('input'); inp.type='file'; inp.accept='image/*';
+  inp.onchange=()=>{ const f=inp.files&&inp.files[0]; if(!f) return;
+    const rd=new FileReader();
+    rd.onload=()=>{ const im=new Image();
+      im.onload=()=>{ let w=im.width,h=im.height,max=220;
+        if(w>h){ if(w>max){ h=Math.round(h*max/w); w=max; } } else { if(h>max){ w=Math.round(w*max/h); h=max; } }
+        const c=document.createElement('canvas'); c.width=w; c.height=h; c.getContext('2d').drawImage(im,0,0,w,h);
+        let q=0.6, url=c.toDataURL('image/jpeg',q);
+        while(url.length>40000 && q>0.3){ q-=0.1; url=c.toDataURL('image/jpeg',q); }
+        const ing=ingById(id); if(ing){ ing.img=url; save(); render(); toast('Imagen cargada'); }
+      };
+      im.onerror=()=>toast('No se pudo leer la imagen'); im.src=rd.result;
+    };
+    rd.readAsDataURL(f);
+  };
+  inp.click();
+}
+function removeImg(id){ const ing=ingById(id); if(ing){ ing.img=null; save(); render(); } }
 function catOptions(){ const set=[...new Set(state.ingredients.map(i=>i.categoria).filter(c=>c&&(''+c).trim()))].sort((a,b)=>a.localeCompare(b)); return set.map(c=>`<option value="${esc(c)}">`).join(''); }
 function delLine(rid){ state.recipes=state.recipes.filter(x=>x.id!==rid); save(); render(); }
 function delProduct(id){ if(!confirm('¿Eliminar este producto?'))return; state.products=state.products.filter(p=>p.id!==id); state.recipes=state.recipes.filter(r=>r.productId!==id); save(); render(); }
