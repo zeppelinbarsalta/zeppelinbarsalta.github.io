@@ -10,7 +10,7 @@
 <script>
 /* ===== CONFIGURAR ANTES DE SUBIR ===== */
 const ENDPOINT    = 'https://script.google.com/macros/s/AKfycby2xWyn_9xAgSV7xsPaUYL7_NNj9yK60PL_DG3sWtuvCjiF8bTEewdE69qBnPSU9_yOHQ/exec';
-const READ_TOKEN  = 'zeppelin';   // el mismo READ_TOKEN del backend
+const READ_TOKEN  = 'CAMBIA-ESTE-TOKEN-DE-LECTURA';   // el mismo READ_TOKEN del backend
 </script>
 <style>
 :root{--bg:#0A0A0A;--surface:#151515;--surface2:#1d1d1d;--line:#2a2a2a;--orange:#FF5A00;--text:#f4f4f4;--muted:#8c8c8c}
@@ -56,6 +56,12 @@ main{max-width:900px;margin:0 auto;padding:12px 14px}
 .ftec-steps{margin:0;padding-left:22px;font-size:14px;line-height:1.65;color:#222}
 .ftec-steps li{margin-bottom:5px}
 .ftec-foot{display:flex;justify-content:space-between;border-top:1px solid #e3e3e3;margin-top:22px;padding-top:8px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#999}
+.ftec-cris{margin:2px 0 6px}
+.ftec-cris .lbl2{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#999;display:block;margin-bottom:5px}
+.ftec-imgs{display:flex;gap:14px;flex-wrap:wrap}
+.ftec-imgs figure{margin:0;text-align:center;width:100px}
+.ftec-imgs img{width:100px;height:100px;object-fit:contain;border:1px solid #e3e3e3;border-radius:6px;background:#fafafa}
+.ftec-imgs figcaption{font-size:11px;color:#666;margin-top:3px;line-height:1.2}
 
 @media print{
   header,main,.ov-bar{display:none!important}
@@ -124,6 +130,7 @@ function ficha(p){
     ${p.composition?`<div class="ftec-desc">${esc(p.composition)}</div>`:''}
     <div class="ftec-rinde"><div><span class="lbl">Rinde</span><span class="val">${p.rinde?esc(p.rinde):'—'}</span></div>${pesoG>0?`<div><span class="lbl">Aprox.</span><span class="val">${pesoG} g</span></div>`:''}</div>
     <div class="ftec-h">Ingredientes</div>
+    ${(()=>{const imgs=lines.map(r=>ingById(r.ingredientId)).filter(i=>i&&i.img);return imgs.length?`<div class="ftec-cris"><span class="lbl2">Cristalería / presentación</span><div class="ftec-imgs">${imgs.map(i=>`<figure><img src="${i.img}"><figcaption>${esc(i.name)}</figcaption></figure>`).join('')}</div></div>`:'';})()}
     <table class="ftec-ing"><tbody>
     ${lines.length?lines.map(r=>{const ing=ingById(r.ingredientId);return `<tr><td>${ing?esc(ing.name):'?'}</td><td class="q">${r.qty??''} ${r.unit||(ing?ing.unit:'')}</td></tr>`;}).join(''):'<tr><td style="color:#999">Sin ingredientes cargados.</td></tr>'}
     </tbody></table>
