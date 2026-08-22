@@ -328,7 +328,7 @@
 /* ============================================================
    Reservas Zeppelin — v4.0 (mesas editables por sector)
    ============================================================ */
-const VERSION="5.12";
+const VERSION="5.13";
 
 /* Metadatos fijos de sector (nombre, zona, reglas de combinación). */
 const SECTORES_META=[
@@ -429,6 +429,7 @@ let localDeleted=new Set(); // ids borrados local NO confirmados por el servidor
 function marcarPendiente(id){ pendingSync.add(id); localDeleted.delete(id); }
 function marcarBorrado(id){ localDeleted.add(id); pendingSync.delete(id); }
 function setSync(s){ SYNC=s; const el=document.getElementById('syncLbl'); if(el){ el.textContent=s==='ok'?'● Sincronizado':s==='off'?'● Sin conexión — reintentar':'● Solo este equipo'; el.className='sync '+s; el.title=(s==='off'?SYNCERR:''); } }
+// Respaldo por <script> (JSONP). Manda cookies, así que solo se usa si fetch falla.
 function jsonp(params){
   return new Promise((resolve,reject)=>{
     const cb='cb'+Date.now()+Math.floor(Math.random()*1e4);
@@ -443,13 +444,23 @@ function jsonp(params){
     setTimeout(()=>{if(!done){reject(new Error('timeout'));cleanup();}},15000);
   });
 }
-// Toda operación (leer y escribir) va por JSONP y devuelve el estado completo del servidor.
+function procesarResp(d){
+  if(d&&d.ok){ SYNCERR=''; setSync('ok'); return d; }
+  SYNCERR=(d&&d.error)?('el backend respondió: '+d.error):'respuesta inválida del backend';
+  setSync('off'); return null;
+}
+// Toda operación (leer y escribir) devuelve el estado completo del servidor.
+// Primero fetch (NO manda cookies → entra siempre anónimo, evita el problema de /u/1/).
+// Si fetch falla (CORS/red), cae a JSONP como respaldo.
 function api(action,data){
   if(!BACKEND_URL){ setSync('local'); return Promise.resolve(null); }
-  const params={action,token:API_TOKEN};
-  if(data!==undefined) params.data=JSON.stringify(data);
-  return jsonp(params).then(d=>{ if(d&&d.ok){SYNCERR='';setSync('ok');return d;} SYNCERR=(d&&d.error)?('el backend respondió: '+d.error):'respuesta inválida del backend'; setSync('off'); return null; })
-    .catch(e=>{ SYNCERR='el backend no responde ('+((e&&e.message)||'red/timeout')+'). Revisá la URL o el despliegue.'; setSync('off'); return null; });
+  const p={action,token:API_TOKEN};
+  if(data!==undefined) p.data=JSON.stringify(data);
+  const url=BACKEND_URL+(BACKEND_URL.includes('?')?'&':'?')+new URLSearchParams(p).toString();
+  return fetch(url,{method:'GET',redirect:'follow'})
+    .then(r=>{ if(!r.ok) throw new Error('http '+r.status); return r.json(); })
+    .then(procesarResp)
+    .catch(()=> jsonp(p).then(procesarResp).catch(e=>{ SYNCERR='no se pudo contactar el backend ('+((e&&e.message)||'red')+'). Revisá acceso "Cualquier persona" y el despliegue.'; setSync('off'); return null; }) );
 }
 // Fusiona el estado del servidor con lo local SIN perder reservas no confirmadas.
 function applyServer(d){
