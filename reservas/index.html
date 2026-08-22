@@ -48,7 +48,7 @@
   .nb-date{font-size:13px;color:var(--muted);text-transform:capitalize;letter-spacing:.03em}
   .sync{font-size:11px;letter-spacing:.05em;white-space:nowrap}
   .sync.ok{color:var(--green)}
-  .sync.off{color:var(--red)}
+  .sync.off{color:var(--red);cursor:pointer}
   .sync.local{color:var(--muted)}
 
   .legend{display:flex;flex-wrap:wrap;gap:16px;margin:0 0 20px;font-size:12.5px;color:var(--muted)}
@@ -328,7 +328,7 @@
 /* ============================================================
    Reservas Zeppelin — v4.0 (mesas editables por sector)
    ============================================================ */
-const VERSION="5.11";
+const VERSION="5.12";
 
 /* Metadatos fijos de sector (nombre, zona, reglas de combinación). */
 const SECTORES_META=[
@@ -423,12 +423,12 @@ function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','
 /* ===== Backend (Google Apps Script + Sheet): sincroniza entre dispositivos ===== */
 const BACKEND_URL = "https://script.google.com/macros/s/AKfycbx_qtjFgXCoGO3RHRrU87d4mA54sDoZ7Tj7dcXAJ0mBXv-Z8psrqkjhehuRoi2qwcOPng/exec"; // backend Zeppelin (fijo)
 const API_TOKEN   = "zeppelin-reservas"; // debe coincidir con TOKEN del Apps Script
-let SYNC="local";
+let SYNC="local", SYNCERR="";
 let pendingSync=new Set();  // ids con alta/cambio local NO confirmado por el servidor
 let localDeleted=new Set(); // ids borrados local NO confirmados por el servidor
 function marcarPendiente(id){ pendingSync.add(id); localDeleted.delete(id); }
 function marcarBorrado(id){ localDeleted.add(id); pendingSync.delete(id); }
-function setSync(s){ SYNC=s; const el=document.getElementById('syncLbl'); if(el){ el.textContent=s==='ok'?'● Sincronizado':s==='off'?'● Sin conexión':'● Solo este equipo'; el.className='sync '+s; } }
+function setSync(s){ SYNC=s; const el=document.getElementById('syncLbl'); if(el){ el.textContent=s==='ok'?'● Sincronizado':s==='off'?'● Sin conexión — reintentar':'● Solo este equipo'; el.className='sync '+s; el.title=(s==='off'?SYNCERR:''); } }
 function jsonp(params){
   return new Promise((resolve,reject)=>{
     const cb='cb'+Date.now()+Math.floor(Math.random()*1e4);
@@ -448,8 +448,8 @@ function api(action,data){
   if(!BACKEND_URL){ setSync('local'); return Promise.resolve(null); }
   const params={action,token:API_TOKEN};
   if(data!==undefined) params.data=JSON.stringify(data);
-  return jsonp(params).then(d=>{ if(d&&d.ok){setSync('ok');return d;} setSync('off'); return null; })
-    .catch(()=>{ setSync('off'); return null; });
+  return jsonp(params).then(d=>{ if(d&&d.ok){SYNCERR='';setSync('ok');return d;} SYNCERR=(d&&d.error)?('el backend respondió: '+d.error):'respuesta inválida del backend'; setSync('off'); return null; })
+    .catch(e=>{ SYNCERR='el backend no responde ('+((e&&e.message)||'red/timeout')+'). Revisá la URL o el despliegue.'; setSync('off'); return null; });
 }
 // Fusiona el estado del servidor con lo local SIN perder reservas no confirmadas.
 function applyServer(d){
@@ -457,7 +457,7 @@ function applyServer(d){
   const server=Array.isArray(d.reservas)?d.reservas:[];
   // SALVAGUARDA: si el servidor responde vacío pero tenemos reservas locales y no
   // borramos nada a propósito, es un hipo del backend → NO pisar nada.
-  if(server.length===0 && RESERVAS.length>0 && localDeleted.size===0){ setSync('off'); return; }
+  if(server.length===0 && RESERVAS.length>0 && localDeleted.size===0){ SYNCERR='el servidor devolvió la hoja vacía; se conservó lo local para no perder datos.'; setSync('off'); return; }
   const sIds=new Set(server.map(r=>r.id));
   // confirmaciones: lo que ya está en el servidor deja de estar pendiente
   pendingSync.forEach(id=>{ if(sIds.has(id)) pendingSync.delete(id); });
@@ -789,6 +789,7 @@ floorEl.addEventListener('mouseleave',()=>{tip.style.display='none';});
 
 /* Wiring. */
 const fechaInput=document.getElementById('fecha');
+document.getElementById('syncLbl').addEventListener('click',()=>{ if(!BACKEND_URL) return; api('load').then(d=>{ if(d){applyServer(d);} else if(SYNCERR){alert('No se pudo sincronizar:\n\n'+SYNCERR);} }); });
 fechaInput.value=fechaSel;
 fechaInput.addEventListener('change',()=>{PENDING=null;fechaSel=fechaInput.value||fechaSel;renderAll();});
 document.getElementById('resetBtn').addEventListener('click',resetNoche);
