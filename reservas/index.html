@@ -111,6 +111,8 @@
   .rv-count{font-size:13px;color:var(--muted);letter-spacing:.05em}
   .rv{display:flex;flex-direction:column;gap:9px;padding:16px 20px;margin-bottom:10px;background:var(--panel-2);border:1px solid var(--stroke);border-left:3px solid var(--orange)}
   .rv.llego{border-left-color:var(--green)}
+  .rv.no_asistio{border-left-color:#6a6a6a;opacity:.62}
+  button.mini.nos-on{background:#8a8a8a;color:#0a0a0a}
   .rv-top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
   .rv-title{font-size:20px;color:var(--text);font-weight:500;letter-spacing:.01em;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
   .rv-pax,.rv-mesas{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:22px;letter-spacing:.04em}
@@ -126,6 +128,10 @@
   .rv-info{display:flex;flex-wrap:wrap;gap:7px 26px;font-size:14px;color:var(--muted);letter-spacing:.02em}
   .rv-info b{color:#dcdcdc;font-weight:500}
   .rv-made{color:var(--muted)}
+  .rv-nota{margin-top:8px;font-size:13.5px;color:#e9d9c8;background:rgba(255,90,0,.06);border-left:2px solid var(--orange-line);padding:7px 12px;border-radius:2px}
+  .rv-nota span{color:var(--orange);font-size:10px;letter-spacing:.14em;text-transform:uppercase;margin-right:6px}
+  .asig-input .f.fw,.ef.fw{flex:1 1 100%}
+  .asig-input .f.fw input,.ef.fw input{width:100%}
   .reubic{background:rgba(255,90,0,.06);border:1px solid var(--orange-line);border-left:3px solid var(--orange);padding:14px 16px;margin:-2px 0 12px}
   .reubic-h{font-size:13.5px;color:var(--orange);margin-bottom:10px;letter-spacing:.02em}
   .ed-fields{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
@@ -274,8 +280,9 @@
       <div class="asig-input">
         <div class="f"><label for="pax">Personas *</label><input id="pax" type="number" min="1" max="60" placeholder="—" inputmode="numeric"></div>
         <div class="f"><label for="rnom">Nombre y apellido *</label><input id="rnom" type="text" placeholder="Juan Pérez"></div>
-        <div class="f"><label for="rdni">DNI *</label><input id="rdni" type="text" placeholder="30123456" inputmode="numeric"></div>
+        <div class="f"><label for="rdni">DNI</label><input id="rdni" type="text" placeholder="Opcional" inputmode="numeric"></div>
         <div class="f"><label for="rtel">WhatsApp *</label><input id="rtel" type="text" placeholder="387 545-8204" inputmode="tel"></div>
+        <div class="f fw"><label for="rnotas">Notas</label><input id="rnotas" type="text" placeholder="Cumpleaños, alergias, ubicación preferida... (opcional)"></div>
       </div>
     </div>
     <div id="rmsg" class="rmsg"></div>
@@ -321,7 +328,7 @@
 /* ============================================================
    Reservas Zeppelin — v4.0 (mesas editables por sector)
    ============================================================ */
-const VERSION="5.8";
+const VERSION="5.11";
 
 /* Metadatos fijos de sector (nombre, zona, reglas de combinación). */
 const SECTORES_META=[
@@ -414,7 +421,7 @@ let OCUP=new Set(), LAST=[], OCUPINFO={};
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 
 /* ===== Backend (Google Apps Script + Sheet): sincroniza entre dispositivos ===== */
-const BACKEND_URL = "https://script.google.com/macros/s/AKfycbx_qtjFgXCoGO3RHRrU87d4mA54sDoZ7Tj7dcXAJ0mBXv-Z8psrqkjhehuRoi2qwcOPng/exec"; // <<<<< PEGÁ ACÁ la URL /exec del Apps Script. Vacío = solo este equipo.
+const BACKEND_URL = "https://script.google.com/macros/s/AKfycbx_qtjFgXCoGO3RHRrU87d4mA54sDoZ7Tj7dcXAJ0mBXv-Z8psrqkjhehuRoi2qwcOPng/exec"; // backend Zeppelin (fijo)
 const API_TOKEN   = "zeppelin-reservas"; // debe coincidir con TOKEN del Apps Script
 let SYNC="local";
 let pendingSync=new Set();  // ids con alta/cambio local NO confirmado por el servidor
@@ -480,15 +487,15 @@ async function initData(){
   }
 }
 function reservasNoche(){return RESERVAS.filter(r=>String(r.fecha).slice(0,10)===fechaSel);}
-function ocupadasSet(){const s=new Set();reservasNoche().forEach(r=>r.mesasIds.forEach(id=>s.add(id)));return s;}
-function reservadasEnTodas(){const s=new Set();RESERVAS.forEach(r=>r.mesasIds.forEach(id=>s.add(id)));return s;}
+function ocupadasSet(){const s=new Set();reservasNoche().forEach(r=>{if(r.estado!=='no_asistio')r.mesasIds.forEach(id=>s.add(id));});return s;}
+function reservadasEnTodas(){const s=new Set();RESERVAS.forEach(r=>{if(r.estado!=='no_asistio')r.mesasIds.forEach(id=>s.add(id));});return s;}
 
 /* Motor de asignación (disponibilidad). */
 /* Opciones de ubicación para N personas en una fecha, excluyendo opcionalmente una reserva
    (para que sus propias mesas cuenten como disponibles al reubicarla). */
 function opcionesPara(N,fecha,excluirId){
   const oc=new Set();
-  RESERVAS.filter(x=>x.fecha===fecha&&x.id!==excluirId).forEach(x=>x.mesasIds.forEach(m=>oc.add(m)));
+  RESERVAS.filter(x=>x.fecha===fecha&&x.id!==excluirId&&x.estado!=='no_asistio').forEach(x=>x.mesasIds.forEach(m=>oc.add(m)));
   const res=[];
   SECTORES.forEach(s=>bloquesDe(s).forEach(b=>{
     const libres=b.ids.filter(id=>!oc.has(id));
@@ -516,24 +523,27 @@ function reservar(i){
   const $n=document.getElementById('rnom'),$d=document.getElementById('rdni'),$t=document.getElementById('rtel');
   [$n,$d,$t].forEach(el=>el.classList.remove('err'));
   const nombre=($n.value||'').trim(), dni=($d.value||'').replace(/\D/g,''), wa=normWa($t.value);
+  const notas=(document.getElementById('rnotas').value||'').trim();
   const pax=Math.max(1,parseInt(document.getElementById('pax').value||'0',10));
   if(nombre.split(/\s+/).filter(Boolean).length<2){$n.classList.add('err');flash('Falta nombre y apellido (los dos).');$n.focus();return;}
-  if(dni.length<7||dni.length>8){$d.classList.add('err');flash('DNI inválido: 7 u 8 dígitos.');$d.focus();return;}
+  if(dni && (dni.length<7||dni.length>8)){$d.classList.add('err');flash('Si cargás DNI, tiene que tener 7 u 8 dígitos.');$d.focus();return;}
   if(!wa){$t.classList.add('err');flash('WhatsApp inválido: código de área + número.');$t.focus();return;}
   const nomN=normName(nombre);
-  const dup=reservasNoche().find(r=>normName(r.nombre)===nomN || (r.dni&&r.dni===dni) || (r.wa&&r.wa===wa));
+  const dup=reservasNoche().find(r=>normName(r.nombre)===nomN || (dni&&r.dni===dni) || (r.wa&&r.wa===wa));
   if(dup){
-    let campo = normName(dup.nombre)===nomN?'nombre' : (dup.dni===dni?'DNI':'WhatsApp');
+    let campo = normName(dup.nombre)===nomN?'nombre' : (dni&&dup.dni===dni?'DNI':'WhatsApp');
     flash('Ya hay una reserva de esta persona esta noche ('+campo+' coincide): '+dup.nombre+' · '+dup.mesasIds.join(', ')+'. Una reserva por persona.');
     return;
   }
-  const nueva={id:'r'+Date.now(),fecha:fechaSel,nombre,dni,wa,pax,sectorId:o.sectorId,sector:o.sector,bloque:o.nombre,mesasIds:o.usarIds,hora_limite:'23:00',estado:'pendiente',creada:new Date().toISOString()};
+  const nueva={id:'r'+Date.now(),fecha:fechaSel,nombre,dni,wa,notas,pax,sectorId:o.sectorId,sector:o.sector,bloque:o.nombre,mesasIds:o.usarIds,hora_limite:'23:00',estado:'pendiente',creada:new Date().toISOString()};
   RESERVAS.push(nueva);
   marcarPendiente(nueva.id);
-  saveReservas(); PENDING=null; $n.value='';$d.value='';$t.value='';document.getElementById('pax').value=''; renderAll(); api('add',nueva).then(applyServer);
+  saveReservas(); PENDING=null; $n.value='';$d.value='';$t.value='';document.getElementById('rnotas').value='';document.getElementById('pax').value=''; renderAll(); api('add',nueva).then(applyServer);
 }
 function liberar(id){PENDING=null;marcarBorrado(id);RESERVAS=RESERVAS.filter(r=>r.id!==id);saveReservas();renderAll();api('delete',{id}).then(applyServer);}
 function toggleEstado(id){const r=RESERVAS.find(x=>x.id===id);if(r){r.estado=r.estado==='llego'?'pendiente':'llego';marcarPendiente(r.id);saveReservas();renderAll();api('update',r).then(applyServer);}}
+function marcarNoAsistio(id){const r=RESERVAS.find(x=>x.id===id);if(r){r.estado=r.estado==='no_asistio'?'pendiente':'no_asistio';marcarPendiente(r.id);saveReservas();renderAll();api('update',r).then(applyServer);}}
+window.marcarNoAsistio=marcarNoAsistio;
 function flashRv(msg){const el=document.getElementById('rvMsg');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),4000);}
 let PENDING=null, EDITING=null;
 // Arma opciones de ubicación (permanecer + alternativas) para una reserva con cierta cantidad.
@@ -544,7 +554,7 @@ function construirReubic(r,pax){
   if(si>=0){
     stay=all[si]; ops=all.filter((_,i)=>i!==si);
     const s=SECTORES.find(x=>x.id===r.sectorId), b=bloquesDe(s).find(x=>x.nombre===r.bloque);
-    const otras=new Set(); RESERVAS.filter(x=>x.fecha===r.fecha&&x.id!==r.id).forEach(x=>x.mesasIds.forEach(m=>otras.add(m)));
+    const otras=new Set(); RESERVAS.filter(x=>x.fecha===r.fecha&&x.id!==r.id&&x.estado!=='no_asistio').forEach(x=>x.mesasIds.forEach(m=>otras.add(m)));
     const disp=b.ids.filter(m=>!otras.has(m));
     let keep=r.mesasIds.filter(m=>disp.includes(m)).slice(0,stay.mesas);
     if(keep.length<stay.mesas) keep=keep.concat(disp.filter(m=>!keep.includes(m)).slice(0,stay.mesas-keep.length));
@@ -578,10 +588,11 @@ function guardarEdicion(id){
   const nombre=(document.getElementById('ednom-'+id).value||'').trim();
   const dni=(document.getElementById('eddni-'+id).value||'').replace(/\D/g,'');
   const wa=normWa(document.getElementById('edwa-'+id).value);
+  const notas=(document.getElementById('ednotas-'+id).value||'').trim();
   if(nombre.split(/\s+/).filter(Boolean).length<2){ flashRv('Falta nombre y apellido (los dos).'); return; }
-  if(dni.length<7||dni.length>8){ flashRv('DNI inválido: 7 u 8 dígitos.'); return; }
+  if(dni && (dni.length<7||dni.length>8)){ flashRv('Si cargás DNI, tiene que tener 7 u 8 dígitos.'); return; }
   if(!wa){ flashRv('WhatsApp inválido: código de área + número.'); return; }
-  r.nombre=nombre; r.dni=dni; r.wa=wa;
+  r.nombre=nombre; r.dni=dni; r.wa=wa; r.notas=notas;
   marcarPendiente(r.id); saveReservas(); EDITING=null; renderAll(); api('update',r).then(applyServer);
 }
 function pedirCambioSector(id){
@@ -695,8 +706,9 @@ function editFormHTML(r){
     <div class="reubic-h">Editar datos de la reserva</div>
     <div class="ed-fields">
       <div class="ef"><label>Nombre y apellido</label><input id="ednom-${r.id}" value="${esc(r.nombre)}"></div>
-      <div class="ef"><label>DNI</label><input id="eddni-${r.id}" value="${esc(r.dni||'')}" inputmode="numeric"></div>
+      <div class="ef"><label>DNI (opcional)</label><input id="eddni-${r.id}" value="${esc(r.dni||'')}" inputmode="numeric"></div>
       <div class="ef"><label>WhatsApp</label><input id="edwa-${r.id}" value="${esc(fmtWa(r.wa||''))}" inputmode="tel"></div>
+      <div class="ef fw"><label>Notas</label><input id="ednotas-${r.id}" value="${esc(r.notas||'')}" placeholder="Particularidades de esta reserva..."></div>
     </div>
     <div class="ed-actions2">
       <button class="mini" onclick="guardarEdicion('${r.id}')">Guardar datos</button>
@@ -719,6 +731,7 @@ function renderReservas(){
         <div class="rv-actions">
           <span class="rv-hold">retiene hasta ${r.hora_limite}</span>
           <button class="mini ${r.estado==='llego'?'on':''}" onclick="toggleEstado('${r.id}')">${r.estado==='llego'?'Llegó ✓':'Pendiente'}</button>
+          <button class="mini ${r.estado==='no_asistio'?'nos-on':''}" onclick="marcarNoAsistio('${r.id}')">${r.estado==='no_asistio'?'No vino ✓':'No asistió'}</button>
           <button class="mini ghost" onclick="editarReserva('${r.id}')">Editar</button>
           <button class="mini danger" onclick="liberar('${r.id}')">Liberar</button>
         </div>
@@ -730,6 +743,7 @@ function renderReservas(){
         <span>${r.wa?`<a class="wa" href="https://wa.me/${r.wa}" target="_blank" rel="noopener">${fmtWa(r.wa)}</a>`:'—'}</span>
         <span class="rv-made">Reservado: ${fmtHecha(r.creada)}</span>
       </div>
+      ${r.notas?`<div class="rv-nota"><span>Nota:</span> ${esc(r.notas)}</div>`:''}
     </div>${editFormHTML(r)}${reubicHTML(r)}`;
   }).join('');
 }
@@ -751,7 +765,7 @@ function renderEditor(){
 }
 function renderAll(){
   OCUP=ocupadasSet();
-  OCUPINFO={}; reservasNoche().forEach(r=>r.mesasIds.forEach(id=>OCUPINFO[id]=r));
+  OCUPINFO={}; reservasNoche().forEach(r=>{if(r.estado!=='no_asistio')r.mesasIds.forEach(id=>OCUPINFO[id]=r);});
   renderDash();
   document.getElementById('floor').innerHTML=SECTORES.map(sectorHTML).join('');
   renderReservas(); renderAsig();
