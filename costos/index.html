@@ -665,7 +665,7 @@ function stockRow(i){
     <td class="r"><input class="num" type="number" inputmode="decimal" value="${i.stockD??''}" placeholder="0" onchange="setStockVal('${i.id}','stockD',this.value,this)" style="width:78px"></td>
     <td class="r num" style="font-weight:500;color:${hasStock&&tot>0?'#4aa3ff':'var(--muted)'}">${hasStock?(''+tot).replace('.',','):'—'}${(hasStock&&i.buyUnit&&+i.buySize>0)?` <span class="ucell">(= ${(''+(tot*(+i.buySize))).replace('.',',')} ${i.unit})</span>`:''}</td>
     <td class="r">${sem}</td>
-    <td class="r"><input class="num" type="number" inputmode="decimal" value="${i.reposicion??''}" placeholder="${diff!=null&&diff>0?diff:0}" onchange="setStockVal('${i.id}','reposicion',this.value,this)" style="width:80px"></td>
+    <td class="r"><input class="num" type="number" inputmode="decimal" value="${i.reposicion??''}" placeholder="${diff!=null&&diff>0?Math.round(diff):0}" onchange="setStockVal('${i.id}','reposicion',this.value,this)" style="width:80px"></td>
     <td class="ucell">${i.buyUnit||i.unit}</td></tr>`;
 }
 
@@ -821,11 +821,11 @@ function applyImport(){
 }
 
 function clearStockCounts(){
-  const n=state.ingredients.filter(i=>i.stockZ!=null||i.stockD!=null).length;
+  const n=state.ingredients.filter(i=>i.stockZ!=null||i.stockD!=null||i.reposicion!=null).length;
   if(!n){ toast('No hay conteo cargado'); return; }
-  if(!confirm(`Vaciar las casillas Zeppelin y Depósito de ${n} ingrediente(s)?\n\nSe borra solo el conteo actual. NO se tocan el stock de piso, los precios ni la reposición.`)) return;
-  state.ingredients.forEach(i=>{ i.stockZ=null; i.stockD=null; });
-  save(); render(); toast('Conteo vaciado — listo para cargar');
+  if(!confirm(`Vaciar Zeppelin, Depósito y Reposición de ${n} ingrediente(s)?\n\nSe borra el conteo y la reposición. NO se tocan el stock de piso ni los precios.`)) return;
+  state.ingredients.forEach(i=>{ i.stockZ=null; i.stockD=null; i.reposicion=null; });
+  save(); render(); toast('Conteo y reposición vaciados');
 }
 function buildOrder(){
   const map={};
@@ -834,7 +834,7 @@ function buildOrder(){
     const hasPiso=(i.stockPiso!=null&&i.stockPiso!=='');
     const shortfall=hasPiso?((+i.stockPiso)-tot):0;
     const rep=+i.reposicion||0;
-    const qty = rep>0 ? rep : (shortfall>0?shortfall:0);
+    const qty = rep>0 ? rep : (shortfall>0?Math.round(shortfall):0);
     const include = rep>0 || (hasPiso && shortfall>0);
     if(include && qty>0){
       const sup=supById(i.proveedorId);
@@ -928,7 +928,7 @@ function updateStockRow(i, el){
   else if(diff===0) sem='<span style="color:#ffd23f">● justo</span>';
   else sem=`<span style="color:#35c759">● <b class="num">+${(''+(-diff)).replace('.',',')}</b></span>`;
   tr.children[8].innerHTML = sem;
-  const rep=tr.children[9].querySelector('input'); if(rep) rep.placeholder = (diff!=null&&diff>0)? diff : 0;
+  const rep=tr.children[9].querySelector('input'); if(rep) rep.placeholder = (diff!=null&&diff>0)? Math.round(diff) : 0;
 }
 function setIngNum(id, field, val, el){
   const i=ingById(id); if(!i) return;
