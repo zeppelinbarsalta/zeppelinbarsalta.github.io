@@ -59,7 +59,31 @@
   .sw-sillon{border-color:var(--sillon);background:rgba(192,124,255,.14)}
   .sw-oc{border-color:#3d3d3d;background:rgba(255,255,255,.03)}
 
-  /* editor */
+  /* calendario */
+  .calendario{background:var(--panel);border:1px solid var(--orange-line);margin:0 0 14px}
+  .calendario[hidden]{display:none}
+  .cal-head{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px dashed var(--orange-line);flex-wrap:wrap}
+  #calTitulo{text-transform:capitalize;min-width:170px}
+  .cal-leyenda{font-size:11px;color:var(--muted);letter-spacing:.03em}
+  #calClose{margin-left:auto}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--stroke);padding:1px}
+  .cal-dow{background:var(--panel);text-align:center;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:7px 0}
+  .cal-cell{background:var(--panel);min-height:60px;padding:5px 7px;cursor:pointer}
+  .cal-cell.empty{background:transparent;cursor:default}
+  .cal-cell:hover:not(.empty){background:var(--panel-2)}
+  .cal-cell .cd{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--muted);line-height:1}
+  .cal-cell.activa{background:rgba(255,90,0,.08)}
+  .cal-cell.activa .cd{color:var(--text)}
+  .cal-cell.sel{outline:2px solid var(--orange);outline-offset:-2px}
+  .cal-cell .cn{font-size:11px;color:var(--orange);font-weight:600;margin-top:3px;letter-spacing:.02em}
+  .cal-cell .cs{font-size:10px;color:var(--muted);line-height:1.35}
+  .cal-list{padding:12px 18px 18px;display:flex;flex-direction:column;gap:6px}
+  .cal-row{display:flex;gap:14px;align-items:baseline;padding:10px 12px;background:var(--panel-2);border:1px solid var(--stroke);border-left:3px solid var(--orange);cursor:pointer;flex-wrap:wrap}
+  .cal-row:hover{background:rgba(255,90,0,.06)}
+  .cr-fecha{font-family:'Bebas Neue',sans-serif;font-size:18px;text-transform:capitalize;min-width:130px;letter-spacing:.02em}
+  .cr-stats{font-size:13.5px;color:#cfcfcf;flex:1}
+  .cr-stats b{color:var(--orange);font-family:'Bebas Neue',sans-serif;font-size:16px;margin-right:2px}
+  @media(max-width:600px){ .cal-cell{min-height:48px;padding:4px 5px} .cal-cell .cs{display:none} .cr-fecha{min-width:100px} }
   .editor{background:var(--panel);border:1px solid var(--orange-line);margin:0 0 20px}
   .editor[hidden]{display:none}
   .ed-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:16px 20px;border-bottom:1px dashed var(--orange-line)}
@@ -250,10 +274,23 @@
       <span id="syncLbl" class="sync local">● Solo este equipo</span>
     </div>
     <div class="nb-right">
+      <button class="ghost" id="calBtn">Calendario</button>
       <button class="ghost" id="cfgBtn">⚙ Configurar mesas</button>
       <button class="ghost" id="resetBtn">Vaciar noche</button>
     </div>
   </div>
+
+  <section class="calendario" id="calendario" hidden>
+    <div class="cal-head">
+      <button class="ghost mini" id="calPrev">‹</button>
+      <h2 class="asig-title" id="calTitulo"></h2>
+      <button class="ghost mini" id="calNext">›</button>
+      <span class="cal-leyenda">As = asientos (ocupados·libres) · Ms = mesas</span>
+      <button class="mini" id="calClose">Cerrar</button>
+    </div>
+    <div class="cal-grid" id="calGrid"></div>
+    <div class="cal-list" id="calList"></div>
+  </section>
 
   <section class="editor" id="editor" hidden>
     <div class="ed-head">
@@ -328,7 +365,7 @@
 /* ============================================================
    Reservas Zeppelin — v4.0 (mesas editables por sector)
    ============================================================ */
-const VERSION="5.13";
+const VERSION="5.14";
 
 /* Metadatos fijos de sector (nombre, zona, reglas de combinación). */
 const SECTORES_META=[
@@ -783,7 +820,64 @@ function renderAll(){
   document.getElementById('fechaLbl').textContent=fmtFecha(fechaSel);
   const inv=inventory();
   document.getElementById('verLine').textContent=`Reservas v${VERSION} · ${inv.totalMesas} mesas · ${inv.totalAsientos} asientos`;
+  if(!document.getElementById('calendario').hidden) renderCalendario();
 }
+
+/* ---------- Calendario / resumen mensual ---------- */
+let calMes = (function(){ const d=new Date(fechaSel+'T00:00:00'); d.setDate(1); return d; })();
+const MESES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+function resumenPorFecha(CAPOF){
+  const m={};
+  RESERVAS.forEach(r=>{
+    const f=String(r.fecha).slice(0,10);
+    if(!m[f]) m[f]={count:0,seatsOc:0,mesasOc:0};
+    m[f].count++;
+    if(r.estado!=='no_asistio'){
+      r.mesasIds.forEach(id=>{ m[f].mesasOc++; m[f].seatsOc += (CAPOF[id]||4); });
+    }
+  });
+  return m;
+}
+function irANoche(iso){
+  fechaSel=iso; document.getElementById('fecha').value=iso;
+  document.getElementById('calendario').hidden=true;
+  PENDING=null; EDITING=null; renderAll();
+  const rv=document.querySelector('.reservas'); if(rv) rv.scrollIntoView({behavior:'smooth'});
+}
+window.irANoche=irANoche;
+function renderCalendario(){
+  const inv=inventory();
+  const res=resumenPorFecha(inv.CAPOF);
+  const y=calMes.getFullYear(), mo=calMes.getMonth();
+  document.getElementById('calTitulo').textContent=MESES[mo]+' '+y;
+  const startDow=(new Date(y,mo,1).getDay()+6)%7; // Lunes=0
+  const dias=new Date(y,mo+1,0).getDate();
+  let cells=['Lu','Ma','Mi','Ju','Vi','Sá','Do'].map(d=>`<div class="cal-dow">${d}</div>`).join('');
+  for(let i=0;i<startDow;i++) cells+='<div class="cal-cell empty"></div>';
+  for(let d=1;d<=dias;d++){
+    const iso=y+'-'+String(mo+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    const r=res[iso], sel=iso===fechaSel?'sel':'';
+    if(r){
+      const sLib=inv.totalAsientos-r.seatsOc, mLib=inv.totalUnidades-r.mesasOc;
+      cells+=`<div class="cal-cell activa ${sel}" onclick="irANoche('${iso}')">
+        <div class="cd">${d}</div><div class="cn">${r.count} res</div>
+        <div class="cs">As ${r.seatsOc}·${sLib}</div><div class="cs">Ms ${r.mesasOc}·${mLib}</div></div>`;
+    }else{
+      cells+=`<div class="cal-cell ${sel}" onclick="irANoche('${iso}')"><div class="cd">${d}</div></div>`;
+    }
+  }
+  document.getElementById('calGrid').innerHTML=cells;
+  const activos=Object.keys(res).filter(f=>{const dd=new Date(f+'T00:00:00');return dd.getFullYear()===y&&dd.getMonth()===mo;}).sort();
+  document.getElementById('calList').innerHTML = activos.length ? activos.map(f=>{
+    const r=res[f], sLib=inv.totalAsientos-r.seatsOc, mLib=inv.totalUnidades-r.mesasOc;
+    const dd=new Date(f+'T00:00:00');
+    return `<div class="cal-row" onclick="irANoche('${f}')">
+      <div class="cr-fecha">${dd.toLocaleDateString('es-AR',{weekday:'short',day:'numeric',month:'short'})}</div>
+      <div class="cr-stats"><b>${r.count}</b> reservas · Asientos: ${r.seatsOc} ocupados · ${sLib} libres · Mesas: ${r.mesasOc} ocupadas · ${mLib} libres</div></div>`;
+  }).join('') : `<div class="res-empty">Sin reservas en ${MESES[mo]}.</div>`;
+}
+function abrirCalendario(){ const c=document.getElementById('calendario'); c.hidden=!c.hidden; if(!c.hidden){ calMes=new Date(fechaSel+'T00:00:00'); calMes.setDate(1); renderCalendario(); c.scrollIntoView({behavior:'smooth'}); } }
+function calMover(delta){ calMes.setMonth(calMes.getMonth()+delta); renderCalendario(); }
 
 /* Tooltip de mesa ocupada. */
 const tip=document.getElementById('tooltip');
@@ -804,6 +898,10 @@ document.getElementById('syncLbl').addEventListener('click',()=>{ if(!BACKEND_UR
 fechaInput.value=fechaSel;
 fechaInput.addEventListener('change',()=>{PENDING=null;fechaSel=fechaInput.value||fechaSel;renderAll();});
 document.getElementById('resetBtn').addEventListener('click',resetNoche);
+document.getElementById('calBtn').addEventListener('click',abrirCalendario);
+document.getElementById('calClose').addEventListener('click',()=>{document.getElementById('calendario').hidden=true;});
+document.getElementById('calPrev').addEventListener('click',()=>calMover(-1));
+document.getElementById('calNext').addEventListener('click',()=>calMover(1));
 document.getElementById('cfgBtn').addEventListener('click',()=>{const e=document.getElementById('editor');e.hidden=!e.hidden;if(!e.hidden)renderEditor();});
 document.getElementById('edClose').addEventListener('click',()=>{document.getElementById('editor').hidden=true;});
 document.getElementById('edReset').addEventListener('click',restablecer);
