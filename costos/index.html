@@ -631,7 +631,7 @@ function removeElab(id){ if(!confirm('¿Volver este elaborado a ingrediente comp
 function renderStock(m){
   m.innerHTML = searchBar('Buscar ingrediente o proveedor…','Ingrediente','addIngredient()');
   const list=document.getElementById('list');
-  list.insertAdjacentHTML('beforebegin','<div style="margin:-2px 0 12px;display:flex;gap:8px;flex-wrap:wrap"><button class="addbtn" style="background:#4aa3ff;color:#04203f" onclick="showOrder()">🛒 Armar orden de compra</button><button class="addbtn" style="background:var(--surface);color:var(--text);border:1px solid var(--line)" onclick="clearStockCounts()">🧹 Vaciar conteo (Zeppelin y Depósito)</button></div>');
+  list.insertAdjacentHTML('beforebegin','<div style="margin:-2px 0 12px;display:flex;gap:8px;flex-wrap:wrap"><button class="addbtn" style="background:#4aa3ff;color:#04203f" onclick="showOrder()">🛒 Armar orden de compra</button><button class="addbtn" style="background:var(--surface);color:var(--text);border:1px solid var(--barra)" onclick="clearStockCounts(\'barra\')">🧹 Vaciar Barra</button><button class="addbtn" style="background:var(--surface);color:var(--text);border:1px solid var(--cocina)" onclick="clearStockCounts(\'cocina\')">🧹 Vaciar Cocina</button><button class="addbtn" style="background:var(--surface);color:var(--text);border:1px solid var(--line)" onclick="clearStockCounts(\'\')">🧹 Vaciar todo</button></div>');
   fillStock(list);
 }
 function fillStock(list){
@@ -820,12 +820,14 @@ function applyImport(){
   window._imp=null;
 }
 
-function clearStockCounts(){
-  const n=state.ingredients.filter(i=>i.stockZ!=null||i.stockD!=null||i.reposicion!=null).length;
-  if(!n){ toast('No hay conteo cargado'); return; }
-  if(!confirm(`Vaciar Zeppelin, Depósito y Reposición de ${n} ingrediente(s)?\n\nSe borra el conteo y la reposición. NO se tocan el stock de piso ni los precios.`)) return;
-  state.ingredients.forEach(i=>{ i.stockZ=null; i.stockD=null; i.reposicion=null; });
-  save(); render(); toast('Conteo y reposición vaciados');
+function clearStockCounts(area){
+  const inScope=i=>(!area||i.area===area||i.area==='ambos');
+  const label = area==='barra'?'Barra':area==='cocina'?'Cocina':'todas las áreas';
+  const affected=state.ingredients.filter(i=>inScope(i)&&(i.stockZ!=null||i.stockD!=null||i.reposicion!=null));
+  if(!affected.length){ toast(`No hay conteo cargado en ${label}`); return; }
+  if(!confirm(`Vaciar Zeppelin, Depósito y Reposición de ${affected.length} ingrediente(s) de ${label}?\n\nSe borra el conteo y la reposición. NO se tocan el stock de piso ni los precios.`)) return;
+  state.ingredients.forEach(i=>{ if(inScope(i)){ i.stockZ=null; i.stockD=null; i.reposicion=null; } });
+  save(); render(); toast(`Conteo de ${label} vaciado`);
 }
 function buildOrder(){
   const map={};
