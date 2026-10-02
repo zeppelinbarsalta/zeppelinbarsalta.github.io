@@ -365,7 +365,7 @@
 /* ============================================================
    Reservas Zeppelin — v4.0 (mesas editables por sector)
    ============================================================ */
-const VERSION="5.14";
+const VERSION="5.15";
 
 /* Metadatos fijos de sector (nombre, zona, reglas de combinación). */
 const SECTORES_META=[
@@ -729,7 +729,7 @@ function renderAsig(){
       <div class="meta"><b>${o.mesas} ${o.mesas>1?'mesas':'mesa'}</b> · cap ${o.cap} · sobran ${o.sobran}</div>
       <button class="mini" onclick="reservar(${i})">Reservar</button></div>`).join('');
 }
-function fmtHecha(iso){try{return new Date(iso).toLocaleString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});}catch(_){return iso;}}
+function fmtHecha(iso){try{return new Date(iso).toLocaleString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:false})+' hs';}catch(_){return iso;}}
 function reubicHTML(r){
   if(!(PENDING&&PENDING.id===r.id)) return '';
   const list=PENDING.list;
@@ -766,7 +766,11 @@ function editFormHTML(r){
   </div>`;
 }
 function renderReservas(){
-  const list=reservasNoche().slice().sort((a,b)=>a.creada<b.creada?-1:1);
+  const list=reservasNoche().slice().sort((a,b)=>{
+    const sa=parseInt(String(a.sectorId).replace('S',''))||99, sb=parseInt(String(b.sectorId).replace('S',''))||99;
+    if(sa!==sb) return sa-sb;                 // primero sector 1, luego 2, etc.
+    return a.creada<b.creada?-1:1;            // dentro del sector, por orden de registro
+  });
   document.getElementById('rvCount').textContent=list.length?`${list.length} reservas · ${list.reduce((t,r)=>t+r.pax,0)} personas`:'';
   const out=document.getElementById('rvOut');
   if(!list.length){out.innerHTML=`<div class="res-empty">Sin reservas para esta noche. Cargá una arriba.</div>`;return;}
@@ -789,7 +793,7 @@ function renderReservas(){
         <span>Mesas: ${esc(r.mesasIds.join(', '))}</span>
         <span>DNI ${esc(r.dni||'—')}</span>
         <span>${r.wa?`<a class="wa" href="https://wa.me/${r.wa}" target="_blank" rel="noopener">${fmtWa(r.wa)}</a>`:'—'}</span>
-        <span class="rv-made">Reservado: ${fmtHecha(r.creada)}</span>
+        <span class="rv-made">Registrada: ${fmtHecha(r.creada)}</span>
       </div>
       ${r.notas?`<div class="rv-nota"><span>Nota:</span> ${esc(r.notas)}</div>`:''}
     </div>${editFormHTML(r)}${reubicHTML(r)}`;
