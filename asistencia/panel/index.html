@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Panel de asistencia · Zeppelin Bar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--neg:#0A0A0A;--nar:#FF5A00;--nar2:#E04E00;--narS:#FFE3D3;--papel:#FFFFFF;--fondo:#EDEDEA;--gris:#6B6B66;--linea:#D6D6D1;--ok:#1E9E4A;--warn:#E8A400;--bad:#D62F1F}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Oswald','Arial Narrow',Arial,sans-serif;background:var(--fondo);color:var(--neg);-webkit-font-smoothing:antialiased;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--nar);outline-offset:2px}
+.hide{display:none!important}
+header{background:var(--papel);border-bottom:4px solid var(--nar);position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+.top{max-width:1180px;margin:0 auto;padding:14px 20px 0;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.marca{font-family:'Bebas Neue',Impact,sans-serif;font-size:30px;line-height:1;letter-spacing:1px}
+.marca em{font-style:normal;color:var(--nar)}
+.acc{display:flex;gap:8px;align-items:center}
+.acc small{color:var(--gris);font-size:13px}
+nav{max-width:1180px;margin:0 auto;padding:10px 20px 0;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav button{background:none;border:none;padding:10px 14px;font-size:16px;font-weight:500;color:var(--gris);border-bottom:3px solid transparent;margin-bottom:-4px;white-space:nowrap}
+nav button.on{color:var(--neg);border-bottom-color:var(--neg)}
+nav .badge{background:var(--nar);color:#fff;border-radius:10px;font-size:12px;padding:1px 7px;margin-left:4px}
+main{max-width:1180px;margin:0 auto;padding:24px 20px 60px}
+h2{font-family:'Bebas Neue',Impact,sans-serif;font-weight:400;font-size:28px;letter-spacing:.5px;margin:28px 0 10px}
+h2:first-child{margin-top:0}
+.noche{font-family:'Bebas Neue',Impact,sans-serif;font-size:clamp(44px,8vw,86px);line-height:.9;letter-spacing:1px;margin-bottom:6px}
+.sub{color:var(--gris);font-size:15px;margin-bottom:22px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:0;background:var(--papel);border:1px solid var(--linea);border-radius:6px;overflow:hidden}
+.kpi{padding:16px 18px;border-right:1px solid var(--linea)}
+.kpi:last-child{border-right:none}
+.kpi b{display:block;font-family:'Bebas Neue',Impact,sans-serif;font-weight:400;font-size:44px;line-height:1}
+.kpi span{font-size:14px;color:var(--gris)}
+.kpi.alerta b{color:var(--nar)}
+.box{background:var(--papel);border:1px solid var(--linea);border-radius:6px;padding:16px}
+.tbl{background:var(--papel);border:1px solid var(--linea);border-radius:6px;overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th{text-align:left;font-weight:500;color:var(--gris);font-size:13px;padding:10px 12px;border-bottom:1px solid var(--linea);white-space:nowrap;background:#FAFAF8}
+td{padding:10px 12px;border-bottom:1px solid #EBEBE7;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+.vacio{padding:22px;color:var(--gris);text-align:center}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.dot.v{background:var(--ok)}.dot.a{background:var(--warn)}.dot.r{background:var(--bad)}
+.pill{display:inline-block;font-size:12px;font-weight:500;padding:2px 8px;border-radius:3px;background:var(--fondo);white-space:nowrap}
+.pill.in{background:var(--narS);color:var(--nar2)}
+.pill.warn{background:#FFF1C9;color:#7A5600}
+.pill.bad{background:#FBDCD8;color:#9C1F12}
+.pill.ok{background:#D8F1E1;color:#14632F}
+.btn{background:var(--neg);color:#fff;border:none;border-radius:4px;padding:9px 16px;font-size:15px;font-weight:500}
+.btn.alt{background:var(--papel);color:var(--neg);border:1.5px solid var(--neg)}
+.btn.nar{background:var(--nar)}
+.btn.sm{padding:5px 10px;font-size:13px}
+.btn:disabled{opacity:.4}
+.lnk{background:none;border:none;color:var(--nar2);font-weight:500;font-size:14px;padding:4px 6px}
+.lnk.bad{color:var(--bad)}
+.barra{display:flex;flex-wrap:wrap;gap:10px;align-items:end;margin-bottom:16px}
+.barra label{display:flex;flex-direction:column;font-size:13px;color:var(--gris);gap:4px}
+input,select,textarea{border:1.5px solid var(--linea);border-radius:4px;padding:8px 10px;font-size:15px;background:#fff;color:var(--neg)}
+.seg{display:inline-flex;border:1.5px solid var(--neg);border-radius:4px;overflow:hidden}
+.seg button{background:#fff;border:none;padding:8px 14px;font-size:15px}
+.seg button.on{background:var(--neg);color:#fff}
+.per{font-family:'Bebas Neue',Impact,sans-serif;font-size:30px;min-width:220px;text-align:center}
+.graf{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.graf .box{height:300px;position:relative}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.cfg label{display:block;font-size:14px;font-weight:500;margin:12px 0 4px}
+.cfg input{width:100%}
+.cfg p{color:var(--gris);font-size:13px;margin-top:4px;line-height:1.4}
+#qr{background:#fff;padding:14px;display:inline-block;border:1px solid var(--linea)}
+#qr img,#qr canvas{display:block;width:220px;height:220px}
+.login{max-width:380px;margin:12vh auto;padding:0 20px}
+.login .box{padding:24px}
+.login input{width:100%;margin:12px 0}
+.err{color:var(--bad);font-size:14px;margin-top:8px}
+.msg{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--neg);color:#fff;padding:12px 20px;border-radius:4px;font-size:15px;z-index:30;max-width:90vw}
+.msg.e{background:var(--bad)}
+.ov{position:fixed;inset:0;background:rgba(10,10,10,.45);display:flex;align-items:center;justify-content:center;z-index:20;padding:16px}
+.mod{background:var(--papel);border-radius:6px;width:100%;max-width:460px;max-height:90vh;overflow:auto;padding:22px}
+.mod h3{font-family:'Bebas Neue',Impact,sans-serif;font-weight:400;font-size:28px;margin-bottom:8px}
+.mod label{display:block;font-size:14px;font-weight:500;margin:12px 0 4px}
+.mod input,.mod select,.mod textarea{width:100%}
+.mod .pie{display:flex;justify-content:flex-end;gap:8px;margin-top:20px}
+.dias{display:flex;gap:6px;flex-wrap:wrap}
+.dias label{display:flex;align-items:center;gap:4px;margin:0;font-weight:400;border:1.5px solid var(--linea);border-radius:4px;padding:6px 8px}
+.dias input{width:auto;accent-color:var(--nar)}
+.cargando{opacity:.5;pointer-events:none}
+@media (max-width:760px){.graf,.grid2{grid-template-columns:1fr}.kpi{border-right:none;border-bottom:1px solid var(--linea)}.per{min-width:0;font-size:24px}}
+</style>
+</head>
+<body>
+
+<div id="vLogin" class="login hide">
+  <div class="box">
+    <div class="marca">Zeppelin <em>Asistencia</em></div>
+    <form id="fLogin">
+      <input id="tk" type="password" placeholder="Clave de administrador" autocomplete="current-password">
+      <button class="btn" style="width:100%" type="submit">Entrar</button>
+      <div class="err" id="eLogin"></div>
+    </form>
+  </div>
+</div>
+
+<div id="vApp" class="hide">
+  <header>
+    <div class="top">
+      <div class="marca">Zeppelin <em>Asistencia</em></div>
+      <div class="acc"><small id="act"></small><button class="btn alt sm" id="bRef">Actualizar</button><button class="lnk" id="bSalir">Salir</button></div>
+    </div>
+    <nav id="nav">
+      <button data-tab="hoy" class="on">Esta noche</button>
+      <button data-tab="rep">Reportes</button>
+      <button data-tab="mar">Marcas</button>
+      <button data-tab="per">Personal <span class="badge hide" id="bdg"></span></button>
+      <button data-tab="nov">Novedades</button>
+      <button data-tab="aud">Auditoría</button>
+      <button data-tab="cfg">Configuración</button>
+    </nav>
+  </header>
+  <main id="main">
+    <section id="t-hoy"></section>
+    <section id="t-rep" class="hide">
+      <div class="barra">
+        <div class="seg" id="segRep"><button data-m="sem" class="on">Semana</button><button data-m="mes">Mes</button></div>
+        <button class="btn alt" id="rPrev" aria-label="Período anterior">‹</button>
+        <div class="per" id="rLbl"></div>
+        <button class="btn alt" id="rNext" aria-label="Período siguiente">›</button>
+        <button class="btn nar" id="rXls">Exportar Excel</button>
+      </div>
+      <div id="repBody"></div>
+    </section>
+    <section id="t-mar" class="hide">
+      <div class="barra">
+        <label>Desde<input type="date" id="mDesde"></label>
+        <label>Hasta<input type="date" id="mHasta"></label>
+        <label>Persona<select id="mPer"><option value="">Todas</option></select></label>
+        <label>Estado<select id="mEst"><option value="">Todos</option><option>OK</option><option>REVISAR</option><option>MANUAL</option><option>EDITADA</option><option>ANULADA</option></select></label>
+        <button class="btn" id="mCargar">Ver marcas</button>
+        <button class="btn nar" id="mAdd">Agregar marca manual</button>
+      </div>
+      <div id="marBody"></div>
+    </section>
+    <section id="t-per" class="hide"></section>
+    <section id="t-nov" class="hide">
+      <div class="barra">
+        <label>Desde<input type="date" id="nDesde"></label>
+        <label>Hasta<input type="date" id="nHasta"></label>
+        <button class="btn" id="nCargar">Ver novedades</button>
+        <button class="btn nar" id="nAdd">Agregar novedad</button>
+      </div>
+      <div id="novBody"></div>
+    </section>
+    <section id="t-aud" class="hide"></section>
+    <section id="t-cfg" class="hide"></section>
+  </main>
+</div>
+
+<div id="ov" class="ov hide"><div class="mod" id="mod"></div></div>
+
+<script>
+const API = 'https://script.google.com/macros/s/AKfycbxgeQIS4pVFD03x6X9SwH50li5wZUOvKExgJZzNsZSBcX5RGkv2WsgbyW91K5BPtP0B/exec';
+const LS_TK = 'zpp_asist_admin';
+const ROLES = ['Mesero de Zona', 'Barra', 'Cocina', 'Bartender', 'Bachero', 'Comis', 'Cajero', 'Encargado', 'DJ', 'Recepcionista', 'Seguridad', 'Limpieza', 'Otro'];
+const DIAS = [['1', 'Lun'], ['2', 'Mar'], ['3', 'Mié'], ['4', 'Jue'], ['5', 'Vie'], ['6', 'Sáb'], ['0', 'Dom']];
+const TIPOS_NOV = ['Ausencia justificada', 'Franco', 'Licencia', 'Enfermedad', 'Cambio de turno', 'Ausencia injustificada', 'Otro'];
+const JUSTIFICA = ['Ausencia justificada', 'Franco', 'Licencia', 'Enfermedad', 'Cambio de turno'];
+const FLAG_TXT = { FUERA_RANGO: 'Fuera del radio', SIN_GPS: 'Sin ubicación' };
+
+let TOKEN = null;
+try { TOKEN = localStorage.getItem(LS_TK); } catch (e) {}
+let D = null;          // última carga del panel (fecha operativa actual)
+let tab = 'hoy';
+let repModo = 'sem', repRef = null, repData = null, charts = [];
+let marData = null, novData = null;
+let timer = null;
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const nom = p => p ? ((p.nombre || '') + ' ' + (p.apellido || '')).trim() : '—';
+const hhmm = ts => ts ? String(ts).slice(11, 16) : '';
+const hrs = min => (min / 60).toFixed(1).replace('.', ',');
+const money = n => '$ ' + Math.round(n).toLocaleString('es-AR');
+
+function msg(t, err) {
+  const m = document.createElement('div');
+  m.className = 'msg' + (err ? ' e' : '');
+  m.textContent = t;
+  document.body.appendChild(m);
+  setTimeout(() => m.remove(), err ? 5000 : 2500);
+}
+
+async function api(body) {
+  const r = await fetch(API, { method: 'POST', body: JSON.stringify(Object.assign({ token: TOKEN }, body)) });
+  const j = await r.json();
+  if (!j.ok) throw new Error(j.error || 'Error del servidor');
+  return j;
+}
+
+/* ---------- fechas (Argentina UTC-3 fijo, sin horario de verano) ---------- */
+function addDays(s, n) { const d = new Date(s + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); }
+function dow(s) { return new Date(s + 'T00:00:00Z').getUTCDay(); }
+function expEpoch(fecha, hm, corte) {
+  const [y, mo, d] = fecha.split('-').map(Number);
+  const [h, m] = hm.split(':').map(Number);
+  let e = Date.UTC(y, mo - 1, d, h + 3, m);
+  if (h < corte) e += 86400000;
+  return e;
+}
+function fLarga(s, conDia = true) {
+  const d = new Date(s + 'T12:00:00Z');
+  return d.toLocaleDateString('es-AR', Object.assign({ day: 'numeric', month: 'long', timeZone: 'UTC' }, conDia ? { weekday: 'long' } : {}));
+}
+function fCorta(s) { return s ? s.slice(8, 10) + '/' + s.slice(5, 7) : ''; }
+function semana(ref) { const o = (dow(ref) + 6) % 7; const desde = addDays(ref, -o); return [desde, addDays(desde, 6)]; }
+function mes(ref) { const desde = ref.slice(0, 7) + '-01'; const d = new Date(desde + 'T00:00:00Z'); d.setUTCMonth(d.getUTCMonth() + 1); d.setUTCDate(0); return [desde, d.toISOString().slice(0, 10)]; }
+
+/* ---------- análisis ---------- */
+function analizar(X) {
+  const corte = +X.config.HORA_CORTE || 12, tol = +X.config.TOL_AMARILLO || 5;
+  const P = {}; X.personal.forEach(p => P[p.dni] = p);
+  const grupos = {};
+  X.marcas.filter(m => m.estado !== 'ANULADA').forEach(m => {
+    m.epoch = +m.epoch;
+    const k = m.dni + '|' + m.fecha_op;
+    (grupos[k] = grupos[k] || []).push(m);
+  });
+  const J = [];
+  Object.keys(grupos).forEach(k => {
+    const ms = grupos[k].sort((a, b) => a.epoch - b.epoch);
+    const [dni, fecha] = k.split('|');
+    const p = P[dni] || { dni, nombre: dni, apellido: '' };
+    let min = 0, abierta = null, primer = null, ultimoOut = null, inc = false, revisar = false;
+    const flags = new Set();
+    ms.forEach(m => {
+      (m.flags || '').split(',').filter(Boolean).forEach(f => flags.add(f));
+      if (m.estado === 'REVISAR') revisar = true;
+      if (m.tipo === 'IN') { if (abierta) inc = true; abierta = m; if (!primer) primer = m; }
+      else { if (abierta) { min += (m.epoch - abierta.epoch) / 60000; abierta = null; ultimoOut = m; } else inc = true; }
+    });
+    const enCurso = !!abierta && fecha === X.ahora.fecha_op;
+    if (abierta && !enCurso) inc = true;
+    let tarde = null, sem = '';
+    if (primer && p.hora_entrada) {
+      tarde = Math.max(0, Math.round((primer.epoch - expEpoch(fecha, p.hora_entrada, corte)) / 60000));
+      sem = tarde === 0 ? 'v' : tarde <= tol ? 'a' : 'r';
+    }
+    let extra = 0;
+    if (p.hora_entrada && p.hora_salida && !inc && !enCurso) {
+      const prog = (expEpoch(fecha, p.hora_salida, corte) - expEpoch(fecha, p.hora_entrada, corte)) / 60000;
+      if (prog > 0) extra = Math.max(0, min - prog);
+    }
+    J.push({ dni, fecha, p, min, primer, ultimoOut, abierta, inc, enCurso, revisar, flags: [...flags], tarde, sem, extra, marcas: ms });
+  });
+  J.sort((a, b) => a.fecha < b.fecha ? -1 : a.fecha > b.fecha ? 1 : (a.primer ? a.primer.epoch : 0) - (b.primer ? b.primer.epoch : 0));
+
+  const NOV = {}; X.novedades.forEach(n => NOV[n.dni + '|' + n.fecha_op] = n);
+  const conJ = new Set(J.map(j => j.dni + '|' + j.fecha));
+  const A = [];
+  for (let f = X.desde; f <= X.hasta && f <= X.ahora.fecha_op; f = addDays(f, 1)) {
+    const wd = String(dow(f));
+    X.personal.forEach(p => {
+      if (p.estado !== 'APROBADO' || !p.dias || !p.dias.split(',').includes(wd)) return;
+      if ((p.alta || '').slice(0, 10) > f) return;
+      if (conJ.has(p.dni + '|' + f)) return;
+      if (f === X.ahora.fecha_op) {
+        if (!p.hora_entrada) return;
+        if (X.ahora.epoch < expEpoch(f, p.hora_entrada, corte) + 30 * 60000) return;
+      }
+      const n = NOV[p.dni + '|' + f] || null;
+      A.push({ dni: p.dni, fecha: f, p, nov: n, just: !!(n && JUSTIFICA.includes(n.tipo)) });
+    });
+  }
+
+  const R = {};
+  const base = dni => R[dni] = R[dni] || { dni, p: P[dni] || { nombre: dni, apellido: '' }, jor: 0, min: 0, extra: 0, tard: 0, rojas: 0, minTarde: 0, aus: 0, just: 0, inc: 0, rev: 0, costo: 0 };
+  J.forEach(j => {
+    const r = base(j.dni);
+    r.jor++; r.min += j.min; r.extra += j.extra;
+    if (j.tarde > 0) { r.tard++; r.minTarde += j.tarde; }
+    if (j.sem === 'r') r.rojas++;
+    if (j.inc) r.inc++;
+    if (j.revisar) r.rev++;
+  });
+  A.forEach(a => { const r = base(a.dni); if (a.just) r.just++; else r.aus++; });
+  Object.values(R).forEach(r => r.costo = (r.min / 60) * (parseFloat(String(r.p.valor_hora || '').replace(',', '.')) || 0));
+  const res = Object.values(R).sort((a, b) => b.min - a.min);
+  return { J, A, R: res, P };
+}
+
+function semaforo(j) {
+  if (j.tarde === null) return '<span class="pill">Sin horario</span>';
+  if (j.tarde === 0) return '<span class="dot v"></span>A horario';
+  return '<span class="dot ' + j.sem + '"></span>+' + j.tarde + ' min';
+}
+function flagsHtml(fl) { return fl.map(f => '<span class="pill warn">' + esc(FLAG_TXT[f] || f) + '</span>').join(' '); }
+function estadoJ(j) {
+  if (j.enCurso) return '<span class="pill in">Adentro</span>';
+  if (j.inc) return '<span class="pill bad">Incompleta</span>';
+  return '<span class="pill ok">Completa</span>';
+}
+
+/* ---------- login / navegación ---------- */
+$('fLogin').addEventListener('submit', async e => {
+  e.preventDefault();
+  TOKEN = $('tk').value.trim();
+  $('eLogin').textContent = '';
+  try {
+    D = await api({ action: 'panel' });
+    try { localStorage.setItem(LS_TK, TOKEN); } catch (x) {}
+    arrancar();
+  } catch (err) { $('eLogin').textContent = err.message; }
+});
+$('bSalir').onclick = () => { try { localStorage.removeItem(LS_TK); } catch (x) {} location.reload(); };
+$('nav').addEventListener('click', e => { const b = e.target.closest('button[data-tab]'); if (b) irA(b.dataset.tab); });
+$('bRef').onclick = () => cargarTab(true);
+
+function arrancar() {
+  $('vLogin').classList.add('hide');
+  $('vApp').classList.remove('hide');
+  const [d1, d2] = semana(D.ahora.fecha_op);
+  $('mDesde').value = d1; $('mHasta').value = d2;
+  const [m1, m2] = mes(D.ahora.fecha_op);
+  $('nDesde').value = m1; $('nHasta').value = m2;
+  repRef = D.ahora.fecha_op;
+  renderHoy();
+  badge();
+  timer = setInterval(() => { if (tab === 'hoy' && !document.hidden) cargarTab(false); }, 60000);
+}
+
+function irA(t) {
+  tab = t;
+  document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.tab === t));
+  document.querySelectorAll('main > section').forEach(s => s.classList.toggle('hide', s.id !== 't-' + t));
+  cargarTab(false);
+}
+
+async function cargarTab(forzar) {
+  $('main').classList.add('cargando');
+  try {
+    if (!['rep', 'mar', 'nov'].includes(tab) || forzar || !D) D = await api({ action: 'panel' });
+    badge();
+    $('act').textContent = 'Actualizado ' + hhmm(D.ahora.ts);
+    if (tab === 'hoy') renderHoy();
+    if (tab === 'rep') await renderRep();
+    if (tab === 'mar') await renderMar();
+    if (tab === 'per') renderPer();
+    if (tab === 'nov') await renderNov();
+    if (tab === 'aud') renderAud();
+    if (tab === 'cfg') renderCfg();
+  } catch (err) { msg(err.message, true); }
+  $('main').classList.remove('cargando');
+}
+
+function badge() {
+  const n = D.personal.filter(p => p.estado === 'PENDIENTE').length;
+  $('bdg').textContent = n; $('bdg').classList.toggle('hide', !n);
+}
+
+/* ---------- ESTA NOCHE ---------- */
+function renderHoy() {
+  const an = analizar(D);
+  const J = an.J, aus = an.A.filter(a => !a.just);
+  const adentro = J.filter(j => j.enCurso).length;
+  const tard = J.filter(j => j.tarde > 0).length;
+  const pend = D.personal.filter(p => p.estado === 'PENDIENTE').length;
+  const geo = D.config.LAT && D.config.LNG;
+  let h = '<div class="noche">Noche del ' + esc(fLarga(D.ahora.fecha_op)) + '</div>';
+  h += '<div class="sub">Fecha operativa: incluye las marcas hasta las ' + esc(D.config.HORA_CORTE) + ':00 del día siguiente.' + (geo ? '' : ' <b style="color:var(--bad)">Geocerca sin configurar: cargá la ubicación del local en Configuración.</b>') + '</div>';
+  h += '<div class="kpis">' +
+    k(adentro, 'Adentro ahora') + k(J.length, 'Marcaron esta noche') + k(tard, 'Llegadas tarde', tard > 0) +
+    k(aus.length, 'Ausentes', aus.length > 0) + k(pend, 'Altas por aprobar', pend > 0) + '</div>';
+  h += '<h2>Personal de la noche</h2>';
+  if (!J.length) h += '<div class="tbl"><div class="vacio">Nadie marcó todavía en esta fecha operativa.</div></div>';
+  else {
+    h += '<div class="tbl"><table><tr><th>Persona</th><th>Rol</th><th>Ingreso</th><th>Puntualidad</th><th>Egreso</th><th class="n">Horas</th><th>Estado</th><th>Revisar</th></tr>';
+    J.forEach(j => {
+      const vivo = j.enCurso ? j.min + (D.ahora.epoch - j.abierta.epoch) / 60000 : j.min;
+      h += '<tr><td>' + esc(nom(j.p)) + '</td><td>' + esc(j.p.rol || '—') + '</td><td>' + hhmm(j.primer && j.primer.ts) + '</td><td>' + semaforo(j) +
+        '</td><td>' + (j.ultimoOut ? hhmm(j.ultimoOut.ts) : '—') + '</td><td class="n">' + hrs(vivo) + '</td><td>' + estadoJ(j) + '</td><td>' + flagsHtml(j.flags) + '</td></tr>';
+    });
+    h += '</table></div>';
+  }
+  h += '<h2>Programados sin marca</h2>';
+  const sinMarca = an.A;
+  if (!sinMarca.length) h += '<div class="tbl"><div class="vacio">No hay ausencias para esta noche' + (D.personal.some(p => p.dias) ? '.' : ': todavía no cargaste días y horarios en Personal.') + '</div></div>';
+  else {
+    h += '<div class="tbl"><table><tr><th>Persona</th><th>Rol</th><th>Entrada prevista</th><th>Situación</th><th></th></tr>';
+    sinMarca.forEach(a => {
+      h += '<tr><td>' + esc(nom(a.p)) + '</td><td>' + esc(a.p.rol || '—') + '</td><td>' + esc(a.p.hora_entrada) + '</td><td>' +
+        (a.nov ? '<span class="pill ' + (a.just ? 'ok' : 'bad') + '">' + esc(a.nov.tipo) + '</span>' : '<span class="pill bad">Sin aviso</span>') +
+        '</td><td>' + (a.nov ? '' : '<button class="lnk" data-act="novDe" data-dni="' + esc(a.dni) + '" data-f="' + a.fecha + '">Cargar novedad</button>') + '</td></tr>';
+    });
+    h += '</table></div>';
+  }
+  $('t-hoy').innerHTML = h;
+  $('act').textContent = 'Actualizado ' + hhmm(D.ahora.ts);
+}
+function k(v, l, alerta) { return '<div class="kpi' + (alerta ? ' alerta' : '') + '"><b>' + v + '</b><span>' + l + '</span></div>'; }
+
+/* ---------- REPORTES ---------- */
+$('segRep').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  repModo = b.dataset.m;
+  document.querySelectorAll('#segRep button').forEach(x => x.classList.toggle('on', x === b));
+  renderRep();
+});
+$('rPrev').onclick = () => { repRef = repModo === 'sem' ? addDays(repRef, -7) : addDays(mes(repRef)[0], -1); renderRep(); };
+$('rNext').onclick = () => { repRef = repModo === 'sem' ? addDays(repRef, 7) : addDays(mes(repRef)[1], 1); renderRep(); };
+$('rXls').onclick = () => exportar();
+
+async function renderRep() {
+  const [d1, d2] = repModo === 'sem' ? semana(repRef) : mes(repRef);
+  $('rLbl').textContent = repModo === 'sem' ? fCorta(d1) + ' al ' + fCorta(d2) : new Date(d1 + 'T12:00:00Z').toLocaleDateString('es-AR', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+  $('repBody').innerHTML = '<div class="vacio">Cargando…</div>';
+  try {
+    repData = await api({ action: 'panel', desde: d1, hasta: d2 });
+  } catch (err) { $('repBody').innerHTML = '<div class="vacio">' + esc(err.message) + '</div>'; return; }
+  const an = analizar(repData);
+  repData._an = an;
+  const T = an.R.reduce((t, r) => { t.min += r.min; t.jor += r.jor; t.tard += r.tard; t.aus += r.aus; t.inc += r.inc; t.costo += r.costo; t.extra += r.extra; return t; }, { min: 0, jor: 0, tard: 0, aus: 0, inc: 0, costo: 0, extra: 0 });
+  const conValor = repData.personal.some(p => parseFloat(p.valor_hora));
+  let h = '<div class="kpis">' + k(hrs(T.min), 'Horas trabajadas') + k(T.jor, 'Jornadas') + k(T.tard, 'Llegadas tarde', T.tard > 0) +
+    k(T.aus, 'Ausencias sin justificar', T.aus > 0) + k(T.inc, 'Jornadas incompletas', T.inc > 0) +
+    (conValor ? k(money(T.costo), 'Costo laboral estimado') : k(hrs(T.extra), 'Horas extra')) + '</div>';
+  h += '<div class="graf"><div class="box"><canvas id="g1"></canvas></div><div class="box"><canvas id="g2"></canvas></div></div>';
+  h += '<h2>Resumen por persona</h2>';
+  if (!an.R.length) h += '<div class="tbl"><div class="vacio">Sin marcas ni ausencias en este período.</div></div>';
+  else {
+    h += '<div class="tbl"><table><tr><th>Persona</th><th>Rol</th><th class="n">Jornadas</th><th class="n">Horas</th><th class="n">Prom. h/jornada</th><th class="n">Horas extra</th><th class="n">Tardanzas</th><th class="n">Min. tarde</th><th class="n">Ausencias</th><th class="n">Justificadas</th><th class="n">Incompletas</th>' + (conValor ? '<th class="n">Costo</th>' : '') + '</tr>';
+    an.R.forEach(r => {
+      h += '<tr><td>' + esc(nom(r.p)) + '</td><td>' + esc(r.p.rol || '—') + '</td><td class="n">' + r.jor + '</td><td class="n">' + hrs(r.min) + '</td><td class="n">' + (r.jor ? hrs(r.min / r.jor) : '—') +
+        '</td><td class="n">' + hrs(r.extra) + '</td><td class="n">' + (r.tard ? (r.rojas ? '<span class="dot r"></span>' : '<span class="dot a"></span>') + r.tard : '0') + '</td><td class="n">' + r.minTarde +
+        '</td><td class="n">' + (r.aus ? '<b style="color:var(--bad)">' + r.aus + '</b>' : '0') + '</td><td class="n">' + r.just + '</td><td class="n">' + r.inc + '</td>' + (conValor ? '<td class="n">' + money(r.costo) + '</td>' : '') + '</tr>';
+    });
+    h += '</table></div>';
+  }
+  const aRev = an.J.filter(j => j.inc || j.revisar);
+  h += '<div class="grid2"><div><h2>Ausencias</h2>';
+  h += an.A.length ? '<div class="tbl"><table><tr><th>Fecha</th><th>Persona</th><th>Situación</th></tr>' + an.A.map(a => '<tr><td>' + fCorta(a.fecha) + '</td><td>' + esc(nom(a.p)) + '</td><td>' + (a.nov ? '<span class="pill ' + (a.just ? 'ok' : 'bad') + '">' + esc(a.nov.tipo) + '</span>' : '<span class="pill bad">Sin aviso</span>') + '</td></tr>').join('') + '</table></div>' : '<div class="tbl"><div class="vacio">Sin ausencias.</div></div>';
+  h += '</div><div><h2>Jornadas a revisar</h2>';
+  h += aRev.length ? '<div class="tbl"><table><tr><th>Fecha</th><th>Persona</th><th>Motivo</th></tr>' + aRev.map(j => '<tr><td>' + fCorta(j.fecha) + '</td><td>' + esc(nom(j.p)) + '</td><td>' + (j.inc ? '<span class="pill bad">Sin egreso / incompleta</span> ' : '') + flagsHtml(j.flags) + '</td></tr>').join('') + '</table></div>' : '<div class="tbl"><div class="vacio">Todo en orden.</div></div>';
+  h += '</div></div>';
+  $('repBody').innerHTML = h;
+  graficos(an, d1, d2);
+}
+
+function graficos(an, d1, d2) {
+  charts.forEach(c => c.destroy()); charts = [];
+  if (typeof Chart === 'undefined') return;
+  Chart.defaults.font.family = 'Oswald, Arial, sans-serif';
+  Chart.defaults.color = '#6B6B66';
+  const fechas = [], horas = [], pers = [];
+  for (let f = d1; f <= d2; f = addDays(f, 1)) {
+    const js = an.J.filter(j => j.fecha === f);
+    if (repModo === 'mes' && !js.length) continue;
+    fechas.push(new Date(f + 'T12:00:00Z').toLocaleDateString('es-AR', { weekday: 'short', day: 'numeric', timeZone: 'UTC' }));
+    horas.push(+(js.reduce((s, j) => s + j.min, 0) / 60).toFixed(1));
+    pers.push(new Set(js.map(j => j.dni)).size);
+  }
+  charts.push(new Chart($('g1'), {
+    type: 'bar',
+    data: { labels: fechas, datasets: [{ label: 'Horas trabajadas', data: horas, backgroundColor: '#FF5A00', borderRadius: 2 }, { label: 'Personas', data: pers, backgroundColor: '#0A0A0A', borderRadius: 2 }] },
+    options: { maintainAspectRatio: false, plugins: { title: { display: true, text: 'Por noche', align: 'start', color: '#0A0A0A', font: { size: 16, weight: 500 } } }, scales: { y: { beginAtZero: true } } }
+  }));
+  const top = an.R.slice(0, 15);
+  charts.push(new Chart($('g2'), {
+    type: 'bar',
+    data: { labels: top.map(r => nom(r.p)), datasets: [{ label: 'Horas', data: top.map(r => +(r.min / 60).toFixed(1)), backgroundColor: '#FF5A00', borderRadius: 2 }, { label: 'Min. tarde', data: top.map(r => r.minTarde), backgroundColor: '#B8B8B2', borderRadius: 2 }] },
+    options: { indexAxis: 'y', maintainAspectRatio: false, plugins: { title: { display: true, text: 'Por persona', align: 'start', color: '#0A0A0A', font: { size: 16, weight: 500 } } }, scales: { x: { beginAtZero: true } } }
+  }));
+}
+
+function exportar() {
+  if (!repData || !repData._an) return msg('Primero cargá un período.', true);
+  if (typeof XLSX === 'undefined') return msg('No se pudo cargar el exportador de Excel.', true);
+  const an = repData._an;
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(an.R.map(r => ({
+    Persona: nom(r.p), DNI: r.dni, Rol: r.p.rol || '', Jornadas: r.jor, Horas: +(r.min / 60).toFixed(2), 'Horas extra': +(r.extra / 60).toFixed(2),
+    Tardanzas: r.tard, 'Min tarde': r.minTarde, Ausencias: r.aus, Justificadas: r.just, Incompletas: r.inc,
+    'Valor hora': parseFloat(r.p.valor_hora) || 0, 'Costo estimado': Math.round(r.costo)
+  }))), 'Resumen');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(an.J.map(j => ({
+    'Fecha operativa': j.fecha, Persona: nom(j.p), DNI: j.dni, Rol: j.p.rol || '', Ingreso: hhmm(j.primer && j.primer.ts), Egreso: j.ultimoOut ? hhmm(j.ultimoOut.ts) : '',
+    Horas: +(j.min / 60).toFixed(2), 'Min tarde': j.tarde === null ? '' : j.tarde, Estado: j.enCurso ? 'En curso' : j.inc ? 'Incompleta' : 'Completa', Observaciones: j.flags.map(f => FLAG_TXT[f] || f).join(', ')
+  }))), 'Jornadas');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(an.A.map(a => ({
+    Fecha: a.fecha, Persona: nom(a.p), DNI: a.dni, Situación: a.nov ? a.nov.tipo : 'Sin aviso', Justificada: a.just ? 'Sí' : 'No', Detalle: a.nov ? a.nov.detalle : ''
+  }))), 'Ausencias');
+  const P = an.P;
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(repData.marcas.map(m => ({
+    'Fecha operativa': m.fecha_op, Persona: nom(P[m.dni]), DNI: m.dni, Tipo: m.tipo === 'IN' ? 'Ingreso' : 'Egreso', 'Fecha y hora': m.ts.replace('T', ' '),
+    Estado: m.estado, Origen: m.origen, 'Distancia (m)': m.distancia_m, Nota: m.nota
+  }))), 'Marcas');
+  XLSX.writeFile(wb, 'Asistencia_Zeppelin_' + repData.desde + '_' + repData.hasta + '.xlsx');
+}
+
+/* ---------- MARCAS ---------- */
+$('mCargar').onclick = () => renderMar();
+$('mAdd').onclick = () => modalMarca(null);
+
+function opcionesPersonal(sel, soloActivos) {
+  return D.personal.filter(p => !soloActivos || p.estado === 'APROBADO').sort((a, b) => nom(a).localeCompare(nom(b)))
+    .map(p => [p.dni, nom(p) + ' · ' + p.dni]);
+}
+
+async function renderMar() {
+  const sel = $('mPer'); const actual = sel.value;
+  sel.innerHTML = '<option value="">Todas</option>' + opcionesPersonal().map(([v, l]) => '<option value="' + esc(v) + '">' + esc(l) + '</option>').join('');
+  sel.value = actual;
+  $('marBody').innerHTML = '<div class="vacio">Cargando…</div>';
+  try { marData = await api({ action: 'panel', desde: $('mDesde').value, hasta: $('mHasta').value }); }
+  catch (err) { $('marBody').innerHTML = '<div class="vacio">' + esc(err.message) + '</div>'; return; }
+  const P = {}; marData.personal.forEach(p => P[p.dni] = p);
+  const ms = marData.marcas.filter(m => (!actual || m.dni === actual) && (!$('mEst').value || m.estado === $('mEst').value))
+    .sort((a, b) => +b.epoch - +a.epoch);
+  if (!ms.length) { $('marBody').innerHTML = '<div class="tbl"><div class="vacio">No hay marcas con esos filtros.</div></div>'; return; }
+  const cls = { OK: 'ok', REVISAR: 'warn', MANUAL: 'in', EDITADA: 'in', ANULADA: 'bad' };
+  let h = '<div class="tbl"><table><tr><th>Noche</th><th>Persona</th><th>Tipo</th><th>Fecha y hora</th><th>Estado</th><th>Observaciones</th><th class="n">Distancia</th><th>Nota</th><th></th></tr>';
+  ms.forEach(m => {
+    h += '<tr' + (m.estado === 'ANULADA' ? ' style="opacity:.5"' : '') + '><td>' + fCorta(m.fecha_op) + '</td><td>' + esc(nom(P[m.dni])) + '</td><td>' + (m.tipo === 'IN' ? 'Ingreso' : 'Egreso') + '</td><td>' + fCorta(m.ts.slice(0, 10)) + ' ' + hhmm(m.ts) +
+      '</td><td><span class="pill ' + (cls[m.estado] || '') + '">' + esc(m.estado) + '</span></td><td>' + flagsHtml((m.flags || '').split(',').filter(Boolean)) + '</td><td class="n">' + (m.distancia_m ? esc(m.distancia_m) + ' m' : '') +
+      '</td><td>' + esc(m.nota) + '</td><td style="white-space:nowrap">' + (m.estado === 'ANULADA' ? '' : '<button class="lnk" data-act="mEdit" data-id="' + esc(m.id) + '">Corregir</button><button class="lnk bad" data-act="mAnular" data-id="' + esc(m.id) + '">Anular</button>') + '</td></tr>';
+  });
+  $('marBody').innerHTML = h + '</table></div>';
+}
+
+function modalMarca(m) {
+  const ahora = D.ahora.ts.slice(0, 16);
+  const campos = [];
+  if (!m) campos.push({ k: 'dni', label: 'Persona', type: 'select', options: opcionesPersonal(null, true), req: true });
+  campos.push({ k: 'tipo', label: 'Tipo', type: 'select', options: [['IN', 'Ingreso'], ['OUT', 'Egreso']], value: m ? m.tipo : 'IN' });
+  campos.push({ k: 'ts', label: 'Fecha y hora', type: 'datetime-local', value: m ? m.ts.slice(0, 16) : ahora, req: true });
+  campos.push({ k: 'motivo', label: 'Motivo (queda en auditoría)', type: 'text', req: true, ph: m ? 'Ej.: se olvidó de marcar la salida' : 'Ej.: celular sin batería' });
+  modal(m ? 'Corregir marca' : 'Agregar marca manual', campos, async v => {
+    if (m) await api({ action: 'marca_editar', id: m.id, tipo: v.tipo, ts: v.ts, motivo: v.motivo });
+    else await api({ action: 'marca_agregar', dni: v.dni, tipo: v.tipo, ts: v.ts, motivo: v.motivo });
+    msg(m ? 'Marca corregida' : 'Marca agregada');
+    D = await api({ action: 'panel' });
+    if (tab === 'mar') renderMar(); else cargarTab(false);
+  }, m ? 'Guardar corrección' : 'Agregar marca');
+}
+
+/* ---------- PERSONAL ---------- */
+function renderPer() {
+  const pend = D.personal.filter(p => p.estado === 'PENDIENTE');
+  let h = '';
+  if (pend.length) {
+    h += '<h2>Altas por aprobar</h2><div class="tbl"><table><tr><th>Nombre</th><th>DNI</th><th>Teléfono</th><th>Registrado</th><th></th></tr>';
+    pend.forEach(p => {
+      h += '<tr><td>' + esc(nom(p)) + '</td><td>' + esc(p.dni) + '</td><td>' + esc(p.telefono) + '</td><td>' + fCorta(p.alta.slice(0, 10)) + ' ' + hhmm(p.alta) +
+        '</td><td style="white-space:nowrap"><button class="btn sm" data-act="pAprobar" data-dni="' + esc(p.dni) + '">Aprobar y asignar turno</button> <button class="lnk bad" data-act="pRechazar" data-dni="' + esc(p.dni) + '">Rechazar</button></td></tr>';
+    });
+    h += '</table></div>';
+  }
+  const lista = D.personal.filter(p => p.estado !== 'PENDIENTE').sort((a, b) => (a.estado === 'APROBADO' ? 0 : 1) - (b.estado === 'APROBADO' ? 0 : 1) || nom(a).localeCompare(nom(b)));
+  h += '<h2>Equipo</h2>';
+  if (!lista.length) h += '<div class="tbl"><div class="vacio">Todavía no hay personal aprobado. Imprimí el cartel QR desde Configuración y pedí a cada empleado que se registre.</div></div>';
+  else {
+    h += '<div class="tbl"><table><tr><th>Nombre</th><th>DNI</th><th>Teléfono</th><th>Rol</th><th>Días</th><th>Horario</th><th class="n">Valor hora</th><th>Celular</th><th>Estado</th><th></th></tr>';
+    lista.forEach(p => {
+      const dias = (p.dias || '').split(',').filter(Boolean).map(d => (DIAS.find(x => x[0] === d) || ['', d])[1]).join(', ');
+      h += '<tr' + (p.estado !== 'APROBADO' ? ' style="opacity:.55"' : '') + '><td>' + esc(nom(p)) + '</td><td>' + esc(p.dni) + '</td><td><a href="https://wa.me/549' + esc(String(p.telefono).replace(/^0/, '').replace(/^549/, '')) + '" target="_blank" rel="noopener" style="color:inherit">' + esc(p.telefono) + '</a></td><td>' + esc(p.rol || '—') + '</td><td>' + esc(dias || '—') +
+        '</td><td>' + (p.hora_entrada ? esc(p.hora_entrada) + ' a ' + esc(p.hora_salida || '?') : '—') + '</td><td class="n">' + (p.valor_hora ? money(parseFloat(p.valor_hora)) : '—') + '</td><td>' + (p.dispositivo ? '<span class="pill ok">Vinculado</span>' : '<span class="pill warn">Sin celular</span>') +
+        '</td><td><span class="pill ' + (p.estado === 'APROBADO' ? 'ok' : 'bad') + '">' + (p.estado === 'APROBADO' ? 'Activo' : p.estado === 'BAJA' ? 'Baja' : 'Rechazado') + '</span></td><td style="white-space:nowrap">' +
+        '<button class="lnk" data-act="pEdit" data-dni="' + esc(p.dni) + '">Editar</button>' +
+        (p.dispositivo ? '<button class="lnk" data-act="pReset" data-dni="' + esc(p.dni) + '">Cambiar celular</button>' : '') +
+        (p.estado === 'APROBADO' ? '<button class="lnk bad" data-act="pBaja" data-dni="' + esc(p.dni) + '">Dar de baja</button>' : '<button class="lnk" data-act="pAlta" data-dni="' + esc(p.dni) + '">Reactivar</button>') + '</td></tr>';
+    });
+    h += '</table></div>';
+  }
+  h += '<p class="sub" style="margin-top:12px">Los días y el horario de cada persona definen las llegadas tarde y las ausencias. "Cambiar celular" desvincula el teléfono actual: la persona vuelve a escanear el QR desde el nuevo y se registra con el mismo DNI.</p>';
+  $('t-per').innerHTML = h;
+}
+
+function modalPersona(p, aprobar) {
+  modal(aprobar ? 'Aprobar a ' + nom(p) : 'Editar ' + nom(p), [
+    { k: 'nombre', label: 'Nombre', type: 'text', value: p.nombre, req: true },
+    { k: 'apellido', label: 'Apellido', type: 'text', value: p.apellido, req: true },
+    { k: 'telefono', label: 'Teléfono', type: 'text', value: p.telefono },
+    { k: 'rol', label: 'Rol', type: 'select', options: [['', 'Sin rol']].concat(ROLES.map(r => [r, r])), value: p.rol },
+    { k: 'dias', label: 'Días que trabaja', type: 'dias', value: p.dias || (aprobar ? '5,6' : '') },
+    { k: 'hora_entrada', label: 'Hora de entrada', type: 'time', value: p.hora_entrada },
+    { k: 'hora_salida', label: 'Hora de salida', type: 'time', value: p.hora_salida },
+    { k: 'valor_hora', label: 'Valor hora ($) — opcional, para el costo laboral', type: 'number', value: p.valor_hora }
+  ], async v => {
+    await api(Object.assign({ action: 'persona_guardar', dni: p.dni }, v));
+    if (aprobar) await api({ action: 'persona_estado', dni: p.dni, estado: 'APROBADO' });
+    msg(aprobar ? 'Aprobado' : 'Guardado');
+    await cargarTab(true);
+  }, aprobar ? 'Aprobar' : 'Guardar');
+}
+
+/* ---------- NOVEDADES ---------- */
+$('nCargar').onclick = () => renderNov();
+$('nAdd').onclick = () => modalNov(null, D.ahora.fecha_op);
+
+async function renderNov() {
+  $('novBody').innerHTML = '<div class="vacio">Cargando…</div>';
+  try { novData = await api({ action: 'panel', desde: $('nDesde').value, hasta: $('nHasta').value }); }
+  catch (err) { $('novBody').innerHTML = '<div class="vacio">' + esc(err.message) + '</div>'; return; }
+  const P = {}; novData.personal.forEach(p => P[p.dni] = p);
+  const ns = novData.novedades.slice().sort((a, b) => a.fecha_op < b.fecha_op ? 1 : -1);
+  if (!ns.length) { $('novBody').innerHTML = '<div class="tbl"><div class="vacio">Sin novedades en el período. Cargá francos, licencias o avisos de ausencia para que no cuenten como faltas.</div></div>'; return; }
+  let h = '<div class="tbl"><table><tr><th>Noche</th><th>Persona</th><th>Tipo</th><th>Detalle</th><th>Cargada</th><th></th></tr>';
+  ns.forEach(n => {
+    h += '<tr><td>' + fCorta(n.fecha_op) + '</td><td>' + esc(nom(P[n.dni])) + '</td><td><span class="pill ' + (JUSTIFICA.includes(n.tipo) ? 'ok' : 'bad') + '">' + esc(n.tipo) + '</span></td><td>' + esc(n.detalle) + '</td><td>' + fCorta(n.creado.slice(0, 10)) +
+      '</td><td><button class="lnk bad" data-act="nBorrar" data-id="' + esc(n.id) + '">Borrar</button></td></tr>';
+  });
+  $('novBody').innerHTML = h + '</table></div>';
+}
+
+function modalNov(dni, fecha) {
+  modal('Agregar novedad', [
+    { k: 'dni', label: 'Persona', type: 'select', options: opcionesPersonal(null, true), value: dni || '', req: true },
+    { k: 'fecha_op', label: 'Noche (fecha operativa)', type: 'date', value: fecha, req: true },
+    { k: 'tipo', label: 'Tipo', type: 'select', options: TIPOS_NOV.map(t => [t, t]) },
+    { k: 'detalle', label: 'Detalle', type: 'text', ph: 'Ej.: avisó por WhatsApp a las 18:00, trae certificado' }
+  ], async v => {
+    await api(Object.assign({ action: 'novedad_agregar' }, v));
+    msg('Novedad cargada');
+    D = await api({ action: 'panel' });
+    cargarTab(false);
+  }, 'Agregar novedad');
+}
+
+/* ---------- AUDITORÍA ---------- */
+const ACC_TXT = { registro: 'Alta desde QR', vincular_dispositivo: 'Celular vinculado', editar_persona: 'Datos editados', estado_persona: 'Cambio de estado', reset_dispositivo: 'Celular desvinculado', editar_marca: 'Marca corregida', agregar_marca: 'Marca manual', anular_marca: 'Marca anulada', agregar_novedad: 'Novedad cargada', borrar_novedad: 'Novedad borrada', config: 'Configuración' };
+function renderAud() {
+  const a = D.auditoria;
+  if (!a.length) { $('t-aud').innerHTML = '<div class="tbl"><div class="vacio">Sin movimientos registrados.</div></div>'; return; }
+  const P = {}; D.personal.forEach(p => P[p.dni] = p);
+  let h = '<h2>Últimos 300 movimientos</h2><div class="tbl"><table><tr><th>Fecha y hora</th><th>Acción</th><th>Referencia</th><th>Motivo</th><th>Cambio</th></tr>';
+  a.forEach(x => {
+    let cambio = '';
+    try {
+      const an = x.antes ? JSON.parse(x.antes) : null, de = x.despues ? JSON.parse(x.despues) : null;
+      if (de && x.accion !== 'config') cambio = Object.keys(de).filter(k => !['actualizado', 'epoch', 'id'].includes(k)).map(k => k + ': ' + (an && an[k] !== undefined ? an[k] + ' → ' : '') + de[k]).join(' · ');
+    } catch (e) {}
+    const ref = P[x.ref] ? nom(P[x.ref]) : x.ref;
+    h += '<tr><td style="white-space:nowrap">' + fCorta(x.ts.slice(0, 10)) + ' ' + hhmm(x.ts) + '</td><td>' + esc(ACC_TXT[x.accion] || x.accion) + '</td><td>' + esc(ref) + '</td><td>' + esc(x.motivo) + '</td><td style="font-size:13px;color:var(--gris)">' + esc(cambio).slice(0, 220) + '</td></tr>';
+  });
+  $('t-aud').innerHTML = h + '</table></div>';
+}
+
+/* ---------- CONFIGURACIÓN ---------- */
+function urlQR() { const c = D.config; return c.STAFF_URL.replace(/\?.*$/, '') + '?k=' + encodeURIComponent(c.QR_KEY); }
+
+function renderCfg() {
+  const c = D.config;
+  let h = '<div class="grid2"><div class="box cfg"><h2>Ubicación y reglas</h2>' +
+    '<label for="cLat">Latitud del local</label><input id="cLat" value="' + esc(c.LAT) + '" inputmode="decimal">' +
+    '<label for="cLng">Longitud del local</label><input id="cLng" value="' + esc(c.LNG) + '" inputmode="decimal">' +
+    '<button class="btn alt sm" id="cGeo" style="margin-top:10px">Usar mi ubicación actual</button><p>Hacelo parado dentro del bar, con el GPS del celular activado.</p>' +
+    '<label for="cRad">Radio permitido (metros)</label><input id="cRad" type="number" value="' + esc(c.RADIO_M) + '"><p>Con 150 m se compensa el error del GPS bajo techo y de noche. Una marca fuera del radio se guarda igual, marcada para revisar.</p>' +
+    '<label for="cTol">Tolerancia amarilla (minutos)</label><input id="cTol" type="number" value="' + esc(c.TOL_AMARILLO) + '"><p>Verde: a horario. Amarillo: hasta esta cantidad de minutos tarde. Rojo: más.</p>' +
+    '<label for="cReb">Bloqueo de doble marca (minutos)</label><input id="cReb" type="number" value="' + esc(c.REBOTE_MIN) + '">' +
+    '<label for="cCor">Corte de fecha operativa (hora)</label><input id="cCor" type="number" min="0" max="23" value="' + esc(c.HORA_CORTE) + '"><p>Las marcas antes de esta hora cuentan para la noche anterior.</p>' +
+    '<label for="cUrl">Dirección de la página de marcas</label><input id="cUrl" value="' + esc(c.STAFF_URL) + '">' +
+    '<button class="btn" id="cSave" style="margin-top:18px">Guardar configuración</button></div>' +
+    '<div class="box cfg"><h2>Cartel QR</h2><div id="qr"></div><p style="word-break:break-all">' + esc(urlQR()) + '</p>' +
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"><button class="btn nar" id="cPrint">Imprimir cartel</button><button class="btn alt" id="cRegen">Regenerar QR</button></div>' +
+    '<p>Regenerar invalida el cartel impreso: hay que imprimir y pegar el nuevo. Usalo si sospechás que alguien marca con una foto del QR.</p></div></div>';
+  $('t-cfg').innerHTML = h;
+  dibujarQR($('qr'), 440);
+  $('cGeo').onclick = () => {
+    if (!navigator.geolocation) return msg('Este navegador no da ubicación.', true);
+    $('cGeo').textContent = 'Buscando…';
+    navigator.geolocation.getCurrentPosition(p => {
+      $('cLat').value = p.coords.latitude.toFixed(6); $('cLng').value = p.coords.longitude.toFixed(6);
+      $('cGeo').textContent = 'Usar mi ubicación actual';
+      msg('Ubicación tomada (precisión ' + Math.round(p.coords.accuracy) + ' m). Falta guardar.');
+    }, () => { $('cGeo').textContent = 'Usar mi ubicación actual'; msg('No se pudo leer la ubicación. Revisá el permiso del navegador.', true); }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 });
+  };
+  $('cSave').onclick = () => guardarCfg(false);
+  $('cRegen').onclick = () => { if (confirm('El cartel impreso actual deja de funcionar. ¿Regenerar el QR?')) guardarCfg(true); };
+  $('cPrint').onclick = imprimirCartel;
+}
+
+async function guardarCfg(regen) {
+  try {
+    const r = await api({ action: 'config_guardar', regenerarQR: regen, config: {
+      LAT: $('cLat').value, LNG: $('cLng').value, RADIO_M: $('cRad').value, TOL_AMARILLO: $('cTol').value,
+      REBOTE_MIN: $('cReb').value, HORA_CORTE: $('cCor').value, STAFF_URL: $('cUrl').value
+    } });
+    D.config = r.config;
+    msg(regen ? 'QR regenerado. Imprimí el cartel nuevo.' : 'Configuración guardada');
+    renderCfg();
+  } catch (err) { msg(err.message, true); }
+}
+
+function dibujarQR(el, size) {
+  el.innerHTML = '';
+  if (typeof QRCode === 'undefined') { el.textContent = 'No se pudo cargar el generador de QR.'; return null; }
+  new QRCode(el, { text: urlQR(), width: size, height: size, colorDark: '#0A0A0A', colorLight: '#FFFFFF', correctLevel: QRCode.CorrectLevel.M });
+  const cv = el.querySelector('canvas');
+  return cv ? cv.toDataURL('image/png') : null;
+}
+
+function imprimirCartel() {
+  const tmp = document.createElement('div');
+  const src = dibujarQR(tmp, 900);
+  if (!src) return msg('No se pudo generar el QR.', true);
+  const w = window.open('', '_blank');
+  if (!w) return msg('Habilitá las ventanas emergentes para imprimir.', true);
+  w.document.write('<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Cartel QR asistencia</title>' +
+    '<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;500&display=swap" rel="stylesheet">' +
+    '<style>@page{size:A4;margin:0}*{margin:0;padding:0;box-sizing:border-box}body{width:210mm;height:297mm;background:#fff;color:#0A0A0A;font-family:Oswald,Arial,sans-serif;display:flex;flex-direction:column;-webkit-print-color-adjust:exact;print-color-adjust:exact}' +
+    '.band{background:#FF5A00;color:#fff;padding:14mm 16mm 10mm}.band h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:30mm;line-height:.9;letter-spacing:1mm}.band p{font-size:7mm;margin-top:3mm}' +
+    '.qr{flex:1;display:flex;align-items:center;justify-content:center}.qr img{width:120mm;height:120mm;border:3mm solid #0A0A0A;padding:5mm}' +
+    'ol{list-style:none;display:flex;gap:6mm;padding:0 16mm 10mm}li{flex:1;border-top:2mm solid #FF5A00;padding-top:3mm;font-size:5.6mm;line-height:1.3}li b{display:block;font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:12mm;line-height:1;color:#FF5A00}' +
+    '.pie{padding:0 16mm 12mm;font-size:4.2mm;color:#55554F}.pie strong{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:9mm;color:#0A0A0A;letter-spacing:.5mm;display:block}</style></head><body>' +
+    '<div class="band"><h1>Marcá tu asistencia</h1><p>Personal de Zeppelin Bar · al llegar y al irte</p></div>' +
+    '<div class="qr"><img src="' + src + '" alt="QR de asistencia"></div>' +
+    '<ol><li><b>1</b>Abrí la cámara del celular y apuntá al código.</li><li><b>2</b>Tocá el enlace. La primera vez completá tus datos.</li><li><b>3</b>Tocá Ingreso o Egreso con la ubicación activada.</li></ol>' +
+    '<div class="pie"><strong>Zeppelin Bar</strong>Cada marca guarda la hora del servidor y la ubicación. Marcar por otra persona no está permitido.</div>' +
+    '</body></html>');
+  w.document.close();
+  setTimeout(() => { w.focus(); w.print(); }, 2000);
+}
+
+/* ---------- MODAL GENÉRICO ---------- */
+function modal(titulo, campos, onOk, okTxt) {
+  let h = '<h3>' + esc(titulo) + '</h3><form id="fMod" novalidate>';
+  campos.forEach(c => {
+    const id = 'f_' + c.k;
+    h += '<label for="' + id + '">' + esc(c.label) + '</label>';
+    if (c.type === 'select') {
+      h += '<select id="' + id + '">' + (c.req && !c.value ? '<option value="">Elegí…</option>' : '') + c.options.map(([v, l]) => '<option value="' + esc(v) + '"' + (String(c.value || '') === String(v) ? ' selected' : '') + '>' + esc(l) + '</option>').join('') + '</select>';
+    } else if (c.type === 'dias') {
+      const sel = String(c.value || '').split(',');
+      h += '<div class="dias" id="' + id + '">' + DIAS.map(([v, l]) => '<label><input type="checkbox" value="' + v + '"' + (sel.includes(v) ? ' checked' : '') + '>' + l + '</label>').join('') + '</div>';
+    } else {
+      h += '<input id="' + id + '" type="' + c.type + '" value="' + esc(c.value || '') + '"' + (c.ph ? ' placeholder="' + esc(c.ph) + '"' : '') + (c.type === 'number' ? ' step="any" min="0"' : '') + '>';
+    }
+  });
+  h += '<div class="err" id="eMod"></div><div class="pie"><button type="button" class="btn alt" id="mCancel">Cancelar</button><button type="submit" class="btn nar" id="mOk">' + esc(okTxt || 'Guardar') + '</button></div></form>';
+  $('mod').innerHTML = h;
+  $('ov').classList.remove('hide');
+  const first = $('mod').querySelector('input,select'); if (first) first.focus();
+  $('mCancel').onclick = cerrarModal;
+  $('fMod').onsubmit = async e => {
+    e.preventDefault();
+    const v = {};
+    for (const c of campos) {
+      const el = $('f_' + c.k);
+      v[c.k] = c.type === 'dias' ? [...el.querySelectorAll('input:checked')].map(i => i.value).join(',') : el.value.trim();
+      if (c.req && !v[c.k]) { $('eMod').textContent = 'Completá: ' + c.label; return; }
+    }
+    $('mOk').disabled = true;
+    try { await onOk(v); cerrarModal(); }
+    catch (err) { $('eMod').textContent = err.message; $('mOk').disabled = false; }
+  };
+}
+function cerrarModal() { $('ov').classList.add('hide'); $('mod').innerHTML = ''; }
+$('ov').addEventListener('click', e => { if (e.target.id === 'ov') cerrarModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('ov').classList.contains('hide')) cerrarModal(); });
+
+/* ---------- ACCIONES (delegación) ---------- */
+document.addEventListener('click', async e => {
+  const b = e.target.closest('[data-act]'); if (!b) return;
+  const act = b.dataset.act, dni = b.dataset.dni, id = b.dataset.id;
+  const per = dni ? D.personal.find(p => p.dni === dni) : null;
+  try {
+    if (act === 'pAprobar') modalPersona(per, true);
+    else if (act === 'pEdit') modalPersona(per, false);
+    else if (act === 'pRechazar') { if (confirm('¿Rechazar el alta de ' + nom(per) + '?')) { await api({ action: 'persona_estado', dni, estado: 'RECHAZADO', motivo: 'Alta rechazada' }); msg('Alta rechazada'); await cargarTab(true); } }
+    else if (act === 'pBaja') { const mo = prompt('Motivo de la baja de ' + nom(per) + ':'); if (mo !== null) { await api({ action: 'persona_estado', dni, estado: 'BAJA', motivo: mo }); msg('Baja registrada'); await cargarTab(true); } }
+    else if (act === 'pAlta') { await api({ action: 'persona_estado', dni, estado: 'APROBADO', motivo: 'Reactivación' }); msg('Reactivado'); await cargarTab(true); }
+    else if (act === 'pReset') { if (confirm('Se desvincula el celular de ' + nom(per) + '. Tiene que escanear el QR desde el nuevo teléfono y registrarse con su DNI. ¿Continuar?')) { await api({ action: 'dispositivo_reset', dni, motivo: 'Cambio de celular' }); msg('Celular desvinculado'); await cargarTab(true); } }
+    else if (act === 'mEdit') { const m = marData.marcas.find(x => x.id === id); if (m) modalMarca(m); }
+    else if (act === 'mAnular') { const mo = prompt('Motivo de la anulación:'); if (mo) { await api({ action: 'marca_anular', id, motivo: mo }); msg('Marca anulada'); renderMar(); } else if (mo === '') msg('El motivo es obligatorio.', true); }
+    else if (act === 'nBorrar') { if (confirm('¿Borrar esta novedad?')) { await api({ action: 'novedad_borrar', id }); msg('Novedad borrada'); renderNov(); } }
+    else if (act === 'novDe') modalNov(dni, b.dataset.f);
+  } catch (err) { msg(err.message, true); }
+});
+
+/* ---------- INICIO ---------- */
+(async () => {
+  if (!TOKEN) { $('vLogin').classList.remove('hide'); return; }
+  try { D = await api({ action: 'panel' }); arrancar(); }
+  catch (err) { $('vLogin').classList.remove('hide'); $('eLogin').textContent = err.message; }
+})();
+</script>
+</body>
+</html>
