@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#FF5A00">
+<title>Asistencia · Zeppelin Bar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--neg:#0A0A0A;--nar:#FF5A00;--nar2:#E04E00;--papel:#FFFFFF;--fondo:#EDEDEA;--gris:#6B6B66;--linea:#D6D6D1;--ok:#1E9E4A;--warn:#E8A400;--bad:#D62F1F}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Oswald','Arial Narrow',Arial,sans-serif;background:var(--fondo);color:var(--neg);font-weight:400;-webkit-font-smoothing:antialiased;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.wrap{max-width:460px;margin:0 auto;min-height:100%;display:flex;flex-direction:column}
+header{background:var(--nar);color:#fff;padding:18px 20px 14px;display:flex;align-items:baseline;justify-content:space-between}
+header h1{font-family:'Bebas Neue',Impact,sans-serif;font-weight:400;font-size:34px;letter-spacing:1px;line-height:1}
+header span{font-size:14px;font-weight:500;opacity:.9}
+main{flex:1;padding:20px}
+.card{background:var(--papel);border:1px solid var(--linea);border-radius:6px;padding:20px;margin-bottom:16px}
+h2{font-family:'Bebas Neue',Impact,sans-serif;font-weight:400;font-size:30px;line-height:1.05;margin-bottom:8px}
+p{line-height:1.5;color:#2a2a28}
+.muted{color:var(--gris);font-size:14px}
+label{display:block;font-size:14px;font-weight:500;margin:14px 0 6px}
+input[type=text],input[type=tel]{width:100%;font:inherit;font-size:18px;padding:12px 14px;border:1.5px solid var(--linea);border-radius:4px;background:#fff}
+input:focus{outline:none;border-color:var(--nar)}
+.chk{display:flex;gap:10px;align-items:flex-start;margin-top:16px;font-size:14px;line-height:1.45;color:#3a3a37}
+.chk input{width:20px;height:20px;margin-top:2px;accent-color:var(--nar);flex:none}
+button{font:inherit;cursor:pointer;border:none}
+.btn{width:100%;background:var(--neg);color:#fff;font-size:18px;font-weight:500;padding:15px;border-radius:4px;margin-top:20px}
+.btn:disabled{opacity:.45}
+button:focus-visible,input:focus-visible{outline:3px solid var(--nar);outline-offset:2px}
+.saludo{font-size:18px;margin-bottom:4px}
+.reloj{font-family:'Bebas Neue',Impact,sans-serif;font-size:84px;line-height:.9;letter-spacing:2px}
+.fecha{color:var(--gris);font-size:15px;margin-top:4px;text-transform:capitalize}
+.marcar{width:100%;aspect-ratio:1/1;max-height:340px;border-radius:50%;background:var(--nar);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:22px auto 6px;box-shadow:0 0 0 10px rgba(255,90,0,.15);transition:transform .12s}
+.marcar:active{transform:scale(.97)}
+.marcar.out{background:var(--neg);box-shadow:0 0 0 10px rgba(10,10,10,.12)}
+.marcar b{font-family:'Bebas Neue',Impact,sans-serif;font-weight:400;font-size:64px;line-height:1;letter-spacing:2px}
+.marcar small{font-size:16px;opacity:.9;margin-top:4px}
+.marcar:disabled{opacity:.6}
+.res{border-left:6px solid var(--ok)}
+.res.warn{border-left-color:var(--warn)}
+.res.err{border-left-color:var(--bad)}
+.res .big{font-family:'Bebas Neue',Impact,sans-serif;font-size:44px;line-height:1}
+.hist{list-style:none}
+.hist li{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--linea);font-size:15px}
+.hist li:last-child{border-bottom:none}
+.tag{font-size:12px;font-weight:600;padding:2px 8px;border-radius:3px;background:var(--fondo)}
+.tag.in{background:#FFE3D3;color:var(--nar2)}
+.tag.out{background:#E4E4E0;color:var(--neg)}
+.hide{display:none!important}
+footer{padding:16px 20px 24px;font-size:12px;color:var(--gris);text-align:center}
+@media (prefers-reduced-motion:reduce){.marcar{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><h1>Zeppelin Bar</h1><span>Asistencia</span></header>
+  <main>
+    <div id="cargando" class="card"><p class="muted">Cargando…</p></div>
+
+    <!-- ALTA -->
+    <section id="vAlta" class="hide">
+      <div class="card">
+        <h2>Primer ingreso</h2>
+        <p class="muted">Completá tus datos una sola vez. Este celular queda vinculado a tu usuario.</p>
+        <form id="fAlta" novalidate>
+          <label for="nombre">Nombre</label>
+          <input id="nombre" type="text" autocomplete="given-name" required>
+          <label for="apellido">Apellido</label>
+          <input id="apellido" type="text" autocomplete="family-name" required>
+          <label for="dni">DNI</label>
+          <input id="dni" type="tel" inputmode="numeric" placeholder="Sin puntos" required>
+          <label for="tel">Teléfono</label>
+          <input id="tel" type="tel" inputmode="tel" placeholder="3874123456" autocomplete="tel" required>
+          <div class="chk"><input id="ok" type="checkbox"><label for="ok" style="margin:0;font-weight:400">Acepto que Zeppelin Bar use estos datos y la ubicación del celular al momento de marcar únicamente para el registro de asistencia (Ley 25.326).</label></div>
+          <button class="btn" id="bAlta" type="submit">Registrarme</button>
+        </form>
+      </div>
+      <div id="eAlta"></div>
+    </section>
+
+    <!-- PENDIENTE / NO HABILITADO -->
+    <section id="vPend" class="hide">
+      <div class="card">
+        <h2 id="pTit">Alta enviada</h2>
+        <p id="pTxt">El encargado tiene que aprobar tu usuario. Cuando esté aprobado, escaneá el QR otra vez para marcar.</p>
+        <button class="btn" onclick="init()">Actualizar</button>
+      </div>
+    </section>
+
+    <!-- MARCAR -->
+    <section id="vMain" class="hide">
+      <div class="card">
+        <div class="saludo" id="hola"></div>
+        <div class="reloj" id="reloj">--:--</div>
+        <div class="fecha" id="fecha"></div>
+        <button class="marcar" id="bMarcar"><b id="bTxt">Ingreso</b><small id="bSub">Tocá para marcar</small></button>
+        <p class="muted hide" id="sinQR" style="text-align:center;margin-top:14px">Para marcar, escaneá el QR que está en el local.</p>
+      </div>
+      <div id="res"></div>
+      <div class="card">
+        <h2 style="font-size:24px">Tus últimas marcas</h2>
+        <ul class="hist" id="hist"></ul>
+      </div>
+    </section>
+  </main>
+  <footer>Zeppelin Bar · 25 de Mayo 340, Salta</footer>
+</div>
+
+<script>
+const API = 'https://script.google.com/macros/s/AKfycbxgeQIS4pVFD03x6X9SwH50li5wZUOvKExgJZzNsZSBcX5RGkv2WsgbyW91K5BPtP0B/exec';
+const LS = 'zpp_asist_device';
+const K = new URLSearchParams(location.search).get('k') || '';
+let device = null;
+try { device = localStorage.getItem(LS); } catch (e) {}
+
+const $ = id => document.getElementById(id);
+function show(id) { ['cargando', 'vAlta', 'vPend', 'vMain'].forEach(v => $(v).classList.toggle('hide', v !== id)); }
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+
+async function api(body) {
+  const r = await fetch(API, { method: 'POST', body: JSON.stringify(body) });
+  const j = await r.json();
+  if (!j.ok) throw new Error(j.error || 'Error del servidor');
+  return j;
+}
+
+function card(cls, html) { return '<div class="card res ' + cls + '">' + html + '</div>'; }
+
+function tick() {
+  const d = new Date();
+  $('reloj').textContent = d.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false });
+  $('fecha').textContent = d.toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' });
+}
+
+function hhmm(ts) { return ts ? ts.slice(11, 16) : ''; }
+function dmy(ts) { return ts ? ts.slice(8, 10) + '/' + ts.slice(5, 7) : ''; }
+
+async function init() {
+  show('cargando');
+  if (!device) { show('vAlta'); return; }
+  try {
+    const e = await api({ action: 'estado', device });
+    if (!e.registrado) {
+      try { localStorage.removeItem(LS); } catch (x) {}
+      device = null; show('vAlta'); return;
+    }
+    if (e.estado !== 'APROBADO') {
+      $('pTit').textContent = e.estado === 'PENDIENTE' ? 'Alta pendiente' : 'Usuario no habilitado';
+      $('pTxt').textContent = e.estado === 'PENDIENTE'
+        ? 'Hola ' + e.nombre + '. El encargado todavía no aprobó tu usuario. Cuando esté aprobado, escaneá el QR otra vez para marcar.'
+        : 'Tu usuario está dado de baja o no habilitado. Hablá con el encargado.';
+      show('vPend'); return;
+    }
+    $('hola').textContent = 'Hola, ' + e.nombre;
+    const out = e.siguiente === 'OUT';
+    $('bMarcar').classList.toggle('out', out);
+    $('bTxt').textContent = out ? 'Egreso' : 'Ingreso';
+    $('bSub').textContent = out ? 'Tocá para marcar salida' : 'Tocá para marcar entrada';
+    $('bMarcar').classList.toggle('hide', !K);
+    $('sinQR').classList.toggle('hide', !!K);
+    $('hist').innerHTML = e.ultimas.length
+      ? e.ultimas.map(m => '<li><span>' + dmy(m.ts) + ' · ' + hhmm(m.ts) + '</span><span class="tag ' + (m.tipo === 'IN' ? 'in' : 'out') + '">' + (m.tipo === 'IN' ? 'Ingreso' : 'Egreso') + '</span></li>').join('')
+      : '<li class="muted">Todavía no registraste marcas.</li>';
+    show('vMain');
+  } catch (err) {
+    show('vMain');
+    $('res').innerHTML = card('err', '<p><b>No se pudo conectar.</b> ' + esc(err.message) + '</p><button class="btn" onclick="init()">Reintentar</button>');
+  }
+}
+
+$('fAlta').addEventListener('submit', async ev => {
+  ev.preventDefault();
+  const datos = { nombre: $('nombre').value.trim(), apellido: $('apellido').value.trim(), dni: $('dni').value.replace(/\D/g, ''), telefono: $('tel').value.replace(/\D/g, '') };
+  $('eAlta').innerHTML = '';
+  if (!datos.nombre || !datos.apellido || !datos.dni || !datos.telefono) { $('eAlta').innerHTML = card('err', '<p>Completá todos los campos.</p>'); return; }
+  if (!$('ok').checked) { $('eAlta').innerHTML = card('err', '<p>Tenés que aceptar el uso de los datos para registrarte.</p>'); return; }
+  $('bAlta').disabled = true; $('bAlta').textContent = 'Registrando…';
+  try {
+    const r = await api(Object.assign({ action: 'registro' }, datos));
+    device = r.token;
+    try { localStorage.setItem(LS, device); } catch (x) {}
+    await init();
+  } catch (err) {
+    $('eAlta').innerHTML = card('err', '<p>' + esc(err.message) + '</p>');
+  } finally {
+    $('bAlta').disabled = false; $('bAlta').textContent = 'Registrarme';
+  }
+});
+
+function ubicacion() {
+  return new Promise(res => {
+    if (!navigator.geolocation) return res(null);
+    navigator.geolocation.getCurrentPosition(
+      p => res({ lat: p.coords.latitude, lng: p.coords.longitude, acc: p.coords.accuracy }),
+      () => res(null),
+      { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
+    );
+  });
+}
+
+$('bMarcar').addEventListener('click', async () => {
+  const b = $('bMarcar');
+  b.disabled = true;
+  $('bSub').textContent = 'Obteniendo ubicación…';
+  $('res').innerHTML = '';
+  const g = await ubicacion();
+  $('bSub').textContent = 'Registrando…';
+  try {
+    const r = await api(Object.assign({ action: 'marcar', device, k: K }, g || {}));
+    const tipo = r.tipo === 'IN' ? 'Ingreso' : 'Egreso';
+    let extra = '';
+    if (r.flags.includes('FUERA_RANGO')) extra = '<p class="muted" style="margin-top:8px">La ubicación quedó fuera del radio del local (' + r.distancia + ' m). La marca se guardó y el encargado la va a revisar.</p>';
+    if (r.flags.includes('SIN_GPS')) extra = '<p class="muted" style="margin-top:8px">No se pudo leer tu ubicación. La marca se guardó y el encargado la va a revisar. Activá la ubicación para la próxima.</p>';
+    $('res').innerHTML = card(r.estado === 'OK' ? '' : 'warn', '<div class="big">' + tipo + ' ' + r.hora + '</div><p>Marca registrada. Ya podés cerrar esta pantalla.</p>' + extra);
+    if (navigator.vibrate) navigator.vibrate(80);
+    await init();
+  } catch (err) {
+    $('res').innerHTML = card('err', '<p>' + esc(err.message) + '</p>');
+    $('bSub').textContent = 'Tocá para marcar';
+  } finally {
+    b.disabled = false;
+  }
+});
+
+tick(); setInterval(tick, 1000);
+init();
+</script>
+</body>
+</html>
