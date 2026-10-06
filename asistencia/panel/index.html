@@ -273,17 +273,26 @@ function msg(t, err) {
 
 const MEMO = {};
 async function api(body, opts) {
+  if (body.action === 'panel' && !(opts && opts._re)) {
+    try { return await api(body, Object.assign({}, opts, { _re: 1 })); }
+    catch (e) { if (!e.red) throw e; return await api(body, Object.assign({}, opts, { _re: 2, fresh: true })); }
+  }
   const lectura = body.action === 'panel';
   const key = lectura ? JSON.stringify(body) : null;
   if (lectura && !(opts && opts.fresh) && MEMO[key] && Date.now() - MEMO[key].t < 45000) return MEMO[key].d;
   const ctrl = new AbortController();
-  const lim = body.action === 'panel' ? 30000 : 50000;
+  const lim = body.action === 'panel' ? 20000 : 50000;
   const tm = setTimeout(() => ctrl.abort(), lim);
   let r, j;
   try {
     r = await fetch(API, { method: 'POST', body: JSON.stringify(Object.assign({ token: TOKEN }, body)), signal: ctrl.signal });
   } catch (e) {
-    throw new Error(e.name === 'AbortError' ? 'El servidor no respondió en ' + (lim / 1000) + ' s. Antes de reintentar, tocá Actualizar: puede que el cambio se haya guardado igual.' : 'No se pudo conectar con el servidor. Revisá la conexión y reintentá.');
+    const lect = body.action === 'panel';
+    const er = new Error(e.name === 'AbortError'
+      ? (lect ? 'Google no respondió a tiempo (2 intentos). Tocá Actualizar para reintentar.' : 'El servidor no respondió en ' + (lim / 1000) + ' s. Antes de reintentar, tocá Actualizar: puede que el cambio se haya guardado igual.')
+      : 'No se pudo conectar con el servidor. Revisá la conexión y reintentá.');
+    er.red = true;
+    throw er;
   } finally { clearTimeout(tm); }
   try { j = await r.json(); } catch (e) {
     const er = new Error('Respuesta inválida del servidor.');
