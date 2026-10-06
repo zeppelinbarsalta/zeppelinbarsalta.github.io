@@ -204,7 +204,7 @@ input,select,textarea{border:1.5px solid var(--linea);border-radius:4px;padding:
 <div id="ov" class="ov hide"><div class="mod" id="mod"></div></div>
 
 <script>
-const API = 'https://script.google.com/macros/s/AKfycbwYJ_2Q86UjJLHQf_nDR3n5nxw3fCZFpk_Dq7-yyp4-wpjLkNcfnajxO2XCdvn3Ui5J/exec';
+const API = 'https://script.google.com/macros/s/AKfycby5KUw7KKL1WYv95fA3VbfNNPbOgJiakDjDEB_L1gR59XNMZKBGyassvPNbkc4I3q1o/exec';
 const LS_TK = 'zpp_asist_admin';
 const ROLES_DEF = 'Mesero de Zona,Barra,Cocina,Bartender,Bachero,Comis,Cajero,Encargado,DJ,Recepcionista,Seguridad,Limpieza,Otro';
 const roles = () => String((D && D.config.ROLES) || ROLES_DEF).split(',').map(x => x.trim()).filter(Boolean);
@@ -277,12 +277,13 @@ async function api(body, opts) {
   const key = lectura ? JSON.stringify(body) : null;
   if (lectura && !(opts && opts.fresh) && MEMO[key] && Date.now() - MEMO[key].t < 45000) return MEMO[key].d;
   const ctrl = new AbortController();
-  const tm = setTimeout(() => ctrl.abort(), 25000);
+  const lim = body.action === 'panel' ? 30000 : 50000;
+  const tm = setTimeout(() => ctrl.abort(), lim);
   let r, j;
   try {
     r = await fetch(API, { method: 'POST', body: JSON.stringify(Object.assign({ token: TOKEN }, body)), signal: ctrl.signal });
   } catch (e) {
-    throw new Error(e.name === 'AbortError' ? 'El servidor no respondió en 25 s. Reintentá.' : 'No se pudo conectar con el servidor. Revisá la conexión y reintentá.');
+    throw new Error(e.name === 'AbortError' ? 'El servidor no respondió en ' + (lim / 1000) + ' s. Antes de reintentar, tocá Actualizar: puede que el cambio se haya guardado igual.' : 'No se pudo conectar con el servidor. Revisá la conexión y reintentá.');
   } finally { clearTimeout(tm); }
   try { j = await r.json(); } catch (e) { throw new Error('Respuesta inválida del servidor (¿acceso de la implementación en "Cualquier usuario"?).'); }
   if (!j.ok) throw new Error(j.error || 'Error del servidor');
