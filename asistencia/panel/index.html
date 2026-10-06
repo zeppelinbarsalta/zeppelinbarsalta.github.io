@@ -285,7 +285,11 @@ async function api(body, opts) {
   } catch (e) {
     throw new Error(e.name === 'AbortError' ? 'El servidor no respondió en ' + (lim / 1000) + ' s. Antes de reintentar, tocá Actualizar: puede que el cambio se haya guardado igual.' : 'No se pudo conectar con el servidor. Revisá la conexión y reintentá.');
   } finally { clearTimeout(tm); }
-  try { j = await r.json(); } catch (e) { throw new Error('Respuesta inválida del servidor (¿acceso de la implementación en "Cualquier usuario"?).'); }
+  try { j = await r.json(); } catch (e) {
+    const er = new Error('Respuesta inválida del servidor.');
+    if (body.action !== 'panel') { er.incierto = true; Object.keys(MEMO).forEach(k => delete MEMO[k]); }
+    throw er;
+  }
   if (!j.ok) throw new Error(j.error || 'Error del servidor');
   if (lectura) MEMO[key] = { t: Date.now(), d: j };
   else Object.keys(MEMO).forEach(k => delete MEMO[k]);
@@ -1003,7 +1007,15 @@ function modal(titulo, campos, onOk, okTxt) {
     }
     $('mOk').disabled = true;
     try { await onOk(v); cerrarModal(); }
-    catch (err) { $('eMod').textContent = err.message; $('mOk').disabled = false; }
+    catch (err) {
+      if (err.incierto) {
+        cerrarModal();
+        msg('El servidor guardó pero respondió con error. Recargué los datos: verificá que el cambio esté.', true);
+        await cargarTab(true);
+        return;
+      }
+      $('eMod').textContent = err.message; $('mOk').disabled = false;
+    }
   };
 }
 function cerrarModal() { $('ov').classList.add('hide'); $('mod').innerHTML = ''; }
