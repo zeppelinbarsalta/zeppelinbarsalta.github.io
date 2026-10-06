@@ -20,17 +20,17 @@ button{cursor:pointer}
 button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--nar);outline-offset:2px}
 .hide{display:none!important}
 header{background:var(--papel);border-bottom:4px solid var(--nar);position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
-.top{max-width:1180px;margin:0 auto;padding:14px 20px 0;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.top{max-width:1440px;margin:0 auto;padding:14px 20px 0;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .marca{font-family:'Bebas Neue',Impact,sans-serif;font-size:30px;line-height:1;letter-spacing:1px}
 .marca em{font-style:normal;color:var(--nar)}
 .acc{display:flex;gap:8px;align-items:center}
 .acc small{color:var(--gris);font-size:13px}
-nav{max-width:1180px;margin:0 auto;padding:10px 20px 0;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+nav{max-width:1440px;margin:0 auto;padding:10px 20px 0;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
 nav::-webkit-scrollbar{display:none}
 nav button{background:none;border:none;padding:10px 14px;font-size:16px;font-weight:500;color:var(--gris);border-bottom:3px solid transparent;margin-bottom:-4px;white-space:nowrap}
 nav button.on{color:var(--neg);border-bottom-color:var(--neg)}
 nav .badge{background:var(--nar);color:#fff;border-radius:10px;font-size:12px;padding:1px 7px;margin-left:4px}
-main{max-width:1180px;margin:0 auto;padding:24px 20px 60px}
+main{max-width:1440px;margin:0 auto;padding:24px 20px 60px}
 h2{font-family:'Bebas Neue',Impact,sans-serif;font-weight:400;font-size:28px;letter-spacing:.5px;margin:28px 0 10px}
 h2:first-child{margin-top:0}
 .noche{font-family:'Bebas Neue',Impact,sans-serif;font-size:clamp(44px,8vw,86px);line-height:.9;letter-spacing:1px;margin-bottom:6px}
@@ -59,6 +59,7 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
 .btn{background:var(--neg);color:#fff;border:none;border-radius:4px;padding:9px 16px;font-size:15px;font-weight:500}
 .btn.alt{background:var(--papel);color:var(--neg);border:1.5px solid var(--neg)}
 .btn.nar{background:var(--nar)}
+.btn.bad{background:var(--bad)}
 .btn.sm{padding:5px 10px;font-size:13px}
 .btn:disabled{opacity:.4}
 .lnk{background:none;border:none;color:var(--nar2);font-weight:500;font-size:14px;padding:4px 6px}
@@ -94,6 +95,41 @@ input,select,textarea{border:1.5px solid var(--linea);border-radius:4px;padding:
 .dias label{display:flex;align-items:center;gap:4px;margin:0;font-weight:400;border:1.5px solid var(--linea);border-radius:4px;padding:6px 8px}
 .dias input{width:auto;accent-color:var(--nar)}
 .cargando{opacity:.5;pointer-events:none}
+/* calendario */
+.cal{border-collapse:separate;border-spacing:3px;font-size:13px;min-width:max-content;width:auto}
+.cal th{background:none;border:none;padding:2px 0;text-align:center;font-size:11px;line-height:1.15;font-weight:500;color:var(--gris)}
+.cal th b{display:block;font-size:14px;color:var(--neg)}
+.cal th.fin,.cal th.fin b{color:var(--nar2)}
+.cal th.izq{text-align:left;padding-left:4px;font-size:13px}
+.cal th.t{text-align:right;padding:0 10px;font-size:13px}
+.cal td{border:none;padding:0}
+.cal td.nm{padding:2px 12px 2px 4px;white-space:nowrap;font-size:15px;position:sticky;left:0;background:var(--papel);z-index:1}
+.cal td.nm small{font-size:11px;color:var(--gris);text-transform:uppercase;margin-left:6px;letter-spacing:.5px}
+.cal td.t{padding:0 10px;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;font-size:15px}
+.cal td.imp{font-weight:600}
+.c{width:30px;height:30px;border-radius:3px;background:#F2F2EF;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;position:relative}
+.c.fin{background:#E7E7E2}
+.c.w{background:var(--nar)}
+.c.w.inc{background:repeating-linear-gradient(45deg,var(--nar) 0 5px,#FFB48A 5px 10px)}
+.c.tr::after,.c.ta::after{content:'';position:absolute;top:2px;right:2px;width:7px;height:7px;border-radius:50%;border:1px solid #fff}
+.c.tr::after{background:var(--neg)}
+.c.ta::after{background:var(--warn)}
+.c.a{background:#FBDCD8;color:var(--bad);border:1.5px solid var(--bad);font-size:13px}
+.c.j{background:#CFCFC9;color:#3a3a37}
+.c.p{background:#fff;border:1.5px dashed #C2C2BB}
+.c.cur{box-shadow:inset 0 0 0 2px var(--neg)}
+.leyenda{display:flex;flex-wrap:wrap;gap:16px;font-size:13px;color:var(--gris);margin:12px 2px 28px}
+.cal.mes .c{width:26px;height:26px;font-size:10px}
+.cal.mes{border-spacing:2px}
+.leyenda span{display:inline-flex;align-items:center;gap:6px}
+.leyenda .c{width:18px;height:18px;font-size:9px}
+/* horarios por día */
+.hor{display:grid;grid-template-columns:auto 1fr 1fr;gap:6px 8px;align-items:center}
+.hor .hd{font-size:12px;color:var(--gris)}
+.hor label{display:flex;align-items:center;gap:6px;margin:0;font-weight:400}
+.hor input[type=checkbox]{width:auto;accent-color:var(--nar)}
+.hor input[type=time]{padding:6px 8px}
+.hor input[type=time]:disabled{opacity:.35}
 @media (max-width:760px){.graf,.grid2{grid-template-columns:1fr}.kpi{border-right:none;border-bottom:1px solid var(--linea)}.per{min-width:0;font-size:24px}}
 </style>
 </head>
@@ -134,6 +170,7 @@ input,select,textarea{border:1.5px solid var(--linea);border-radius:4px;padding:
         <button class="btn alt" id="rPrev" aria-label="Período anterior">‹</button>
         <div class="per" id="rLbl"></div>
         <button class="btn alt" id="rNext" aria-label="Período siguiente">›</button>
+        <div class="seg" id="segVista"><button data-v="cal" class="on">Calendario</button><button data-v="tabla">Resumen</button></div>
         <button class="btn nar" id="rXls">Exportar Excel</button>
       </div>
       <div id="repBody"></div>
@@ -169,7 +206,9 @@ input,select,textarea{border:1.5px solid var(--linea);border-radius:4px;padding:
 <script>
 const API = 'https://script.google.com/macros/s/AKfycbwYJ_2Q86UjJLHQf_nDR3n5nxw3fCZFpk_Dq7-yyp4-wpjLkNcfnajxO2XCdvn3Ui5J/exec';
 const LS_TK = 'zpp_asist_admin';
-const ROLES = ['Mesero de Zona', 'Barra', 'Cocina', 'Bartender', 'Bachero', 'Comis', 'Cajero', 'Encargado', 'DJ', 'Recepcionista', 'Seguridad', 'Limpieza', 'Otro'];
+const ROLES_DEF = 'Mesero de Zona,Barra,Cocina,Bartender,Bachero,Comis,Cajero,Encargado,DJ,Recepcionista,Seguridad,Limpieza,Otro';
+const roles = () => String((D && D.config.ROLES) || ROLES_DEF).split(',').map(x => x.trim()).filter(Boolean);
+const MODO_TXT = { JORNADA: 'Por jornada', HORA: 'Por hora', AMBAS: 'Jornada y hora' };
 const DIAS = [['1', 'Lun'], ['2', 'Mar'], ['3', 'Mié'], ['4', 'Jue'], ['5', 'Vie'], ['6', 'Sáb'], ['0', 'Dom']];
 const TIPOS_NOV = ['Ausencia justificada', 'Franco', 'Licencia', 'Enfermedad', 'Cambio de turno', 'Ausencia injustificada', 'Otro'];
 const JUSTIFICA = ['Ausencia justificada', 'Franco', 'Licencia', 'Enfermedad', 'Cambio de turno'];
@@ -179,7 +218,7 @@ let TOKEN = null;
 try { TOKEN = localStorage.getItem(LS_TK); } catch (e) {}
 let D = null;          // última carga del panel (fecha operativa actual)
 let tab = 'hoy';
-let repModo = 'sem', repRef = null, repData = null, charts = [];
+let repModo = 'sem', repVista = 'cal', repRef = null, repData = null, charts = [];
 let marData = null, novData = null;
 let timer = null;
 
@@ -189,6 +228,40 @@ const nom = p => p ? ((p.nombre || '') + ' ' + (p.apellido || '')).trim() : '—
 const hhmm = ts => ts ? String(ts).slice(11, 16) : '';
 const hrs = min => (min / 60).toFixed(1).replace('.', ',');
 const money = n => '$ ' + Math.round(n).toLocaleString('es-AR');
+const num = v => parseFloat(String(v == null ? '' : v).replace(',', '.')) || 0;
+
+/* ---------- horarios por día: "5=20:00-05:00;6=21:00-05:00" ---------- */
+function parseHor(str) {
+  const o = {};
+  String(str || '').split(';').filter(Boolean).forEach(x => {
+    const [d, r] = x.split('=');
+    const [a, b] = String(r || '').split('-');
+    o[d] = { in: a || '', out: b || '' };
+  });
+  return o;
+}
+function horariosDe(p) {
+  if (p.horarios) return parseHor(p.horarios);
+  const o = {};
+  String(p.dias || '').split(',').filter(Boolean).forEach(d => o[d] = { in: p.hora_entrada || '', out: p.hora_salida || '' });
+  return o;
+}
+function horarioDe(p, wd) { return horariosDe(p)[String(wd)] || null; }
+function resumenHor(p) {
+  const h = horariosDe(p);
+  const items = DIAS.filter(([v]) => h[v]).map(([v, l]) => [l, h[v]]);
+  if (!items.length) return '—';
+  const rng = x => x.in ? x.in + ' a ' + (x.out || '?') : 'sin horario';
+  const u = new Set(items.map(([, x]) => rng(x)));
+  if (u.size === 1) return items.map(i => i[0]).join(', ') + ' · ' + [...u][0];
+  return items.map(([l, x]) => l + ' ' + rng(x)).join('<br>');
+}
+function valoresTxt(p) {
+  const out = [];
+  if (num(p.valor_jornada)) out.push(money(num(p.valor_jornada)) + ' /jornada');
+  if (num(p.valor_hora)) out.push(money(num(p.valor_hora)) + ' /h');
+  return out.join('<br>') || '—';
+}
 
 function msg(t, err) {
   const m = document.createElement('div');
@@ -262,13 +335,15 @@ function analizar(X) {
     const enCurso = !!abierta && fecha === X.ahora.fecha_op;
     if (abierta && !enCurso) inc = true;
     let tarde = null, sem = '';
-    if (primer && p.hora_entrada) {
-      tarde = Math.max(0, Math.round((primer.epoch - expEpoch(fecha, p.hora_entrada, corte)) / 60000));
+    const hs = horarioDe(p, dow(fecha));
+    if (primer && hs && hs.in) {
+      tarde = Math.max(0, Math.round((primer.epoch - expEpoch(fecha, hs.in, corte)) / 60000));
       sem = tarde === 0 ? 'v' : tarde <= tol ? 'a' : 'r';
     }
     let extra = 0;
-    if (p.hora_entrada && p.hora_salida && !inc && !enCurso) {
-      const prog = (expEpoch(fecha, p.hora_salida, corte) - expEpoch(fecha, p.hora_entrada, corte)) / 60000;
+    if (hs && hs.in && hs.out && !inc && !enCurso) {
+      let prog = (expEpoch(fecha, hs.out, corte) - expEpoch(fecha, hs.in, corte)) / 60000;
+      if (prog <= 0) prog += 1440;
       if (prog > 0) extra = Math.max(0, min - prog);
     }
     J.push({ dni, fecha, p, min, primer, ultimoOut, abierta, inc, enCurso, revisar, flags: [...flags], tarde, sem, extra, marcas: ms });
@@ -281,12 +356,13 @@ function analizar(X) {
   for (let f = X.desde; f <= X.hasta && f <= X.ahora.fecha_op; f = addDays(f, 1)) {
     const wd = String(dow(f));
     X.personal.forEach(p => {
-      if (p.estado !== 'APROBADO' || !p.dias || !p.dias.split(',').includes(wd)) return;
+      const hs = horarioDe(p, wd);
+      if (p.estado !== 'APROBADO' || !hs) return;
       if ((p.alta || '').slice(0, 10) > f) return;
       if (conJ.has(p.dni + '|' + f)) return;
       if (f === X.ahora.fecha_op) {
-        if (!p.hora_entrada) return;
-        if (X.ahora.epoch < expEpoch(f, p.hora_entrada, corte) + 30 * 60000) return;
+        if (!hs.in) return;
+        if (X.ahora.epoch < expEpoch(f, hs.in, corte) + 30 * 60000) return;
       }
       const n = NOV[p.dni + '|' + f] || null;
       A.push({ dni: p.dni, fecha: f, p, nov: n, just: !!(n && JUSTIFICA.includes(n.tipo)) });
@@ -304,7 +380,13 @@ function analizar(X) {
     if (j.revisar) r.rev++;
   });
   A.forEach(a => { const r = base(a.dni); if (a.just) r.just++; else r.aus++; });
-  Object.values(R).forEach(r => r.costo = (r.min / 60) * (parseFloat(String(r.p.valor_hora || '').replace(',', '.')) || 0));
+  const modo = X.config.MODO || 'AMBAS';
+  Object.values(R).forEach(r => {
+    const vj = num(r.p.valor_jornada), vh = num(r.p.valor_hora);
+    if (modo === 'JORNADA') r.costo = r.jor * vj;
+    else if (modo === 'HORA') r.costo = (r.min / 60) * vh;
+    else r.costo = vj ? r.jor * vj + (r.extra / 60) * vh : (r.min / 60) * vh;
+  });
   const res = Object.values(R).sort((a, b) => b.min - a.min);
   return { J, A, R: res, P };
 }
@@ -405,11 +487,11 @@ function renderHoy() {
   }
   h += '<h2>Programados sin marca</h2>';
   const sinMarca = an.A;
-  if (!sinMarca.length) h += '<div class="tbl"><div class="vacio">No hay ausencias para esta noche' + (D.personal.some(p => p.dias) ? '.' : ': todavía no cargaste días y horarios en Personal.') + '</div></div>';
+  if (!sinMarca.length) h += '<div class="tbl"><div class="vacio">No hay ausencias para esta noche' + (D.personal.some(p => p.dias || p.horarios) ? '.' : ': todavía no cargaste días y horarios en Personal.') + '</div></div>';
   else {
     h += '<div class="tbl"><table><tr><th>Persona</th><th>Rol</th><th>Entrada prevista</th><th>Situación</th><th></th></tr>';
     sinMarca.forEach(a => {
-      h += '<tr><td>' + esc(nom(a.p)) + '</td><td>' + esc(a.p.rol || '—') + '</td><td>' + esc(a.p.hora_entrada) + '</td><td>' +
+      h += '<tr><td>' + esc(nom(a.p)) + '</td><td>' + esc(a.p.rol || '—') + '</td><td>' + esc((horarioDe(a.p, dow(a.fecha)) || {}).in || '—') + '</td><td>' +
         (a.nov ? '<span class="pill ' + (a.just ? 'ok' : 'bad') + '">' + esc(a.nov.tipo) + '</span>' : '<span class="pill bad">Sin aviso</span>') +
         '</td><td>' + (a.nov ? '' : '<button class="lnk" data-act="novDe" data-dni="' + esc(a.dni) + '" data-f="' + a.fecha + '">Cargar novedad</button>') + '</td></tr>';
     });
@@ -431,6 +513,13 @@ $('rPrev').onclick = () => { repRef = repModo === 'sem' ? addDays(repRef, -7) : 
 $('rNext').onclick = () => { repRef = repModo === 'sem' ? addDays(repRef, 7) : addDays(mes(repRef)[1], 1); renderRep(); };
 $('rXls').onclick = () => exportar();
 
+$('segVista').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  repVista = b.dataset.v;
+  document.querySelectorAll('#segVista button').forEach(x => x.classList.toggle('on', x === b));
+  renderRep();
+});
+
 async function renderRep() {
   const [d1, d2] = repModo === 'sem' ? semana(repRef) : mes(repRef);
   $('rLbl').textContent = repModo === 'sem' ? fCorta(d1) + ' al ' + fCorta(d2) : new Date(d1 + 'T12:00:00Z').toLocaleDateString('es-AR', { month: 'long', year: 'numeric', timeZone: 'UTC' });
@@ -440,22 +529,30 @@ async function renderRep() {
   } catch (err) { $('repBody').innerHTML = '<div class="vacio">' + esc(err.message) + '</div>'; return; }
   const an = analizar(repData);
   repData._an = an;
+  const modo = repData.config.MODO || 'AMBAS', vJ = modo !== 'HORA', vH = modo !== 'JORNADA';
   const T = an.R.reduce((t, r) => { t.min += r.min; t.jor += r.jor; t.tard += r.tard; t.aus += r.aus; t.inc += r.inc; t.costo += r.costo; t.extra += r.extra; return t; }, { min: 0, jor: 0, tard: 0, aus: 0, inc: 0, costo: 0, extra: 0 });
-  const conValor = repData.personal.some(p => parseFloat(p.valor_hora));
-  let h = '<div class="kpis">' + k(hrs(T.min), 'Horas trabajadas') + k(T.jor, 'Jornadas') + k(T.tard, 'Llegadas tarde', T.tard > 0) +
-    k(T.aus, 'Ausencias sin justificar', T.aus > 0) + k(T.inc, 'Jornadas incompletas', T.inc > 0) +
-    (conValor ? k(money(T.costo), 'Costo laboral estimado') : k(hrs(T.extra), 'Horas extra')) + '</div>';
-  h += '<div class="graf"><div class="box"><canvas id="g1"></canvas></div><div class="box"><canvas id="g2"></canvas></div></div>';
-  h += '<h2>Resumen por persona</h2>';
-  if (!an.R.length) h += '<div class="tbl"><div class="vacio">Sin marcas ni ausencias en este período.</div></div>';
+  const conValor = repData.personal.some(p => (vJ && num(p.valor_jornada)) || (vH && num(p.valor_hora)));
+  let h = '<div class="kpis">' + (vJ ? k(T.jor, 'Jornadas') : '') + (vH ? k(hrs(T.min), 'Horas trabajadas') : '') +
+    k(T.tard, 'Llegadas tarde', T.tard > 0) + k(T.aus, 'Ausencias sin justificar', T.aus > 0) + k(T.inc, 'Jornadas incompletas', T.inc > 0) +
+    (conValor ? k(money(T.costo), 'Importe estimado') : (vH ? k(hrs(T.extra), 'Horas extra') : '')) + '</div>';
+  if (repVista === 'cal') h += '<h2>Calendario de asistencia</h2>' + calendario(an, repData, d1, d2, modo, conValor);
   else {
-    h += '<div class="tbl"><table><tr><th>Persona</th><th>Rol</th><th class="n">Jornadas</th><th class="n">Horas</th><th class="n">Prom. h/jornada</th><th class="n">Horas extra</th><th class="n">Tardanzas</th><th class="n">Min. tarde</th><th class="n">Ausencias</th><th class="n">Justificadas</th><th class="n">Incompletas</th>' + (conValor ? '<th class="n">Costo</th>' : '') + '</tr>';
-    an.R.forEach(r => {
-      h += '<tr><td>' + esc(nom(r.p)) + '</td><td>' + esc(r.p.rol || '—') + '</td><td class="n">' + r.jor + '</td><td class="n">' + hrs(r.min) + '</td><td class="n">' + (r.jor ? hrs(r.min / r.jor) : '—') +
-        '</td><td class="n">' + hrs(r.extra) + '</td><td class="n">' + (r.tard ? (r.rojas ? '<span class="dot r"></span>' : '<span class="dot a"></span>') + r.tard : '0') + '</td><td class="n">' + r.minTarde +
-        '</td><td class="n">' + (r.aus ? '<b style="color:var(--bad)">' + r.aus + '</b>' : '0') + '</td><td class="n">' + r.just + '</td><td class="n">' + r.inc + '</td>' + (conValor ? '<td class="n">' + money(r.costo) + '</td>' : '') + '</tr>';
-    });
-    h += '</table></div>';
+    h += '<div class="graf"><div class="box"><canvas id="g1"></canvas></div><div class="box"><canvas id="g2"></canvas></div></div>';
+    h += '<h2>Resumen por persona</h2>';
+    if (!an.R.length) h += '<div class="tbl"><div class="vacio">Sin marcas ni ausencias en este período.</div></div>';
+    else {
+      const cols = [
+        ['Persona', r => esc(nom(r.p)), 0, 1], ['Rol', r => esc(r.p.rol || '—'), 0, 1],
+        ['Jornadas', r => r.jor, 1, vJ], ['Horas', r => hrs(r.min), 1, vH], ['Prom. h/jornada', r => r.jor ? hrs(r.min / r.jor) : '—', 1, vH],
+        ['Horas extra', r => hrs(r.extra), 1, vH],
+        ['Tardanzas', r => r.tard ? (r.rojas ? '<span class="dot r"></span>' : '<span class="dot a"></span>') + r.tard : '0', 1, 1],
+        ['Min. tarde', r => r.minTarde, 1, 1], ['Ausencias', r => r.aus ? '<b style="color:var(--bad)">' + r.aus + '</b>' : '0', 1, 1],
+        ['Justificadas', r => r.just, 1, 1], ['Incompletas', r => r.inc, 1, 1], ['Importe', r => money(r.costo), 1, conValor]
+      ].filter(c => c[3]);
+      h += '<div class="tbl"><table><tr>' + cols.map(c => '<th' + (c[2] ? ' class="n"' : '') + '>' + c[0] + '</th>').join('') + '</tr>';
+      an.R.forEach(r => { h += '<tr>' + cols.map(c => '<td' + (c[2] ? ' class="n"' : '') + '>' + c[1](r) + '</td>').join('') + '</tr>'; });
+      h += '</table></div>';
+    }
   }
   const aRev = an.J.filter(j => j.inc || j.revisar);
   h += '<div class="grid2"><div><h2>Ausencias</h2>';
@@ -464,10 +561,50 @@ async function renderRep() {
   h += aRev.length ? '<div class="tbl"><table><tr><th>Fecha</th><th>Persona</th><th>Motivo</th></tr>' + aRev.map(j => '<tr><td>' + fCorta(j.fecha) + '</td><td>' + esc(nom(j.p)) + '</td><td>' + (j.inc ? '<span class="pill bad">Sin egreso / incompleta</span> ' : '') + flagsHtml(j.flags) + '</td></tr>').join('') + '</table></div>' : '<div class="tbl"><div class="vacio">Todo en orden.</div></div>';
   h += '</div></div>';
   $('repBody').innerHTML = h;
-  graficos(an, d1, d2);
+  if (repVista !== 'cal') graficos(an, d1, d2, modo);
 }
 
-function graficos(an, d1, d2) {
+function calendario(an, X, d1, d2, modo, conValor) {
+  const vJ = modo !== 'HORA', vH = modo !== 'JORNADA';
+  const dias = []; for (let f = d1; f <= d2; f = addDays(f, 1)) dias.push(f);
+  const JM = {}, AM = {}, NM = {}, RM = {};
+  an.J.forEach(j => JM[j.dni + '|' + j.fecha] = j);
+  an.A.forEach(a => AM[a.dni + '|' + a.fecha] = a);
+  X.novedades.forEach(n => NM[n.dni + '|' + n.fecha_op] = n);
+  an.R.forEach(r => RM[r.dni] = r);
+  const pers = X.personal.filter(p => p.estado === 'APROBADO' || RM[p.dni])
+    .sort((a, b) => ((RM[b.dni] || {}).jor || 0) - ((RM[a.dni] || {}).jor || 0) || nom(a).localeCompare(nom(b)));
+  if (!pers.length) return '<div class="tbl"><div class="vacio">Sin personal activo.</div></div>';
+  const LET = ['D', 'L', 'M', 'X', 'J', 'V', 'S'];
+  const fin = f => { const w = dow(f); return w === 5 || w === 6; };
+  let h = '<div class="tbl" style="padding:8px"><table class="cal' + (dias.length > 7 ? ' mes' : '') + '"><tr><th class="izq">Empleado</th>' +
+    dias.map(f => '<th class="' + (fin(f) ? 'fin' : '') + '">' + LET[dow(f)] + '<b>' + (+f.slice(8)) + '</b></th>').join('') +
+    (vJ ? '<th class="t">Jornadas</th>' : '') + (vH ? '<th class="t">Horas</th>' : '') + (conValor ? '<th class="t">Importe</th>' : '') + '</tr>';
+  pers.forEach(p => {
+    const r = RM[p.dni] || { jor: 0, min: 0, costo: 0 };
+    h += '<tr><td class="nm">' + esc(nom(p)) + (p.rol ? '<small>' + esc(p.rol) + '</small>' : '') + '</td>';
+    dias.forEach(f => {
+      const key = p.dni + '|' + f, j = JM[key], a = AM[key], n = NM[key];
+      let cls = 'c' + (fin(f) ? ' fin' : ''), txt = '', tit = fCorta(f);
+      if (j) {
+        cls = 'c w' + (j.inc ? ' inc' : '') + (j.sem === 'r' ? ' tr' : j.sem === 'a' ? ' ta' : '') + (j.enCurso ? ' cur' : '');
+        txt = vH ? hrs(j.min) : '';
+        tit += ' · ingreso ' + hhmm(j.primer && j.primer.ts) + (j.ultimoOut ? ', egreso ' + hhmm(j.ultimoOut.ts) : ', sin egreso') + ' · ' + hrs(j.min) + ' h' + (j.tarde ? ' · +' + j.tarde + ' min tarde' : '');
+      } else if (a && !a.just) { cls = 'c a'; txt = '✕'; tit += ' · ausente' + (n ? ' (' + n.tipo + ')' : ' sin aviso'); }
+      else if (n) { cls = 'c j'; txt = n.tipo.charAt(0); tit += ' · ' + n.tipo + (n.detalle ? ': ' + n.detalle : ''); }
+      else if (f > X.ahora.fecha_op && horarioDe(p, dow(f)) && p.estado === 'APROBADO') { cls = 'c p'; tit += ' · programado'; }
+      h += '<td><div class="' + cls + '" title="' + esc(tit) + '">' + txt + '</div></td>';
+    });
+    h += (vJ ? '<td class="t">' + r.jor + '</td>' : '') + (vH ? '<td class="t">' + hrs(r.min) + '</td>' : '') + (conValor ? '<td class="t imp">' + money(r.costo) + '</td>' : '') + '</tr>';
+  });
+  h += '</table></div>';
+  h += '<div class="leyenda"><span><i class="c w"></i>Trabajó' + (vH ? ' (horas)' : '') + '</span><span><i class="c w ta"></i>Llegó tarde (amarillo)</span><span><i class="c w tr"></i>Llegó tarde (rojo)</span>' +
+    '<span><i class="c w inc"></i>Sin egreso</span><span><i class="c a">✕</i>Ausente sin justificar</span><span><i class="c j">F</i>Novedad (franco, licencia…)</span><span><i class="c p"></i>Programado</span></div>';
+  return h;
+}
+
+function graficos(an, d1, d2, modo) {
+  const vH = modo !== 'JORNADA';
   charts.forEach(c => c.destroy()); charts = [];
   if (typeof Chart === 'undefined') return;
   Chart.defaults.font.family = 'Oswald, Arial, sans-serif';
@@ -482,13 +619,13 @@ function graficos(an, d1, d2) {
   }
   charts.push(new Chart($('g1'), {
     type: 'bar',
-    data: { labels: fechas, datasets: [{ label: 'Horas trabajadas', data: horas, backgroundColor: '#FF5A00', borderRadius: 2 }, { label: 'Personas', data: pers, backgroundColor: '#0A0A0A', borderRadius: 2 }] },
+    data: { labels: fechas, datasets: (vH ? [{ label: 'Horas trabajadas', data: horas, backgroundColor: '#FF5A00', borderRadius: 2 }] : []).concat([{ label: 'Personas', data: pers, backgroundColor: vH ? '#0A0A0A' : '#FF5A00', borderRadius: 2 }]) },
     options: { maintainAspectRatio: false, plugins: { title: { display: true, text: 'Por noche', align: 'start', color: '#0A0A0A', font: { size: 16, weight: 500 } } }, scales: { y: { beginAtZero: true } } }
   }));
-  const top = an.R.slice(0, 15);
+  const top = an.R.slice().sort((a, b) => vH ? b.min - a.min : b.jor - a.jor).slice(0, 15);
   charts.push(new Chart($('g2'), {
     type: 'bar',
-    data: { labels: top.map(r => nom(r.p)), datasets: [{ label: 'Horas', data: top.map(r => +(r.min / 60).toFixed(1)), backgroundColor: '#FF5A00', borderRadius: 2 }, { label: 'Min. tarde', data: top.map(r => r.minTarde), backgroundColor: '#B8B8B2', borderRadius: 2 }] },
+    data: { labels: top.map(r => nom(r.p)), datasets: [vH ? { label: 'Horas', data: top.map(r => +(r.min / 60).toFixed(1)), backgroundColor: '#FF5A00', borderRadius: 2 } : { label: 'Jornadas', data: top.map(r => r.jor), backgroundColor: '#FF5A00', borderRadius: 2 }, { label: 'Min. tarde', data: top.map(r => r.minTarde), backgroundColor: '#B8B8B2', borderRadius: 2 }] },
     options: { indexAxis: 'y', maintainAspectRatio: false, plugins: { title: { display: true, text: 'Por persona', align: 'start', color: '#0A0A0A', font: { size: 16, weight: 500 } } }, scales: { x: { beginAtZero: true } } }
   }));
 }
@@ -501,8 +638,28 @@ function exportar() {
   XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(an.R.map(r => ({
     Persona: nom(r.p), DNI: r.dni, Rol: r.p.rol || '', Jornadas: r.jor, Horas: +(r.min / 60).toFixed(2), 'Horas extra': +(r.extra / 60).toFixed(2),
     Tardanzas: r.tard, 'Min tarde': r.minTarde, Ausencias: r.aus, Justificadas: r.just, Incompletas: r.inc,
-    'Valor hora': parseFloat(r.p.valor_hora) || 0, 'Costo estimado': Math.round(r.costo)
+    'Valor jornada': num(r.p.valor_jornada), 'Valor hora': num(r.p.valor_hora), 'Importe estimado': Math.round(r.costo)
   }))), 'Resumen');
+  {
+    const modo = repData.config.MODO || 'AMBAS';
+    const JM = {}, AM = {}, NM = {};
+    an.J.forEach(j => JM[j.dni + '|' + j.fecha] = j);
+    an.A.forEach(a => AM[a.dni + '|' + a.fecha] = a);
+    repData.novedades.forEach(n => NM[n.dni + '|' + n.fecha_op] = n);
+    const dias = []; for (let f = repData.desde; f <= repData.hasta; f = addDays(f, 1)) dias.push(f);
+    const filas = an.R.map(r => {
+      const o = { Persona: nom(r.p), Rol: r.p.rol || '' };
+      dias.forEach(f => {
+        const key = r.dni + '|' + f, j = JM[key], a = AM[key], n = NM[key];
+        o[fCorta(f)] = j ? (modo === 'JORNADA' ? 'X' : +(j.min / 60).toFixed(1)) : (a && !a.just) ? 'A' : n ? n.tipo.charAt(0) : '';
+      });
+      if (modo !== 'HORA') o.Jornadas = r.jor;
+      if (modo !== 'JORNADA') o.Horas = +(r.min / 60).toFixed(2);
+      o.Importe = Math.round(r.costo);
+      return o;
+    });
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(filas), 'Calendario');
+  }
   XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(an.J.map(j => ({
     'Fecha operativa': j.fecha, Persona: nom(j.p), DNI: j.dni, Rol: j.p.rol || '', Ingreso: hhmm(j.primer && j.primer.ts), Egreso: j.ultimoOut ? hhmm(j.ultimoOut.ts) : '',
     Horas: +(j.min / 60).toFixed(2), 'Min tarde': j.tarde === null ? '' : j.tarde, Estado: j.enCurso ? 'En curso' : j.inc ? 'Incompleta' : 'Completa', Observaciones: j.flags.map(f => FLAG_TXT[f] || f).join(', ')
@@ -580,11 +737,10 @@ function renderPer() {
   h += '<h2>Equipo</h2>';
   if (!lista.length) h += '<div class="tbl"><div class="vacio">Todavía no hay personal aprobado. Imprimí el cartel QR desde Configuración y pedí a cada empleado que se registre.</div></div>';
   else {
-    h += '<div class="tbl"><table><tr><th>Nombre</th><th>DNI</th><th>Teléfono</th><th>Rol</th><th>Días</th><th>Horario</th><th class="n">Valor hora</th><th>Celular</th><th>Estado</th><th></th></tr>';
+    h += '<div class="tbl"><table><tr><th>Nombre</th><th>DNI</th><th>Teléfono</th><th>Rol</th><th>Horario</th><th class="n">Valor</th><th>Celular</th><th>Estado</th><th></th></tr>';
     lista.forEach(p => {
-      const dias = (p.dias || '').split(',').filter(Boolean).map(d => (DIAS.find(x => x[0] === d) || ['', d])[1]).join(', ');
-      h += '<tr' + (p.estado !== 'APROBADO' ? ' style="opacity:.55"' : '') + '><td>' + esc(nom(p)) + '</td><td>' + esc(p.dni) + '</td><td><a href="https://wa.me/549' + esc(String(p.telefono).replace(/^0/, '').replace(/^549/, '')) + '" target="_blank" rel="noopener" style="color:inherit">' + esc(p.telefono) + '</a></td><td>' + esc(p.rol || '—') + '</td><td>' + esc(dias || '—') +
-        '</td><td>' + (p.hora_entrada ? esc(p.hora_entrada) + ' a ' + esc(p.hora_salida || '?') : '—') + '</td><td class="n">' + (p.valor_hora ? money(parseFloat(p.valor_hora)) : '—') + '</td><td>' + (p.dispositivo ? '<span class="pill ok">Vinculado</span>' : '<span class="pill warn">Sin celular</span>') +
+      h += '<tr' + (p.estado !== 'APROBADO' ? ' style="opacity:.55"' : '') + '><td>' + esc(nom(p)) + '</td><td>' + esc(p.dni) + '</td><td><a href="https://wa.me/549' + esc(String(p.telefono).replace(/^0/, '').replace(/^549/, '')) + '" target="_blank" rel="noopener" style="color:inherit">' + esc(p.telefono) + '</a></td><td>' + esc(p.rol || '—') + '</td><td style="font-size:14px;line-height:1.35">' + resumenHor(p) +
+        '</td><td class="n" style="font-size:14px;line-height:1.35;white-space:nowrap">' + valoresTxt(p) + '</td><td>' + (p.dispositivo ? '<span class="pill ok">Vinculado</span>' : '<span class="pill warn">Sin celular</span>') +
         '</td><td><span class="pill ' + (p.estado === 'APROBADO' ? 'ok' : 'bad') + '">' + (p.estado === 'APROBADO' ? 'Activo' : p.estado === 'BAJA' ? 'Baja' : 'Rechazado') + '</span></td><td style="white-space:nowrap">' +
         '<button class="lnk" data-act="pEdit" data-dni="' + esc(p.dni) + '">Editar</button>' +
         (p.dispositivo ? '<button class="lnk" data-act="pReset" data-dni="' + esc(p.dni) + '">Cambiar celular</button>' : '') +
@@ -592,26 +748,46 @@ function renderPer() {
     });
     h += '</table></div>';
   }
-  h += '<p class="sub" style="margin-top:12px">Los días y el horario de cada persona definen las llegadas tarde y las ausencias. "Cambiar celular" desvincula el teléfono actual: la persona vuelve a escanear el QR desde el nuevo y se registra con el mismo DNI.</p>';
+  h += '<p class="sub" style="margin-top:12px">El horario de cada día define las llegadas tarde y las ausencias de esa noche. "Cambiar celular" desvincula el teléfono actual: la persona vuelve a escanear el QR desde el nuevo y se registra con el mismo DNI.</p>';
   $('t-per').innerHTML = h;
 }
 
 function modalPersona(p, aprobar) {
-  modal(aprobar ? 'Aprobar a ' + nom(p) : 'Editar ' + nom(p), [
+  const modo = D.config.MODO || 'AMBAS';
+  const rl = roles();
+  if (p.rol && !rl.includes(p.rol)) rl.push(p.rol);
+  let hor = horariosDe(p);
+  if (aprobar && !Object.keys(hor).length) hor = { 5: { in: '20:00', out: '05:00' }, 6: { in: '20:00', out: '05:00' } };
+  const campos = [
     { k: 'nombre', label: 'Nombre', type: 'text', value: p.nombre, req: true },
     { k: 'apellido', label: 'Apellido', type: 'text', value: p.apellido, req: true },
     { k: 'telefono', label: 'Teléfono', type: 'text', value: p.telefono },
-    { k: 'rol', label: 'Rol', type: 'select', options: [['', 'Sin rol']].concat(ROLES.map(r => [r, r])), value: p.rol },
-    { k: 'dias', label: 'Días que trabaja', type: 'dias', value: p.dias || (aprobar ? '5,6' : '') },
-    { k: 'hora_entrada', label: 'Hora de entrada', type: 'time', value: p.hora_entrada },
-    { k: 'hora_salida', label: 'Hora de salida', type: 'time', value: p.hora_salida },
-    { k: 'valor_hora', label: 'Valor hora ($) — opcional, para el costo laboral', type: 'number', value: p.valor_hora }
-  ], async v => {
+    { k: 'rol', label: 'Rol', type: 'select', options: [['', 'Sin rol']].concat(rl.map(r => [r, r]), [['__nuevo', '+ Agregar rol nuevo…']]), value: p.rol },
+    { k: 'horarios', label: 'Días y horario de cada día', type: 'horarios', value: hor }
+  ];
+  if (modo !== 'HORA') campos.push({ k: 'valor_jornada', label: 'Valor jornada ($)', type: 'number', value: p.valor_jornada });
+  if (modo !== 'JORNADA') campos.push({ k: 'valor_hora', label: modo === 'AMBAS' ? 'Valor hora ($) — si tiene valor jornada, se usa para las horas extra' : 'Valor hora ($)', type: 'number', value: p.valor_hora });
+  modal(aprobar ? 'Aprobar a ' + nom(p) : 'Editar ' + nom(p), campos, async v => {
+    if (v.rol === '__nuevo') v.rol = '';
+    v.dias = Object.keys(parseHor(v.horarios)).join(',');
+    v.hora_entrada = ''; v.hora_salida = '';
+    if (v.rol && !roles().includes(v.rol)) {
+      const r = await api({ action: 'config_guardar', config: { ROLES: roles().concat([v.rol]).join(',') } });
+      D.config = r.config;
+    }
     await api(Object.assign({ action: 'persona_guardar', dni: p.dni }, v));
     if (aprobar) await api({ action: 'persona_estado', dni: p.dni, estado: 'APROBADO' });
     msg(aprobar ? 'Aprobado' : 'Guardado');
     await cargarTab(true);
   }, aprobar ? 'Aprobar' : 'Guardar');
+  const sel = $('f_rol');
+  sel.addEventListener('change', () => {
+    if (sel.value !== '__nuevo') return;
+    const nuevo = (prompt('Nombre del rol nuevo:') || '').replace(/[,;]/g, ' ').trim();
+    if (!nuevo) { sel.value = p.rol || ''; return; }
+    const o = document.createElement('option'); o.value = nuevo; o.textContent = nuevo;
+    sel.insertBefore(o, sel.lastElementChild); sel.value = nuevo;
+  });
 }
 
 /* ---------- NOVEDADES ---------- */
@@ -648,7 +824,7 @@ function modalNov(dni, fecha) {
 }
 
 /* ---------- AUDITORÍA ---------- */
-const ACC_TXT = { registro: 'Alta desde QR', vincular_dispositivo: 'Celular vinculado', editar_persona: 'Datos editados', estado_persona: 'Cambio de estado', reset_dispositivo: 'Celular desvinculado', editar_marca: 'Marca corregida', agregar_marca: 'Marca manual', anular_marca: 'Marca anulada', agregar_novedad: 'Novedad cargada', borrar_novedad: 'Novedad borrada', config: 'Configuración' };
+const ACC_TXT = { registro: 'Alta desde QR', vincular_dispositivo: 'Celular vinculado', editar_persona: 'Datos editados', estado_persona: 'Cambio de estado', reset_dispositivo: 'Celular desvinculado', editar_marca: 'Marca corregida', agregar_marca: 'Marca manual', anular_marca: 'Marca anulada', agregar_novedad: 'Novedad cargada', borrar_novedad: 'Novedad borrada', config: 'Configuración', borrar_marcas: 'Marcas borradas' };
 function renderAud() {
   const a = D.auditoria;
   if (!a.length) { $('t-aud').innerHTML = '<div class="tbl"><div class="vacio">Sin movimientos registrados.</div></div>'; return; }
@@ -679,11 +855,20 @@ function renderCfg() {
     '<label for="cTol">Tolerancia amarilla (minutos)</label><input id="cTol" type="number" value="' + esc(c.TOL_AMARILLO) + '"><p>Verde: a horario. Amarillo: hasta esta cantidad de minutos tarde. Rojo: más.</p>' +
     '<label for="cReb">Bloqueo de doble marca (minutos)</label><input id="cReb" type="number" value="' + esc(c.REBOTE_MIN) + '">' +
     '<label for="cCor">Corte de fecha operativa (hora)</label><input id="cCor" type="number" min="0" max="23" value="' + esc(c.HORA_CORTE) + '"><p>Las marcas antes de esta hora cuentan para la noche anterior.</p>' +
+    '<label for="cModo">Seguimiento y liquidación</label><select id="cModo" style="width:100%">' + ['JORNADA', 'HORA', 'AMBAS'].map(m => '<option value="' + m + '"' + ((c.MODO || 'AMBAS') === m ? ' selected' : '') + '>' + MODO_TXT[m] + '</option>').join('') + '</select>' +
+    '<p>Por jornada: cuenta noches trabajadas y liquida por valor jornada. Por hora: cuenta horas y liquida por valor hora. Jornada y hora: muestra ambas; liquida valor jornada más horas extra, o por hora si la persona no tiene valor jornada.</p>' +
+    '<label for="cRoles">Roles (uno por línea)</label><textarea id="cRoles" rows="8" style="width:100%">' + esc(roles().join('\n')) + '</textarea>' +
     '<label for="cUrl">Dirección de la página de marcas</label><input id="cUrl" value="' + esc(c.STAFF_URL) + '">' +
     '<button class="btn" id="cSave" style="margin-top:18px">Guardar configuración</button></div>' +
-    '<div class="box cfg"><h2>Cartel QR</h2><div id="qr"></div><p style="word-break:break-all">' + esc(urlQR()) + '</p>' +
+    '<div><div class="box cfg"><h2>Cartel QR</h2><div id="qr"></div><p style="word-break:break-all">' + esc(urlQR()) + '</p>' +
     '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"><button class="btn nar" id="cPrint">Imprimir cartel</button><button class="btn alt" id="cRegen">Regenerar QR</button></div>' +
-    '<p>Regenerar invalida el cartel impreso: hay que imprimir y pegar el nuevo. Usalo si sospechás que alguien marca con una foto del QR.</p></div></div>';
+    '<p>Regenerar invalida el cartel impreso: hay que imprimir y pegar el nuevo. Usalo si sospechás que alguien marca con una foto del QR.</p></div>' +
+    '<div class="box cfg" style="margin-top:16px;border-color:#F0B9B2"><h2>Borrar marcas</h2>' +
+    '<p style="margin-top:0">Borra marcas de forma definitiva, por ejemplo los datos de prueba. Sin fechas borra todas. El personal y sus horarios no se tocan.</p>' +
+    '<div style="display:flex;gap:10px"><div style="flex:1"><label for="bDesde">Desde</label><input type="date" id="bDesde"></div><div style="flex:1"><label for="bHasta">Hasta</label><input type="date" id="bHasta"></div></div>' +
+    '<label for="bPer">Persona</label><select id="bPer" style="width:100%"><option value="">Todas</option>' + opcionesPersonal().map(([v, l]) => '<option value="' + esc(v) + '">' + esc(l) + '</option>').join('') + '</select>' +
+    '<label style="display:flex;gap:8px;align-items:center;font-weight:400"><input type="checkbox" id="bNov" style="width:auto;accent-color:var(--nar)"> También borrar novedades del mismo período</label>' +
+    '<button class="btn bad" id="bBorrar" style="margin-top:14px">Borrar marcas…</button></div></div></div>';
   $('t-cfg').innerHTML = h;
   dibujarQR($('qr'), 440);
   $('cGeo').onclick = () => {
@@ -698,13 +883,33 @@ function renderCfg() {
   $('cSave').onclick = () => guardarCfg(false);
   $('cRegen').onclick = () => { if (confirm('El cartel impreso actual deja de funcionar. ¿Regenerar el QR?')) guardarCfg(true); };
   $('cPrint').onclick = imprimirCartel;
+  $('bBorrar').onclick = borrarMarcas;
+}
+
+async function borrarMarcas() {
+  const desde = $('bDesde').value, hasta = $('bHasta').value, dni = $('bPer').value, nov = $('bNov').checked;
+  if (desde && hasta && desde > hasta) return msg('La fecha desde es posterior a la fecha hasta.', true);
+  const per = dni ? nom(D.personal.find(p => p.dni === dni)) : 'todo el personal';
+  const rango = desde || hasta ? 'del ' + (desde ? fCorta(desde) : 'inicio') + ' al ' + (hasta ? fCorta(hasta) : 'hoy') : 'de todas las fechas';
+  const txt = 'Se van a borrar DEFINITIVAMENTE las marcas ' + rango + ' de ' + per + (nov ? ', y también las novedades' : '') + '.\n\nEscribí BORRAR para confirmar:';
+  const c = prompt(txt);
+  if (c === null) return;
+  if (c.trim().toUpperCase() !== 'BORRAR') return msg('No se borró nada: la confirmación no coincide.', true);
+  $('bBorrar').disabled = true;
+  try {
+    const r = await api({ action: 'marcas_borrar', confirmar: 'BORRAR', desde, hasta, dni, novedades: nov, motivo: 'Borrado desde Configuración' });
+    msg('Se borraron ' + r.marcas + ' marcas' + (nov ? ' y ' + r.novedades + ' novedades' : '') + '.');
+    D = await api({ action: 'panel' }, { fresh: true });
+    renderCfg();
+  } catch (err) { msg(err.message, true); $('bBorrar').disabled = false; }
 }
 
 async function guardarCfg(regen) {
   try {
     const r = await api({ action: 'config_guardar', regenerarQR: regen, config: {
       LAT: $('cLat').value, LNG: $('cLng').value, RADIO_M: $('cRad').value, TOL_AMARILLO: $('cTol').value,
-      REBOTE_MIN: $('cReb').value, HORA_CORTE: $('cCor').value, STAFF_URL: $('cUrl').value
+      REBOTE_MIN: $('cReb').value, HORA_CORTE: $('cCor').value, STAFF_URL: $('cUrl').value, MODO: $('cModo').value,
+      ROLES: $('cRoles').value.split('\n').map(x => x.replace(/[,;]/g, ' ').trim()).filter(Boolean).join(',')
     } });
     D.config = r.config;
     msg(regen ? 'QR regenerado. Imprimí el cartel nuevo.' : 'Configuración guardada');
@@ -750,6 +955,15 @@ function modal(titulo, campos, onOk, okTxt) {
     h += '<label for="' + id + '">' + esc(c.label) + '</label>';
     if (c.type === 'select') {
       h += '<select id="' + id + '">' + (c.req && !c.value ? '<option value="">Elegí…</option>' : '') + c.options.map(([v, l]) => '<option value="' + esc(v) + '"' + (String(c.value || '') === String(v) ? ' selected' : '') + '>' + esc(l) + '</option>').join('') + '</select>';
+    } else if (c.type === 'horarios') {
+      const hv = c.value || {};
+      h += '<div class="hor" id="' + id + '"><span class="hd">Día</span><span class="hd">Entrada</span><span class="hd">Salida</span>' +
+        DIAS.map(([v, l]) => {
+          const x = hv[v], on = !!x;
+          return '<label><input type="checkbox" data-d="' + v + '"' + (on ? ' checked' : '') + '>' + l + '</label>' +
+            '<input type="time" data-in="' + v + '" value="' + esc(on ? x.in : '') + '"' + (on ? '' : ' disabled') + '>' +
+            '<input type="time" data-out="' + v + '" value="' + esc(on ? x.out : '') + '"' + (on ? '' : ' disabled') + '>';
+        }).join('') + '</div>';
     } else if (c.type === 'dias') {
       const sel = String(c.value || '').split(',');
       h += '<div class="dias" id="' + id + '">' + DIAS.map(([v, l]) => '<label><input type="checkbox" value="' + v + '"' + (sel.includes(v) ? ' checked' : '') + '>' + l + '</label>').join('') + '</div>';
@@ -762,11 +976,27 @@ function modal(titulo, campos, onOk, okTxt) {
   $('ov').classList.remove('hide');
   const first = $('mod').querySelector('input,select'); if (first) first.focus();
   $('mCancel').onclick = cerrarModal;
+  $('mod').querySelectorAll('.hor').forEach(g => g.addEventListener('change', e => {
+    const cb = e.target.closest('input[type=checkbox]'); if (!cb) return;
+    const d = cb.dataset.d, i = g.querySelector('[data-in="' + d + '"]'), o = g.querySelector('[data-out="' + d + '"]');
+    i.disabled = o.disabled = !cb.checked;
+    if (cb.checked && !i.value) {
+      const ref = [...g.querySelectorAll('input[type=checkbox]:checked')].find(x => x !== cb && g.querySelector('[data-in="' + x.dataset.d + '"]').value);
+      if (ref) { i.value = g.querySelector('[data-in="' + ref.dataset.d + '"]').value; o.value = g.querySelector('[data-out="' + ref.dataset.d + '"]').value; }
+    }
+  }));
   $('fMod').onsubmit = async e => {
     e.preventDefault();
     const v = {};
     for (const c of campos) {
       const el = $('f_' + c.k);
+      if (c.type === 'horarios') {
+        v[c.k] = [...el.querySelectorAll('input[type=checkbox]:checked')].map(cb => {
+          const d = cb.dataset.d;
+          return d + '=' + el.querySelector('[data-in="' + d + '"]').value + '-' + el.querySelector('[data-out="' + d + '"]').value;
+        }).join(';');
+        continue;
+      }
       v[c.k] = c.type === 'dias' ? [...el.querySelectorAll('input:checked')].map(i => i.value).join(',') : el.value.trim();
       if (c.req && !v[c.k]) { $('eMod').textContent = 'Completá: ' + c.label; return; }
     }
