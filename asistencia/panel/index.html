@@ -8,9 +8,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 :root{--neg:#0A0A0A;--nar:#FF5A00;--nar2:#E04E00;--narS:#FFE3D3;--papel:#FFFFFF;--fondo:#EDEDEA;--gris:#6B6B66;--linea:#D6D6D1;--ok:#1E9E4A;--warn:#E8A400;--bad:#D62F1F}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -271,6 +268,21 @@ function msg(t, err) {
   setTimeout(() => m.remove(), err ? 5000 : 2500);
 }
 
+const LIBS = {
+  Chart: 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js',
+  XLSX: 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',
+  QRCode: 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js'
+};
+const libPend = {};
+function lib(name) {
+  if (window[name]) return Promise.resolve(true);
+  if (!libPend[name]) libPend[name] = new Promise(res => {
+    const sc = document.createElement('script');
+    sc.src = LIBS[name]; sc.onload = () => res(true); sc.onerror = () => { delete libPend[name]; res(false); };
+    document.head.appendChild(sc);
+  });
+  return libPend[name];
+}
 const MEMO = {};
 async function api(body, opts) {
   if (body.action === 'panel' && !(opts && opts._re)) {
@@ -279,7 +291,7 @@ async function api(body, opts) {
   }
   const lectura = body.action === 'panel';
   const key = lectura ? JSON.stringify(body) : null;
-  if (lectura && !(opts && opts.fresh) && MEMO[key] && Date.now() - MEMO[key].t < 45000) return MEMO[key].d;
+  if (lectura && !(opts && opts.fresh) && MEMO[key] && Date.now() - MEMO[key].t < 180000) return MEMO[key].d;
   const ctrl = new AbortController();
   const lim = body.action === 'panel' ? 20000 : 50000;
   const tm = setTimeout(() => ctrl.abort(), lim);
@@ -442,7 +454,7 @@ function arrancar() {
   repRef = D.ahora.fecha_op;
   renderHoy();
   badge();
-  timer = setInterval(() => { if (tab === 'hoy' && !document.hidden) cargarTab(false); }, 60000);
+  timer = setInterval(() => { if (tab === 'hoy' && !document.hidden) cargarTab(true); }, 120000);
 }
 
 function irA(t) {
@@ -453,7 +465,7 @@ function irA(t) {
 }
 
 async function cargarTab(forzar) {
-  $('main').classList.add('cargando');
+  const sec = $('t-' + tab); sec.classList.add('cargando');
   try {
     if (tab === 'hoy' || forzar || !D) D = await api({ action: 'panel' }, { fresh: forzar });
     if (tab === 'aud') D.auditoria = (await api({ action: 'panel', aud: true }, { fresh: forzar })).auditoria;
@@ -467,7 +479,7 @@ async function cargarTab(forzar) {
     if (tab === 'aud') renderAud();
     if (tab === 'cfg') renderCfg();
   } catch (err) { msg(err.message, true); }
-  $('main').classList.remove('cargando');
+  sec.classList.remove('cargando');
 }
 
 function badge() {
@@ -531,16 +543,18 @@ $('segVista').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
   repVista = b.dataset.v;
   document.querySelectorAll('#segVista button').forEach(x => x.classList.toggle('on', x === b));
-  renderRep();
+  renderRep(true);
 });
 
-async function renderRep() {
+async function renderRep(reusar) {
   const [d1, d2] = repModo === 'sem' ? semana(repRef) : mes(repRef);
   $('rLbl').textContent = repModo === 'sem' ? fCorta(d1) + ' al ' + fCorta(d2) : new Date(d1 + 'T12:00:00Z').toLocaleDateString('es-AR', { month: 'long', year: 'numeric', timeZone: 'UTC' });
-  $('repBody').innerHTML = '<div class="vacio">Cargando…</div>';
-  try {
-    repData = await api({ action: 'panel', desde: d1, hasta: d2 });
-  } catch (err) { $('repBody').innerHTML = '<div class="vacio">' + esc(err.message) + '</div>'; return; }
+  if (!(reusar && repData && repData.desde === d1 && repData.hasta === d2)) {
+    $('repBody').innerHTML = '<div class="vacio">Cargando…</div>';
+    try {
+      repData = await api({ action: 'panel', desde: d1, hasta: d2 });
+    } catch (err) { $('repBody').innerHTML = '<div class="vacio">' + esc(err.message) + '</div>'; return; }
+  }
   const an = analizar(repData);
   repData._an = an;
   const modo = repData.config.MODO || 'AMBAS', vJ = modo !== 'HORA', vH = modo !== 'JORNADA';
@@ -617,10 +631,11 @@ function calendario(an, X, d1, d2, modo, conValor) {
   return h;
 }
 
-function graficos(an, d1, d2, modo) {
+async function graficos(an, d1, d2, modo) {
   const vH = modo !== 'JORNADA';
   charts.forEach(c => c.destroy()); charts = [];
-  if (typeof Chart === 'undefined') return;
+  await lib('Chart');
+  if (typeof Chart === 'undefined' || !$('g1')) return;
   Chart.defaults.font.family = 'Oswald, Arial, sans-serif';
   Chart.defaults.color = '#6B6B66';
   const fechas = [], horas = [], pers = [];
@@ -644,8 +659,9 @@ function graficos(an, d1, d2, modo) {
   }));
 }
 
-function exportar() {
+async function exportar() {
   if (!repData || !repData._an) return msg('Primero cargá un período.', true);
+  await lib('XLSX');
   if (typeof XLSX === 'undefined') return msg('No se pudo cargar el exportador de Excel.', true);
   const an = repData._an;
   const wb = XLSX.utils.book_new();
@@ -884,7 +900,7 @@ function renderCfg() {
     '<label style="display:flex;gap:8px;align-items:center;font-weight:400"><input type="checkbox" id="bNov" style="width:auto;accent-color:var(--nar)"> También borrar novedades del mismo período</label>' +
     '<button class="btn bad" id="bBorrar" style="margin-top:14px">Borrar marcas…</button></div></div></div>';
   $('t-cfg').innerHTML = h;
-  dibujarQR($('qr'), 440);
+  lib('QRCode').then(() => { if ($('qr')) dibujarQR($('qr'), 440); });
   $('cGeo').onclick = () => {
     if (!navigator.geolocation) return msg('Este navegador no da ubicación.', true);
     $('cGeo').textContent = 'Buscando…';
@@ -939,7 +955,8 @@ function dibujarQR(el, size) {
   return cv ? cv.toDataURL('image/png') : null;
 }
 
-function imprimirCartel() {
+async function imprimirCartel() {
+  await lib('QRCode');
   const tmp = document.createElement('div');
   const src = dibujarQR(tmp, 900);
   if (!src) return msg('No se pudo generar el QR.', true);
