@@ -164,6 +164,10 @@
   .ef input{background:var(--void);border:1px solid var(--stroke);color:var(--text);font-family:'Oswald',sans-serif;font-size:14px;padding:8px 10px;border-radius:2px;min-width:150px}
   .ef input:focus{outline:none;border-color:var(--orange)}
   .ed-actions2{display:flex;gap:10px;flex-wrap:wrap}
+  .ed-fecha{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px dashed var(--stroke)}
+  .ed-fecha label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .ed-fecha input[type=date]{color-scheme:dark;background:var(--void);border:1px solid var(--stroke);color:var(--text);font-family:'Oswald',sans-serif;font-size:14px;padding:7px 10px;border-radius:2px}
+  .ed-fecha input[type=date]:focus{outline:none;border-color:var(--orange)}
   .rv-info a.wa{color:var(--green);text-decoration:none;border-bottom:1px dotted rgba(79,208,122,.4)}
   .rv-info a.wa:hover{filter:brightness(1.2)}
 
@@ -365,7 +369,7 @@
 /* ============================================================
    Reservas Zeppelin — v4.0 (mesas editables por sector)
    ============================================================ */
-const VERSION="5.15";
+const VERSION="5.17";
 
 /* Metadatos fijos de sector (nombre, zona, reglas de combinación). */
 const SECTORES_META=[
@@ -595,14 +599,15 @@ window.marcarNoAsistio=marcarNoAsistio;
 function flashRv(msg){const el=document.getElementById('rvMsg');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),4000);}
 let PENDING=null, EDITING=null;
 // Arma opciones de ubicación (permanecer + alternativas) para una reserva con cierta cantidad.
-function construirReubic(r,pax){
-  const all=opcionesPara(pax,r.fecha,r.id);
+function construirReubic(r,pax,fecha){
+  fecha = fecha || r.fecha;
+  const all=opcionesPara(pax,fecha,r.id);
   const si=all.findIndex(o=>o.sectorId===r.sectorId&&o.nombre===r.bloque);
   let stay=null, ops=all;
   if(si>=0){
     stay=all[si]; ops=all.filter((_,i)=>i!==si);
     const s=SECTORES.find(x=>x.id===r.sectorId), b=bloquesDe(s).find(x=>x.nombre===r.bloque);
-    const otras=new Set(); RESERVAS.filter(x=>x.fecha===r.fecha&&x.id!==r.id&&x.estado!=='no_asistio').forEach(x=>x.mesasIds.forEach(m=>otras.add(m)));
+    const otras=new Set(); RESERVAS.filter(x=>x.fecha===fecha&&x.id!==r.id&&x.estado!=='no_asistio').forEach(x=>x.mesasIds.forEach(m=>otras.add(m)));
     const disp=b.ids.filter(m=>!otras.has(m));
     let keep=r.mesasIds.filter(m=>disp.includes(m)).slice(0,stay.mesas);
     if(keep.length<stay.mesas) keep=keep.concat(disp.filter(m=>!keep.includes(m)).slice(0,stay.mesas-keep.length));
@@ -623,9 +628,12 @@ function moverReserva(id,i){
   if(!PENDING||PENDING.id!==id) return;
   const o=PENDING.list[i], r=RESERVAS.find(x=>x.id===id);
   if(!o||!r) return;
+  const movidaFecha = PENDING.nuevaFecha && PENDING.nuevaFecha!==String(r.fecha).slice(0,10) ? PENDING.nuevaFecha : null;
+  if(movidaFecha) r.fecha=movidaFecha;
   r.pax=PENDING.pax; r.sectorId=o.sectorId; r.sector=o.sector; r.bloque=o.nombre; r.mesasIds=o.usarIds;
   marcarPendiente(r.id);
   PENDING=null; EDITING=null; saveReservas(); renderAll(); api('update',r).then(applyServer);
+  if(movidaFecha) flashRv('Reserva movida al '+fmtFecha(movidaFecha)+'. Cambiá la noche para verla.');
 }
 function cancelReubic(){ PENDING=null; renderReservas(); }
 // --- Edición de datos de una reserva ---
@@ -649,8 +657,17 @@ function pedirCambioSector(id){
   PENDING={id:r.id,pax:r.pax,list,hasStay,modo:'sector',antes:r.pax};
   renderReservas();
 }
+function pedirCambioFecha(id){
+  const r=RESERVAS.find(x=>x.id===id); if(!r) return;
+  const nf=(document.getElementById('edfecha-'+id).value||'').slice(0,10);
+  if(!nf){ flashRv('Elegí una fecha.'); return; }
+  if(nf===String(r.fecha).slice(0,10)){ flashRv('Ya está en esa fecha.'); return; }
+  const {list,hasStay}=construirReubic(r,r.pax,nf);
+  PENDING={id:r.id,pax:r.pax,list,hasStay,modo:'fecha',nuevaFecha:nf,antes:r.pax};
+  renderReservas();
+}
 window.moverReserva=moverReserva; window.cancelReubic=cancelReubic;
-window.editarReserva=editarReserva; window.cancelEdit=cancelEdit; window.guardarEdicion=guardarEdicion; window.pedirCambioSector=pedirCambioSector;
+window.editarReserva=editarReserva; window.cancelEdit=cancelEdit; window.guardarEdicion=guardarEdicion; window.pedirCambioSector=pedirCambioSector; window.pedirCambioFecha=pedirCambioFecha;
 function resetNoche(){if(confirm('¿Liberar todas las reservas de esta noche?')){PENDING=null;reservasNoche().forEach(r=>marcarBorrado(r.id));RESERVAS=RESERVAS.filter(r=>r.fecha!==fechaSel);saveReservas();renderAll();api('clearNight',{fecha:fechaSel}).then(applyServer);}}
 window.reservar=reservar;window.liberar=liberar;window.toggleEstado=toggleEstado;window.editPax=editPax;
 
@@ -734,10 +751,14 @@ function reubicHTML(r){
   if(!(PENDING&&PENDING.id===r.id)) return '';
   const list=PENDING.list;
   const head = !list.length
-    ? `No hay lugar en ningún sector para ${PENDING.pax} personas esta noche.`
-    : PENDING.modo==='sector'
-      ? `¿A qué sector movés la reserva? (${PENDING.pax} personas)`
-      : `${PENDING.pax} personas (antes ${PENDING.antes}). ¿Dónde ubico la reserva?`;
+    ? (PENDING.modo==='fecha'
+        ? `No hay lugar para ${PENDING.pax} personas el ${fmtFecha(PENDING.nuevaFecha)}.`
+        : `No hay lugar en ningún sector para ${PENDING.pax} personas esta noche.`)
+    : PENDING.modo==='fecha'
+      ? `Mover al ${fmtFecha(PENDING.nuevaFecha)} — ¿a qué sector?`
+      : PENDING.modo==='sector'
+        ? `¿A qué sector movés la reserva? (${PENDING.pax} personas)`
+        : `${PENDING.pax} personas (antes ${PENDING.antes}). ¿Dónde ubico la reserva?`;
   const rows=list.map((o,i)=>{
     const stay=PENDING.hasStay&&i===0;
     return `<div class="res ${stay?'best':''}"><span class="rk">${stay?'✓':o.sectorId.replace('S','')}</span>
@@ -762,6 +783,11 @@ function editFormHTML(r){
       <button class="mini" onclick="guardarEdicion('${r.id}')">Guardar datos</button>
       <button class="mini ghost" onclick="pedirCambioSector('${r.id}')">Cambiar de sector</button>
       <button class="mini danger" onclick="cancelEdit()">Cerrar</button>
+    </div>
+    <div class="ed-fecha">
+      <label>Mover a otra fecha:</label>
+      <input id="edfecha-${r.id}" type="date" value="${esc((PENDING&&PENDING.id===r.id&&PENDING.nuevaFecha)?PENDING.nuevaFecha:String(r.fecha).slice(0,10))}">
+      <button class="mini ghost" onclick="pedirCambioFecha('${r.id}')">Cambiar fecha</button>
     </div>
   </div>`;
 }
