@@ -854,7 +854,7 @@ function modalNov(dni, fecha) {
 }
 
 /* ---------- AUDITORÍA ---------- */
-const ACC_TXT = { registro: 'Alta desde QR', vincular_dispositivo: 'Celular vinculado', editar_persona: 'Datos editados', estado_persona: 'Cambio de estado', reset_dispositivo: 'Celular desvinculado', editar_marca: 'Marca corregida', agregar_marca: 'Marca manual', anular_marca: 'Marca anulada', agregar_novedad: 'Novedad cargada', borrar_novedad: 'Novedad borrada', config: 'Configuración', borrar_marcas: 'Marcas borradas' };
+const ACC_TXT = { registro: 'Alta desde QR', vincular_dispositivo: 'Celular vinculado', editar_persona: 'Datos editados', estado_persona: 'Cambio de estado', reset_dispositivo: 'Celular desvinculado', cambio_celular_auto: 'Celular cambiado (automático)', editar_marca: 'Marca corregida', agregar_marca: 'Marca manual', anular_marca: 'Marca anulada', agregar_novedad: 'Novedad cargada', borrar_novedad: 'Novedad borrada', config: 'Configuración', borrar_marcas: 'Marcas borradas' };
 function renderAud() {
   const a = D.auditoria;
   if (!a.length) { $('t-aud').innerHTML = '<div class="tbl"><div class="vacio">Sin movimientos registrados.</div></div>'; return; }
@@ -890,9 +890,19 @@ function renderCfg() {
     '<label for="cRoles">Roles (uno por línea)</label><textarea id="cRoles" rows="8" style="width:100%">' + esc(roles().join('\n')) + '</textarea>' +
     '<label for="cUrl">Dirección de la página de marcas</label><input id="cUrl" value="' + esc(c.STAFF_URL) + '">' +
     '<button class="btn" id="cSave" style="margin-top:18px">Guardar configuración</button></div>' +
-    '<div><div class="box cfg"><h2>Cartel QR</h2><div id="qr"></div><p style="word-break:break-all">' + esc(urlQR()) + '</p>' +
-    '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"><button class="btn nar" id="cPrint">Imprimir cartel</button><button class="btn alt" id="cRegen">Regenerar QR</button></div>' +
-    '<p>Regenerar invalida el cartel impreso: hay que imprimir y pegar el nuevo. Usalo si sospechás que alguien marca con una foto del QR.</p></div>' +
+    '<div><div class="box cfg"><h2>Código QR</h2>' +
+    '<label for="cQrModo">Modo</label><select id="cQrModo" style="width:100%">' +
+    '<option value="DINAMICO"' + (c.QR_MODO === 'DINAMICO' ? ' selected' : '') + '>Dinámico — pantalla en el local, cambia cada 30 s</option>' +
+    '<option value="FIJO"' + (c.QR_MODO !== 'DINAMICO' ? ' selected' : '') + '>Fijo — cartel impreso</option></select>' +
+    '<button class="btn" id="cQrSave" style="margin-top:10px">Guardar modo</button>' +
+    '<p>En modo dinámico solo sirve el código de la pantalla: una foto vieja o reenviada por WhatsApp vence al minuto, y el cartel impreso deja de funcionar. Activalo recién cuando la pantalla esté andando.</p>' +
+    '<h3 style="font-family:\'Bebas Neue\',Impact,sans-serif;font-weight:400;font-size:24px;margin-top:20px">Pantalla</h3>' +
+    '<p style="margin-top:0">En la tablet o PC de la entrada abrí <b>zeppelin-bar.com/asistencia/pantalla/</b> e ingresá la clave, o tocá "Abrir pantalla" desde ese mismo dispositivo y se vincula sola.</p>' +
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="btn nar" id="cPant">Abrir pantalla</button><button class="btn alt" id="cClave">Copiar clave</button><button class="btn alt" id="cRegenS">Regenerar clave</button></div>' +
+    (c.QR_SECRET ? '' : '<p style="color:var(--bad)">Todavía no hay clave: tocá "Guardar modo" para generarla.</p>') +
+    '<h3 style="font-family:\'Bebas Neue\',Impact,sans-serif;font-weight:400;font-size:24px;margin-top:20px">Cartel fijo</h3><div id="qr"></div><p style="word-break:break-all">' + esc(urlQR()) + '</p>' +
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"><button class="btn alt" id="cPrint">Imprimir cartel</button><button class="btn alt" id="cRegen">Regenerar QR</button></div>' +
+    '<p>Solo funciona en modo fijo. Regenerar invalida el cartel impreso.</p></div>' +
     '<div class="box cfg" style="margin-top:16px;border-color:#F0B9B2"><h2>Borrar marcas</h2>' +
     '<p style="margin-top:0">Borra marcas de forma definitiva, por ejemplo los datos de prueba. Sin fechas borra todas. El personal y sus horarios no se tocan.</p>' +
     '<div style="display:flex;gap:10px"><div style="flex:1"><label for="bDesde">Desde</label><input type="date" id="bDesde"></div><div style="flex:1"><label for="bHasta">Hasta</label><input type="date" id="bHasta"></div></div>' +
@@ -914,6 +924,30 @@ function renderCfg() {
   $('cRegen').onclick = () => { if (confirm('El cartel impreso actual deja de funcionar. ¿Regenerar el QR?')) guardarCfg(true); };
   $('cPrint').onclick = imprimirCartel;
   $('bBorrar').onclick = borrarMarcas;
+  $('cQrSave').onclick = async () => {
+    const modo = $('cQrModo').value;
+    if (modo === 'DINAMICO' && !confirm('Desde ahora solo se podrá marcar escaneando la pantalla. El cartel impreso deja de funcionar. ¿Continuar?')) return;
+    try {
+      const r = await api({ action: 'config_guardar', config: { QR_MODO: modo } });
+      D.config = r.config; msg('Modo de QR: ' + (modo === 'DINAMICO' ? 'dinámico (pantalla)' : 'fijo (cartel)')); renderCfg();
+    } catch (err) { msg(err.message, true); }
+  };
+  $('cPant').onclick = () => {
+    if (!D.config.QR_SECRET) return msg('Primero tocá "Guardar modo" para generar la clave.', true);
+    window.open(D.config.STAFF_URL.replace(/\?.*$/, '').replace(/\/?$/, '/') + 'pantalla/#s=' + encodeURIComponent(D.config.QR_SECRET), '_blank');
+  };
+  $('cClave').onclick = async () => {
+    if (!D.config.QR_SECRET) return msg('Primero tocá "Guardar modo" para generar la clave.', true);
+    try { await navigator.clipboard.writeText(D.config.QR_SECRET); msg('Clave copiada'); }
+    catch (e) { prompt('Copiá la clave:', D.config.QR_SECRET); }
+  };
+  $('cRegenS').onclick = async () => {
+    if (!confirm('La pantalla actual deja de funcionar hasta que la vuelvas a vincular con la clave nueva. ¿Regenerar?')) return;
+    try {
+      const r = await api({ action: 'config_guardar', regenerarSecreto: true, config: {} });
+      D.config = r.config; msg('Clave nueva generada. Volvé a vincular la pantalla.'); renderCfg();
+    } catch (err) { msg(err.message, true); }
+  };
 }
 
 async function borrarMarcas() {
