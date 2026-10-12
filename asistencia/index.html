@@ -99,7 +99,7 @@ footer{padding:16px 20px 24px;font-size:12px;color:var(--gris);text-align:center
         <div class="reloj" id="reloj">--:--</div>
         <div class="fecha" id="fecha"></div>
         <button class="marcar" id="bMarcar"><b id="bTxt">Ingreso</b><small id="bSub">Tocá para marcar</small></button>
-        <p class="muted hide" id="sinQR" style="text-align:center;margin-top:14px">Para marcar, escaneá el QR que está en el local.</p>
+        <p class="muted hide" id="sinQR" style="text-align:center;margin-top:14px">Para marcar, escaneá el código QR de la pantalla del local.</p>
       </div>
       <div id="res"></div>
       <div class="card">
@@ -115,7 +115,14 @@ footer{padding:16px 20px 24px;font-size:12px;color:var(--gris);text-align:center
 const API = 'https://script.google.com/macros/s/AKfycby5KUw7KKL1WYv95fA3VbfNNPbOgJiakDjDEB_L1gR59XNMZKBGyassvPNbkc4I3q1o/exec';
 const LS = 'zpp_asist_device';
 const LS_EST = 'zpp_asist_estado';
-const K = new URLSearchParams(location.search).get('k') || '';
+const PARAMS = new URLSearchParams(location.search);
+let K = PARAMS.get('k') || '';      // QR fijo (cartel)
+let Q = PARAMS.get('q') || '';      // QR dinámico (pantalla)
+const conQR = () => !!(K || Q);
+function consumirQR() {             // un código se usa una sola vez: se borra de la URL
+  K = ''; Q = '';
+  try { history.replaceState(null, '', location.pathname); } catch (x) {}
+}
 let device = null, geo = null, geoPend = null;
 try { device = localStorage.getItem(LS); } catch (e) {}
 
@@ -159,7 +166,7 @@ function leerUbicacion(timeout) {
   });
 }
 function precalentarGeo() {
-  if (geoPend || !K) return;
+  if (geoPend || !conQR()) return;
   geoPend = leerUbicacion(10000).then(g => { if (g) geo = g; geoPend = null; return g; });
 }
 async function ubicacionParaMarcar() {
@@ -184,8 +191,8 @@ function render(e) {
   $('bMarcar').classList.toggle('out', out);
   $('bTxt').textContent = out ? 'Egreso' : 'Ingreso';
   $('bSub').textContent = out ? 'Tocá para marcar salida' : 'Tocá para marcar entrada';
-  $('bMarcar').classList.toggle('hide', !K);
-  $('sinQR').classList.toggle('hide', !!K);
+  $('bMarcar').classList.toggle('hide', !conQR());
+  $('sinQR').classList.toggle('hide', conQR());
   $('hist').innerHTML = (e.ultimas || []).length
     ? e.ultimas.map(m => '<li><span>' + dmy(m.ts) + ' · ' + hhmm(m.ts) + '</span><span class="tag ' + (m.tipo === 'IN' ? 'in' : 'out') + '">' + (m.tipo === 'IN' ? 'Ingreso' : 'Egreso') + '</span></li>').join('')
     : '<li class="muted">Todavía no registraste marcas.</li>';
@@ -232,9 +239,9 @@ $('fAlta').addEventListener('submit', async ev => {
     const r = await api(Object.assign({ action: 'registro' }, datos));
     device = r.token;
     try { localStorage.setItem(LS, device); } catch (x) {}
-    const e = { estado: r.estado, nombre: r.nombre, siguiente: 'IN', ultimas: [] };
-    guardarEstado(e);
-    render(e);
+    try { localStorage.removeItem(LS_EST); } catch (x) {}
+    await init();
+    if (r.cambio) $('res').innerHTML = card('', '<p><b>Listo, ' + esc(r.nombre) + '.</b> Este celular quedó vinculado a tu usuario.</p>');
   } catch (err) {
     $('eAlta').innerHTML = card('err', '<p>' + esc(err.message) + '</p>');
   } finally {
@@ -250,7 +257,8 @@ $('bMarcar').addEventListener('click', async () => {
   const g = await ubicacionParaMarcar();
   $('bSub').textContent = 'Registrando…';
   try {
-    const r = await api(Object.assign({ action: 'marcar', device, k: K }, g ? { lat: g.lat, lng: g.lng, acc: g.acc } : {}));
+    const r = await api(Object.assign({ action: 'marcar', device, k: K, q: Q }, g ? { lat: g.lat, lng: g.lng, acc: g.acc } : {}));
+    consumirQR();
     const tipo = r.tipo === 'IN' ? 'Ingreso' : 'Egreso';
     let extra = '';
     if (r.flags.includes('FUERA_RANGO')) extra = '<p class="muted" style="margin-top:8px">La ubicación quedó fuera del radio del local (' + r.distancia + ' m). La marca se guardó y el encargado la va a revisar.</p>';
@@ -264,6 +272,11 @@ $('bMarcar').addEventListener('click', async () => {
   } catch (err) {
     $('res').innerHTML = card('err', '<p>' + esc(err.message) + '</p>');
     $('bSub').textContent = 'Tocá para marcar';
+    if (/venció|QR inválido|Código QR|escaneá/i.test(err.message)) {
+      consumirQR();
+      $('bMarcar').classList.add('hide');
+      $('sinQR').classList.remove('hide');
+    }
   } finally {
     b.disabled = false;
   }
