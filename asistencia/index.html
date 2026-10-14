@@ -236,7 +236,7 @@ $('fAlta').addEventListener('submit', async ev => {
   if (!$('ok').checked) { $('eAlta').innerHTML = card('err', '<p>Tenés que aceptar el uso de los datos para registrarte.</p>'); return; }
   $('bAlta').disabled = true; $('bAlta').textContent = 'Registrando…';
   try {
-    const r = await api(Object.assign({ action: 'registro' }, datos));
+    const r = await api(Object.assign({ action: 'registro', k: K, q: Q }, datos));
     device = r.token;
     try { localStorage.setItem(LS, device); } catch (x) {}
     try { localStorage.removeItem(LS_EST); } catch (x) {}
