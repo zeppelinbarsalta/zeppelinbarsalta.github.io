@@ -135,7 +135,11 @@
   .rv-count{font-size:13px;color:var(--muted);letter-spacing:.05em}
   .rv{display:flex;flex-direction:column;gap:9px;padding:16px 20px;margin-bottom:10px;background:var(--panel-2);border:1px solid var(--stroke);border-left:3px solid var(--orange)}
   .rv.llego{border-left-color:var(--green)}
+  .rv.confirmada{border-left-color:var(--alta)}
   .rv.no_asistio{border-left-color:#6a6a6a;opacity:.62}
+  button.mini.conf-on{background:var(--alta);color:#0a0a0a}
+  button.mini.wa-send{background:#25D366;color:#0a0a0a}
+  button.mini.wa-send.open{outline:2px solid #fff;outline-offset:1px}
   button.mini.nos-on{background:#8a8a8a;color:#0a0a0a}
   .rv-top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
   .rv-title{font-size:20px;color:var(--text);font-weight:500;letter-spacing:.01em;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
@@ -369,7 +373,7 @@
 /* ============================================================
    Reservas Zeppelin — v4.0 (mesas editables por sector)
    ============================================================ */
-const VERSION="5.17";
+const VERSION="5.20";
 
 /* Metadatos fijos de sector (nombre, zona, reglas de combinación). */
 const SECTORES_META=[
@@ -593,9 +597,41 @@ function reservar(i){
   saveReservas(); PENDING=null; $n.value='';$d.value='';$t.value='';document.getElementById('rnotas').value='';document.getElementById('pax').value=''; renderAll(); api('add',nueva).then(applyServer);
 }
 function liberar(id){PENDING=null;marcarBorrado(id);RESERVAS=RESERVAS.filter(r=>r.id!==id);saveReservas();renderAll();api('delete',{id}).then(applyServer);}
-function toggleEstado(id){const r=RESERVAS.find(x=>x.id===id);if(r){r.estado=r.estado==='llego'?'pendiente':'llego';marcarPendiente(r.id);saveReservas();renderAll();api('update',r).then(applyServer);}}
-function marcarNoAsistio(id){const r=RESERVAS.find(x=>x.id===id);if(r){r.estado=r.estado==='no_asistio'?'pendiente':'no_asistio';marcarPendiente(r.id);saveReservas();renderAll();api('update',r).then(applyServer);}}
-window.marcarNoAsistio=marcarNoAsistio;
+// Estados: pendiente → confirmada → llego · no_asistio. Cada botón fija su estado; si ya está, vuelve a pendiente.
+function setEstado(id,target){const r=RESERVAS.find(x=>x.id===id);if(r){r.estado=(r.estado===target)?'pendiente':target;marcarPendiente(r.id);saveReservas();renderAll();api('update',r).then(applyServer);}}
+window.setEstado=setEstado;
+// Mensajes de confirmación por WhatsApp (la cantidad de personas se completa sola).
+function msgCumple(pax){
+  return '🥳 ¡Hola! Hoy es tu festejo en Zeppelin 🎉\n\n'+
+    'Confirmamos tu reserva de cumpleaños:\n'+
+    '👥 '+pax+' personas\n'+
+    '🕘 Tu mesa lista desde las 20:30\n'+
+    '⏰ Recordá: todos tus invitados tienen que llegar antes de las 23:00 hs\n\n'+
+    '¿Sigue todo en pie? Respondé CONFIRMO y dejamos todo preparado para recibirte.\n\n'+
+    'Si cambió la cantidad de invitados, avisanos por acá 🙌\n'+
+    'Nos vemos esta noche 🔥';
+}
+function msgGeneral(pax){
+  return '🎉 ¡Hola! Te esperamos hoy en Zeppelin 🎶\n\n'+
+    'Confirmamos tu reserva:\n'+
+    '👥 '+pax+' personas\n'+
+    '🕘 Tu mesa lista desde las 20:30\n'+
+    '⏰ Recordá: todo el grupo tiene que llegar antes de las 23:00 hs\n\n'+
+    '¿Sigue todo en pie? Respondé CONFIRMO y dejamos todo preparado para recibirte.\n\n'+
+    'Si cambió la cantidad, avisanos por acá 🙌\n'+
+    'Nos vemos esta noche 🔥';
+}
+let WA_MENU=null;
+function menuWhatsapp(id){ const r=RESERVAS.find(x=>x.id===id); if(r&&!r.wa){ flashRv('Esta reserva no tiene WhatsApp cargado.'); return; } WA_MENU=(WA_MENU===id)?null:id; renderReservas(); }
+function cerrarWaMenu(){ WA_MENU=null; renderReservas(); }
+function enviarWhatsapp(id,tipo){
+  WA_MENU=null;
+  const r=RESERVAS.find(x=>x.id===id); if(!r||!r.wa){ renderReservas(); return; }
+  const msg = (tipo==='general') ? msgGeneral(r.pax) : msgCumple(r.pax);
+  window.open('https://wa.me/'+r.wa+'?text='+encodeURIComponent(msg),'_blank');
+  renderReservas();
+}
+window.menuWhatsapp=menuWhatsapp; window.cerrarWaMenu=cerrarWaMenu; window.enviarWhatsapp=enviarWhatsapp;
 function flashRv(msg){const el=document.getElementById('rvMsg');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),4000);}
 let PENDING=null, EDITING=null;
 // Arma opciones de ubicación (permanecer + alternativas) para una reserva con cierta cantidad.
@@ -669,7 +705,7 @@ function pedirCambioFecha(id){
 window.moverReserva=moverReserva; window.cancelReubic=cancelReubic;
 window.editarReserva=editarReserva; window.cancelEdit=cancelEdit; window.guardarEdicion=guardarEdicion; window.pedirCambioSector=pedirCambioSector; window.pedirCambioFecha=pedirCambioFecha;
 function resetNoche(){if(confirm('¿Liberar todas las reservas de esta noche?')){PENDING=null;reservasNoche().forEach(r=>marcarBorrado(r.id));RESERVAS=RESERVAS.filter(r=>r.fecha!==fechaSel);saveReservas();renderAll();api('clearNight',{fecha:fechaSel}).then(applyServer);}}
-window.reservar=reservar;window.liberar=liberar;window.toggleEstado=toggleEstado;window.editPax=editPax;
+window.reservar=reservar;window.liberar=liberar;window.editPax=editPax;
 
 /* Edición de mesas. */
 function flashEd(msg){const el=document.getElementById('edMsg');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),3000);}
@@ -769,6 +805,17 @@ function reubicHTML(r){
   }).join('');
   return `<div class="reubic"><div class="reubic-h">${head}</div>${rows}<button class="mini danger" onclick="cancelReubic()">Cancelar cambio</button></div>`;
 }
+function waMenuHTML(r){
+  if(WA_MENU!==r.id) return '';
+  return `<div class="reubic">
+    <div class="reubic-h">Mensaje de confirmación por WhatsApp a ${esc(r.nombre)} (${r.pax} pers.):</div>
+    <div class="ed-actions2">
+      <button class="mini wa-send" onclick="enviarWhatsapp('${r.id}','cumple')">🥳 Cumpleaños</button>
+      <button class="mini wa-send" onclick="enviarWhatsapp('${r.id}','general')">🎶 General</button>
+      <button class="mini danger" onclick="cerrarWaMenu()">Cancelar</button>
+    </div>
+  </div>`;
+}
 function editFormHTML(r){
   if(EDITING!==r.id) return '';
   return `<div class="reubic">
@@ -808,8 +855,10 @@ function renderReservas(){
         <div class="rv-title">${esc(r.nombre)}<span class="rv-paxwrap"><input class="pax-edit" type="number" min="1" value="${showPax}" onchange="editPax('${r.id}',this.value)" onclick="this.select()"> personas</span><span class="rv-mesas">${nM} ${nM>1?'mesas':'mesa'}</span></div>
         <div class="rv-actions">
           <span class="rv-hold">retiene hasta ${r.hora_limite}</span>
-          <button class="mini ${r.estado==='llego'?'on':''}" onclick="toggleEstado('${r.id}')">${r.estado==='llego'?'Llegó ✓':'Pendiente'}</button>
-          <button class="mini ${r.estado==='no_asistio'?'nos-on':''}" onclick="marcarNoAsistio('${r.id}')">${r.estado==='no_asistio'?'No vino ✓':'No asistió'}</button>
+          <button class="mini ${r.estado==='confirmada'?'conf-on':''}" onclick="setEstado('${r.id}','confirmada')">${r.estado==='confirmada'?'Confirmada ✓':'Confirmar'}</button>
+          <button class="mini ${r.estado==='llego'?'on':''}" onclick="setEstado('${r.id}','llego')">${r.estado==='llego'?'Llegó ✓':'Llegó'}</button>
+          <button class="mini ${r.estado==='no_asistio'?'nos-on':''}" onclick="setEstado('${r.id}','no_asistio')">${r.estado==='no_asistio'?'No vino ✓':'No asistió'}</button>
+          <button class="mini wa-send ${WA_MENU===r.id?'open':''}" onclick="menuWhatsapp('${r.id}')" title="Enviar mensaje de confirmación por WhatsApp">✉ WhatsApp</button>
           <button class="mini ghost" onclick="editarReserva('${r.id}')">Editar</button>
           <button class="mini danger" onclick="liberar('${r.id}')">Liberar</button>
         </div>
@@ -822,7 +871,7 @@ function renderReservas(){
         <span class="rv-made">Registrada: ${fmtHecha(r.creada)}</span>
       </div>
       ${r.notas?`<div class="rv-nota"><span>Nota:</span> ${esc(r.notas)}</div>`:''}
-    </div>${editFormHTML(r)}${reubicHTML(r)}`;
+    </div>${waMenuHTML(r)}${editFormHTML(r)}${reubicHTML(r)}`;
   }).join('');
 }
 function renderEditor(){
