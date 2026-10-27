@@ -32,7 +32,21 @@
       "addressRegion": "Salta",
       "addressCountry": "AR"
     },
-    "openingHours": ["Fr 20:30-04:00", "Sa 20:30-04:00"],
+    "openingHoursSpecification": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": "Thursday",
+        "opens": "20:30",
+        "closes": "03:00",
+        "validFrom": "2026-10-29"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Friday", "Saturday"],
+        "opens": "20:30",
+        "closes": "05:00"
+      }
+    ],
     "telephone": "+5493875458204",
     "sameAs": [
       "https://www.instagram.com/zeppelinbar.salta"
