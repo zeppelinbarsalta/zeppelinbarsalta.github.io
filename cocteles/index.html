@@ -641,13 +641,23 @@
   .zb-faq__a p{margin:0}
   @keyframes zbfade{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
 </style>
+<style id="nav-fix">
+  nav { background: rgba(10,10,10,0.94); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(255,255,255,0.08); padding-top: 12px; padding-bottom: 12px; gap: 12px; }
+  .nav-logo { white-space: nowrap; }
+  .nav-back { display: inline-block; white-space: nowrap; line-height: 1; padding: 14px 18px; border: 1px solid var(--orange); color: var(--white); font-size: 0.8rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; transition: background 0.2s, color 0.2s; }
+  .nav-back::before { content: '←'; margin-right: 8px; color: var(--orange); transition: color 0.2s; }
+  .nav-back:hover, .nav-back:focus-visible { background: var(--orange); color: var(--white); }
+  .nav-back:hover::before, .nav-back:focus-visible::before { color: var(--white); }
+  @media (max-width: 768px) { nav { padding: 10px 16px; } .nav-logo { font-size: 1.35rem; } .nav-back { padding: 13px 14px; font-size: 0.75rem; } }
+  @media (max-width: 480px) { .nav-back .nb-long { display: none; } }
+</style>
 </head>
 <body>
 
   <!-- NAV -->
   <nav>
     <a href="https://zeppelin-bar.com" class="nav-logo">ZEP<span>PE</span>LIN BAR</a>
-    <a href="https://zeppelin-bar.com" class="nav-back">Inicio</a>
+    <a href="https://zeppelin-bar.com" class="nav-back"><span class="nb-long">Volver al </span>inicio</a>
   </nav>
 
   <!-- HERO -->
