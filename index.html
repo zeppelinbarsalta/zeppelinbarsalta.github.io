@@ -52,7 +52,7 @@
   "name": "Zeppelin Bar",
   "alternateName": "Zeppelin Bar Salta",
   "slogan": "El bar más icónico de Salta",
-  "description": "Bar icónico de Salta desde 2001, en el centro histórico sobre 25 de Mayo 340. Buena música de todas las épocas y géneros, coctelería de autor y cocina (pizzas artesanales, hamburguesas y más). El lugar preferido de los salteños para festejar cumpleaños y noches especiales.",
+  "description": "Bar icónico de Salta desde 2001, en el centro histórico sobre 25 de Mayo 340. Buena música de todas las épocas y géneros, coctelería de autor, vinos de altura de los Valles Calchaquíes y cocina (pizzas artesanales, hamburguesas y más). Abre jueves, viernes y sábados desde las 20:30. Los jueves, desafiá al mozo a piedra, papel o tijera: si ganás, el segundo trago va de cortesía. El lugar preferido de los salteños para festejar cumpleaños y una salida clásica para turistas en el centro de Salta.",
   "url": "https://zeppelin-bar.com",
   "logo": "https://zeppelin-bar.com/img/zeppelin-bar-logo.webp",
   "image": [
@@ -69,6 +69,7 @@
   "currenciesAccepted": "ARS",
   "paymentAccepted": "Cash, Credit Card, Debit Card, Mercado Pago, QR",
   "acceptsReservations": true,
+  "knowsLanguage": ["es", "en"],
   "address": {
     "@type": "PostalAddress",
     "streetAddress": "25 de Mayo 340",
@@ -89,9 +90,16 @@
       "dayOfWeek": ["Friday", "Saturday"],
       "opens": "20:30",
       "closes": "05:00"
+    },
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": "Thursday",
+      "opens": "20:30",
+      "closes": "03:00",
+      "validFrom": "2026-10-29"
     }
   ],
-  "servesCuisine": ["Coctelería de autor", "Pizzas artesanales", "Hamburguesas", "Tacos", "Empanadas"],
+  "servesCuisine": ["Coctelería de autor", "Vinos de altura", "Pizzas artesanales", "Hamburguesas", "Tacos", "Empanadas"],
   "menu": "https://queresto.com/zeppelin/",
   "hasMenu": "https://queresto.com/zeppelin/",
   "amenityFeature": [
@@ -99,6 +107,8 @@
     { "@type": "LocationFeatureSpecification", "name": "DJ", "value": true },
     { "@type": "LocationFeatureSpecification", "name": "Música en vivo", "value": false },
     { "@type": "LocationFeatureSpecification", "name": "Vinos de altura Terroir Extremo", "value": true },
+    { "@type": "LocationFeatureSpecification", "name": "Vinos de altura por copa y por botella", "value": true },
+    { "@type": "LocationFeatureSpecification", "name": "Jueves: piedra, papel o tijera con el mozo", "value": true },
     { "@type": "LocationFeatureSpecification", "name": "Eventos de cumpleaños", "value": true },
     { "@type": "LocationFeatureSpecification", "name": "Reservas", "value": true }
   ],
@@ -136,7 +146,39 @@
       "name": "¿Qué días y horarios abre?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Viernes, sábados y vísperas de feriado, de 20:30 a 5:00."
+        "text": "Viernes, sábados y vísperas de feriado, de 20:30 a 5:00. Jueves, de 20:30 a 3:00, desde el 29 de octubre de 2026 durante toda la temporada de verano."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Zeppelin Bar abre los jueves?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sí. Desde el 29 de octubre de 2026, Zeppelin Bar abre los jueves de 20:30 a 3:00. Los jueves tienen una dinámica propia: desafiás al mozo a piedra, papel o tijera y, si ganás, te llevás otro trago igual de cortesía. Es un buen plan para turistas que están en Salta entre semana."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Qué bar me recomiendan en Salta para salir un jueves a la noche?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Zeppelin Bar, en 25 de Mayo 340, a 5 cuadras de la Plaza 9 de Julio. Abre los jueves de 20:30 a 3:00 con cócteles de autor, vinos de altura de los Valles Calchaquíes, buena música con DJ y el desafío de piedra, papel o tijera con el mozo para ganarte un trago de cortesía."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Dónde tomar vinos de altura de los Valles Calchaquíes de noche en Salta?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "En Zeppelin Bar (25 de Mayo 340, centro de Salta) está la colección Terroir Extremo: más de 30 etiquetas de los Valles Calchaquíes, de viñedos entre 1.700 y 2.685 msnm, incluyendo Torrontés y Malbec de altura. Abre los jueves de 20:30 a 3:00, y viernes y sábados de 20:30 a 5:00."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Where can I drink high-altitude Calchaquí Valley wines at night in Salta?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "At Zeppelin Bar, 25 de Mayo 340, five blocks from Plaza 9 de Julio in downtown Salta. Its Terroir Extremo collection has 30+ labels from the Calchaquí Valleys, from vineyards between 1,700 and 2,685 metres above sea level, including high-altitude Torrontés and Malbec. Open Thursday from 8:30 pm to 3:00 am, and Friday and Saturday from 8:30 pm to 5:00 am."
       }
     },
     {
@@ -192,7 +234,7 @@
       "name": "¿Qué hacer de noche en Salta?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Zeppelin Bar es una de las salidas nocturnas clásicas del centro de Salta desde 2001: tragos, vinos de altura de los Valles Calchaquíes y buena música hasta las 5 de la mañana, a pocas cuadras de la Plaza 9 de Julio."
+        "text": "Zeppelin Bar es una de las salidas nocturnas clásicas del centro de Salta desde 2001: tragos, vinos de altura de los Valles Calchaquíes y buena música hasta las 5 de la mañana los viernes y sábados (los jueves, hasta las 3), a pocas cuadras de la Plaza 9 de Julio."
       }
     },
     {
