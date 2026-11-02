@@ -136,7 +136,8 @@ input,select,textarea{border:1.5px solid var(--linea);border-radius:4px;padding:
   <div class="box">
     <div class="marca">Zeppelin <em>Asistencia</em></div>
     <form id="fLogin">
-      <input id="tk" type="password" placeholder="Clave de administrador" autocomplete="current-password">
+      <input id="lDni" inputmode="numeric" placeholder="DNI" autocomplete="username">
+      <input id="tk" type="password" placeholder="Clave" autocomplete="current-password" style="margin-top:8px">
       <button class="btn" style="width:100%" type="submit">Entrar</button>
       <div class="err" id="eLogin"></div>
     </form>
@@ -202,7 +203,13 @@ input,select,textarea{border:1.5px solid var(--linea);border-radius:4px;padding:
 
 <script>
 const API = 'https://script.google.com/macros/s/AKfycby5KUw7KKL1WYv95fA3VbfNNPbOgJiakDjDEB_L1gR59XNMZKBGyassvPNbkc4I3q1o/exec';
-const LS_TK = 'zpp_asist_admin';
+const LS_TK = 'zpp_asist_admin';           // clave vieja (ya no se usa; se borra al abrir)
+const LS_SES = 'zpp_sesion';                // sesión de Accesos compartida por zeppelin-bar.com
+const ACCESOS_URL = 'https://script.google.com/macros/s/AKfycbyRC8Y2pb1eU7g8nvEmMrTIVS5V23YVa3Hcj6z77jS3UkWVWxiRInAhFJuaD3tnDGv8/exec';
+function sesGet(){ try{ return JSON.parse(localStorage.getItem(LS_SES)||'null'); }catch(e){ return null; } }
+function sesSet(v){ try{ v ? localStorage.setItem(LS_SES, JSON.stringify(v)) : localStorage.removeItem(LS_SES); }catch(e){} }
+function tokenVigente(t){ try{ const p=JSON.parse(atob(String(t).split('.')[0].replace(/-/g,'+').replace(/_/g,'/'))); return p && p.e > Date.now(); }catch(e){ return false; } }
+function tieneAsist(u){ return !!(u && (u.accesos||[]).indexOf('asistencia')>=0); }
 const ROLES_DEF = 'Mesero de Zona,Barra,Cocina,Bartender,Bachero,Comis,Cajero,Encargado,DJ,Recepcionista,Seguridad,Limpieza,Otro';
 const roles = () => String((D && D.config.ROLES) || ROLES_DEF).split(',').map(x => x.trim()).filter(Boolean);
 const MODO_TXT = { JORNADA: 'Por jornada', HORA: 'Por hora', AMBAS: 'Jornada y hora' };
@@ -212,7 +219,8 @@ const JUSTIFICA = ['Ausencia justificada', 'Franco', 'Licencia', 'Enfermedad', '
 const FLAG_TXT = { FUERA_RANGO: 'Fuera del radio', SIN_GPS: 'Sin ubicación' };
 
 let TOKEN = null;
-try { TOKEN = localStorage.getItem(LS_TK); } catch (e) {}
+try { localStorage.removeItem(LS_TK); } catch (e) {}
+(function(){ const s = sesGet(); if (s && s.token && tieneAsist(s.usuario) && tokenVigente(s.token)) TOKEN = s.token; })();
 let D = null;          // última carga del panel (fecha operativa actual)
 let tab = 'hoy';
 let repModo = 'sem', repVista = 'cal', repRef = null, repData = null, charts = [];
@@ -311,6 +319,7 @@ async function api(body, opts) {
     if (body.action !== 'panel') { er.incierto = true; Object.keys(MEMO).forEach(k => delete MEMO[k]); }
     throw er;
   }
+  if (!j.ok && j.error === 'sesion') { TOKEN = null; sesSet(null); $('vApp').classList.add('hide'); $('vLogin').classList.remove('hide'); throw new Error('Tu sesión venció o no tenés acceso. Volvé a ingresar.'); }
   if (!j.ok) throw new Error(j.error || 'Error del servidor');
   if (lectura) MEMO[key] = { t: Date.now(), d: j };
   else Object.keys(MEMO).forEach(k => delete MEMO[k]);
@@ -432,15 +441,20 @@ function estadoJ(j) {
 /* ---------- login / navegación ---------- */
 $('fLogin').addEventListener('submit', async e => {
   e.preventDefault();
-  TOKEN = $('tk').value.trim();
+  const dni = $('lDni').value.replace(/\D/g, ''), pass = $('tk').value;
   $('eLogin').textContent = '';
+  if (!dni || !pass) { $('eLogin').textContent = 'Ingresá DNI y clave'; return; }
   try {
+    const r = await fetch(ACCESOS_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'login', dni, pass, sistema: 'asistencia' }) });
+    const j = await r.json();
+    if (!j || !j.ok) { $('eLogin').textContent = (j && j.error) || 'No se pudo ingresar'; return; }
+    if (!tieneAsist(j.usuario)) { $('eLogin').textContent = 'No tenés acceso al panel de Asistencia'; return; }
+    sesSet({ token: j.token, usuario: j.usuario }); TOKEN = j.token; $('tk').value = '';
     D = await api({ action: 'panel' });
-    try { localStorage.setItem(LS_TK, TOKEN); } catch (x) {}
     arrancar();
-  } catch (err) { $('eLogin').textContent = err.message; }
+  } catch (err) { $('eLogin').textContent = err.message === 'Failed to fetch' ? 'No se pudo conectar' : err.message; }
 });
-$('bSalir').onclick = () => { try { localStorage.removeItem(LS_TK); } catch (x) {} location.reload(); };
+$('bSalir').onclick = () => { sesSet(null); try { localStorage.removeItem(LS_TK); } catch (x) {} location.reload(); };
 $('nav').addEventListener('click', e => { const b = e.target.closest('button[data-tab]'); if (b) irA(b.dataset.tab); });
 $('bRef').onclick = () => cargarTab(true);
 
