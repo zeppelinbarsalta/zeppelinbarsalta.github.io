@@ -262,10 +262,42 @@
     #tooltip{max-width:210px}
   }
   @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+  /* ---- Login (Accesos) ---- */
+  #login{position:fixed;inset:0;z-index:9999;background:var(--void);display:flex;align-items:center;justify-content:center;padding:16px}
+  #login[hidden]{display:none}
+  #login form{width:100%;max-width:360px;background:var(--panel);border:1px solid var(--orange-line);padding:28px 24px;display:flex;flex-direction:column;gap:12px}
+  #login h2{font-family:'Bebas Neue',sans-serif;font-size:38px;font-weight:400;letter-spacing:.04em;line-height:1}
+  #login h2 span{color:var(--orange)}
+  #login label{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+  #login input{background:var(--panel-2);border:1px solid var(--stroke);color:var(--text);font-family:'Oswald',sans-serif;font-size:18px;padding:11px 12px;width:100%}
+  #login .err{min-height:20px;color:var(--red);font-size:14px}
+  #login .nota{font-size:12px;color:var(--muted)}
+  .userbar{display:flex;justify-content:flex-end;align-items:center;gap:12px;margin-bottom:14px;font-size:13px;color:var(--muted);flex-wrap:wrap}
+  .userbar b{color:var(--text);font-weight:500}
+  .userbar button{padding:7px 14px;font-size:11px}
+  .userbar .ro{color:var(--orange);border:1px solid var(--orange-line);padding:2px 8px;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+  /* ---- Solo visualización (mozos): nada editable ---- */
+  body.solover .asignador, body.solover #cfgBtn, body.solover #resetBtn, body.solover #editor,
+  body.solover .rv-actions button, body.solover .actions, body.solover .reubic, body.solover .notes{display:none!important}
+  body.solover .rv-info span:nth-child(3), body.solover .rv-info span:nth-child(4){display:none}
+  body.solover .pax-edit{pointer-events:none;border-color:transparent;background:transparent}
 </style>
 </head>
 <body>
+<div id="login">
+  <form id="loginForm" autocomplete="on">
+    <h2>Reservas <span>Zeppelin</span></h2>
+    <label for="liDni">DNI</label>
+    <input id="liDni" inputmode="numeric" autocomplete="username" placeholder="Sin puntos">
+    <label for="liPass">Clave</label>
+    <input id="liPass" type="password" autocomplete="current-password">
+    <div class="err" id="liErr"></div>
+    <button type="submit" id="liBtn">Ingresar</button>
+    <div class="nota">La clave te la da Fernando. Acceso con permiso “Reservas” en zeppelin-bar.com/accesos.</div>
+  </form>
+</div>
 <div class="wrap">
+  <div class="userbar" id="userbar" hidden><span id="quien"></span><button class="ghost" id="logoutBtn" type="button">Salir</button></div>
   <header>
     <div class="eyebrow">Sistema de Reservas · Fase 3 — Disponibilidad</div>
     <h1>Mapa <span>&amp; Reservas</span></h1>
@@ -373,7 +405,7 @@
 /* ============================================================
    Reservas Zeppelin — v4.0 (mesas editables por sector)
    ============================================================ */
-const VERSION="5.20";
+const VERSION="5.21";
 
 /* Metadatos fijos de sector (nombre, zona, reglas de combinación). */
 const SECTORES_META=[
@@ -460,52 +492,83 @@ function mesasNecesarias(b,N){
 const STORE_KEY="zeppelin_reservas_v3";
 function loadReservas(){try{return JSON.parse(localStorage.getItem(STORE_KEY))||[];}catch(_){return [];}}
 function saveReservas(){try{localStorage.setItem(STORE_KEY,JSON.stringify(RESERVAS));}catch(_){}}
-let RESERVAS=loadReservas();
+let RESERVAS=[]; // se cargan del equipo solo después de iniciar sesión
 let fechaSel=new Date().toISOString().slice(0,10);
 let OCUP=new Set(), LAST=[], OCUPINFO={};
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 
 /* ===== Backend (Google Apps Script + Sheet): sincroniza entre dispositivos ===== */
 const BACKEND_URL = "https://script.google.com/macros/s/AKfycbx_qtjFgXCoGO3RHRrU87d4mA54sDoZ7Tj7dcXAJ0mBXv-Z8psrqkjhehuRoi2qwcOPng/exec"; // backend Zeppelin (fijo)
-const API_TOKEN   = "zeppelin-reservas"; // debe coincidir con TOKEN del Apps Script
+const ACCESOS_URL = "https://script.google.com/macros/s/AKfycbyRC8Y2pb1eU7g8nvEmMrTIVS5V23YVa3Hcj6z77jS3UkWVWxiRInAhFJuaD3tnDGv8/exec";
+const LS_SES = "zpp_sesion"; // sesión compartida por todos los sistemas de zeppelin-bar.com
+let SES = null;
+function sesGet(){ try{ return JSON.parse(localStorage.getItem(LS_SES)||'null'); }catch(_){ return null; } }
+function sesSet(v){ try{ v ? localStorage.setItem(LS_SES, JSON.stringify(v)) : localStorage.removeItem(LS_SES); }catch(_){} }
+function tokenVigente(t){ try{ const p=JSON.parse(atob(String(t).split('.')[0].replace(/-/g,'+').replace(/_/g,'/'))); return p && p.e > Date.now(); }catch(_){ return false; } }
+function tieneReservas(u){ const a=(u&&u.accesos)||[]; return a.indexOf('reservas')>=0 || a.indexOf('reservas_ver')>=0; }
+function esSoloVer(){ return !(SES&&SES.usuario&&(SES.usuario.accesos||[]).indexOf('reservas')>=0); }
 let SYNC="local", SYNCERR="";
 let pendingSync=new Set();  // ids con alta/cambio local NO confirmado por el servidor
 let localDeleted=new Set(); // ids borrados local NO confirmados por el servidor
 function marcarPendiente(id){ pendingSync.add(id); localDeleted.delete(id); }
 function marcarBorrado(id){ localDeleted.add(id); pendingSync.delete(id); }
 function setSync(s){ SYNC=s; const el=document.getElementById('syncLbl'); if(el){ el.textContent=s==='ok'?'● Sincronizado':s==='off'?'● Sin conexión — reintentar':'● Solo este equipo'; el.className='sync '+s; el.title=(s==='off'?SYNCERR:''); } }
-// Respaldo por <script> (JSONP). Manda cookies, así que solo se usa si fetch falla.
-function jsonp(params){
-  return new Promise((resolve,reject)=>{
-    const cb='cb'+Date.now()+Math.floor(Math.random()*1e4);
-    const s=document.createElement('script');
-    const q=new URLSearchParams({...params,callback:cb}).toString();
-    let done=false;
-    const cleanup=()=>{try{delete window[cb];}catch(_){}if(s.parentNode)s.parentNode.removeChild(s);};
-    window[cb]=d=>{done=true;resolve(d);cleanup();};
-    s.onerror=()=>{if(!done)reject(new Error('net'));cleanup();};
-    s.src=BACKEND_URL+(BACKEND_URL.includes('?')?'&':'?')+q;
-    document.body.appendChild(s);
-    setTimeout(()=>{if(!done){reject(new Error('timeout'));cleanup();}},15000);
-  });
-}
 function procesarResp(d){
   if(d&&d.ok){ SYNCERR=''; setSync('ok'); return d; }
+  if(d&&d.error==='sesion'){ sesionVencida(); return null; }
   SYNCERR=(d&&d.error)?('el backend respondió: '+d.error):'respuesta inválida del backend';
   setSync('off'); return null;
 }
-// Toda operación (leer y escribir) devuelve el estado completo del servidor.
-// Primero fetch (NO manda cookies → entra siempre anónimo, evita el problema de /u/1/).
-// Si fetch falla (CORS/red), cae a JSONP como respaldo.
+// Toda operación (leer y escribir) va por POST con el token de sesión y devuelve el estado completo.
 function api(action,data){
-  if(!BACKEND_URL){ setSync('local'); return Promise.resolve(null); }
-  const p={action,token:API_TOKEN};
-  if(data!==undefined) p.data=JSON.stringify(data);
-  const url=BACKEND_URL+(BACKEND_URL.includes('?')?'&':'?')+new URLSearchParams(p).toString();
-  return fetch(url,{method:'GET',redirect:'follow'})
+  if(!SES||!SES.token){ return Promise.resolve(null); }
+  if(action!=='load' && esSoloVer()){ return Promise.resolve(null); } // solo ver: nunca escribe
+  const body={action,token:SES.token};
+  if(data!==undefined) body.data=data;
+  return fetch(BACKEND_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body),redirect:'follow'})
     .then(r=>{ if(!r.ok) throw new Error('http '+r.status); return r.json(); })
     .then(procesarResp)
-    .catch(()=> jsonp(p).then(procesarResp).catch(e=>{ SYNCERR='no se pudo contactar el backend ('+((e&&e.message)||'red')+'). Revisá acceso "Cualquier persona" y el despliegue.'; setSync('off'); return null; }) );
+    .catch(e=>{ SYNCERR='no se pudo contactar el backend ('+((e&&e.message)||'red')+').'; setSync('off'); return null; });
+}
+/* ---- Sesión ---- */
+function purgarLocal(){ try{ localStorage.removeItem(STORE_KEY); }catch(_){} RESERVAS=[]; pendingSync.clear(); localDeleted.clear(); }
+function mostrarLogin(msg){
+  document.getElementById('login').hidden=false;
+  document.getElementById('userbar').hidden=true;
+  document.getElementById('liErr').textContent=msg||'';
+  setTimeout(()=>{ const i=document.getElementById('liDni'); if(i) i.focus(); },50);
+}
+function sesionVencida(){ document.body.classList.remove('solover'); SES=null; sesSet(null); purgarLocal(); detenerSync(); mostrarLogin('Tu sesión venció o te quitaron el acceso. Volvé a ingresar.'); }
+function logout(){ document.body.classList.remove('solover'); SES=null; sesSet(null); purgarLocal(); detenerSync(); renderAll(); mostrarLogin(''); }
+async function doLogin(ev){
+  if(ev) ev.preventDefault();
+  const dni=document.getElementById('liDni').value.replace(/\D/g,'');
+  const pass=document.getElementById('liPass').value;
+  const err=document.getElementById('liErr'), btn=document.getElementById('liBtn');
+  if(!dni||!pass){ err.textContent='Ingresá DNI y clave'; return; }
+  btn.disabled=true; err.textContent='Verificando…';
+  try{
+    const r=await fetch(ACCESOS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'login',dni,pass})});
+    const j=await r.json();
+    if(!j||!j.ok){ err.textContent=(j&&j.error)||'No se pudo ingresar'; return; }
+    if(!tieneReservas(j.usuario)){ err.textContent='No tenés acceso a Reservas'; return; }
+    const prev=sesGet();
+    if(!prev||!prev.usuario||prev.usuario.dni!==j.usuario.dni) purgarLocal(); // otro usuario en este equipo
+    SES={token:j.token,usuario:j.usuario}; sesSet(SES);
+    document.getElementById('liPass').value=''; err.textContent='';
+    iniciarSesion();
+  }catch(_){ err.textContent='No se pudo conectar'; }
+  finally{ btn.disabled=false; }
+}
+function iniciarSesion(){
+  const u=SES.usuario;
+  const ro=esSoloVer();
+  document.body.classList.toggle('solover',ro);
+  document.getElementById('quien').innerHTML='<b>'+esc(((u.nombre||'')+' '+(u.apellido||'')).trim()||u.dni)+'</b>'+(u.rol?' · '+esc(u.rol):'')+(ro?' <span class="ro">Solo lectura</span>':'');
+  document.getElementById('userbar').hidden=false;
+  document.getElementById('login').hidden=true;
+  RESERVAS=loadReservas();
+  initData();
 }
 // Fusiona el estado del servidor con lo local SIN perder reservas no confirmadas.
 function applyServer(d){
@@ -535,12 +598,13 @@ function resyncPendientes(){
   localDeleted.forEach(id=>{ api('delete',{id}).then(applyServer); });
 }
 function focoEnInput(){ const ae=document.activeElement; return !!(ae&&ae.tagName==='INPUT'); }
+let SYNC_TIMER=null;
+function detenerSync(){ if(SYNC_TIMER){ clearInterval(SYNC_TIMER); SYNC_TIMER=null; } }
 async function initData(){
   renderAll(); renderEditor();
   const d=await api('load'); if(d){ applyServer(d); resyncPendientes(); }
-  if(BACKEND_URL){
-    setInterval(()=>{ if(PENDING||EDITING||focoEnInput()) return; api('load').then(d=>{ if(d){ applyServer(d); resyncPendientes(); } }); },20000);
-  }
+  detenerSync();
+  SYNC_TIMER=setInterval(()=>{ if(!SES||PENDING||EDITING||focoEnInput()) return; api('load').then(d=>{ if(d){ applyServer(d); resyncPendientes(); } }); },20000);
 }
 function reservasNoche(){return RESERVAS.filter(r=>String(r.fecha).slice(0,10)===fechaSel);}
 function ocupadasSet(){const s=new Set();reservasNoche().forEach(r=>{if(r.estado!=='no_asistio')r.mesasIds.forEach(id=>s.add(id));});return s;}
@@ -988,7 +1052,18 @@ document.getElementById('pax').addEventListener('input',renderAsig);
 document.getElementById('pax').addEventListener('keydown',e=>{if(e.key==='Enter')renderAsig();});
 document.getElementById('exportBtn').addEventListener('click',()=>{const blob=new Blob([JSON.stringify({version:VERSION,reglas:REGLAS,config:CFG,sectores:SECTORES},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='mapa_mesas_zeppelin_v'+VERSION+'.json';a.click();});
 document.getElementById('expResBtn').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(RESERVAS,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='reservas_zeppelin.json';a.click();});
-initData();
+/* Solo ver: cualquier acción de edición queda anulada (además el backend la rechaza). */
+['reservar','editPax','setEstado','liberar','editarReserva','guardarEdicion','pedirCambioSector','pedirCambioFecha','moverReserva','menuWhatsapp','enviarWhatsapp','resetNoche','setCount','toggleSillon','restablecer'].forEach(fn=>{
+  const orig=window[fn]; if(typeof orig!=='function') return;
+  window[fn]=function(){ if(esSoloVer()) return; return orig.apply(this,arguments); };
+});
+document.getElementById('loginForm').addEventListener('submit',doLogin);
+document.getElementById('logoutBtn').addEventListener('click',logout);
+(function arranque(){
+  const s=sesGet();
+  if(s&&s.token&&tieneReservas(s.usuario)&&tokenVigente(s.token)){ SES=s; iniciarSesion(); }
+  else { purgarLocal(); renderAll(); mostrarLogin(''); }
+})();
 </script>
 </body>
 </html>
