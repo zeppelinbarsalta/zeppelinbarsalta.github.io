@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Accesos · Zeppelin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --naranja:#FF5A00; --negro:#0A0A0A; --fondo:#F6F4F1; --card:#FFFFFF; --linea:#E4DFD8;
+  --texto:#1A1A1A; --suave:#6B655E; --ok:#1F8A4C; --mal:#C62828; --amb:#B7791F;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--fondo);color:var(--texto);font-family:'Oswald',system-ui,sans-serif;font-weight:400}
+h1,h2,h3{font-family:'Bebas Neue',sans-serif;letter-spacing:.04em;font-weight:400;margin:0}
+button{font-family:inherit;cursor:pointer}
+input,select{font-family:inherit;font-size:16px}
+.top{background:var(--negro);color:#fff;padding:12px 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:5}
+.top h1{font-size:28px;color:#fff}.top h1 span{color:var(--naranja)}
+.top .quien{margin-left:auto;font-size:14px;color:#ccc;text-align:right}
+.top button{background:transparent;border:1px solid #555;color:#eee;border-radius:6px;padding:6px 10px;font-size:13px}
+.wrap{max-width:1200px;margin:0 auto;padding:16px}
+.tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.tabs button{background:var(--card);border:1px solid var(--linea);border-radius:8px;padding:8px 16px;font-size:15px;color:var(--suave)}
+.tabs button.on{background:var(--naranja);border-color:var(--naranja);color:#fff}
+.card{background:var(--card);border:1px solid var(--linea);border-radius:12px;padding:16px}
+.login{max-width:360px;margin:12vh auto 0}
+.login h2{font-size:34px;margin-bottom:4px}.login p{color:var(--suave);margin:0 0 16px}
+label{display:block;font-size:13px;color:var(--suave);margin:10px 0 4px}
+.in{width:100%;padding:11px 12px;border:1px solid var(--linea);border-radius:8px;background:#fff}
+.in:focus{outline:2px solid var(--naranja);border-color:transparent}
+.btn{background:var(--naranja);color:#fff;border:0;border-radius:8px;padding:11px 16px;font-size:16px;font-weight:500}
+.btn.sec{background:#fff;color:var(--texto);border:1px solid var(--linea)}
+.btn.chico{padding:6px 10px;font-size:13px}
+.btn:disabled{opacity:.5}
+.err{color:var(--mal);font-size:14px;min-height:20px;margin-top:8px}
+.barra{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.barra .in{max-width:280px}
+.stat{font-size:13px;color:var(--suave)}
+.lista{display:grid;gap:10px}
+.u{background:var(--card);border:1px solid var(--linea);border-radius:12px;padding:12px 14px}
+.u.off{opacity:.55}
+.u .cab{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.u .nom{font-size:18px;font-weight:500}
+.u .dni{font-size:13px;color:var(--suave)}
+.u .cab select{padding:6px 8px;border:1px solid var(--linea);border-radius:6px;background:#fff;font-size:14px}
+.badges{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.badge{font-size:12px;padding:3px 8px;border-radius:20px;background:#F1EEEA;color:var(--suave)}
+.badge.ok{background:#E3F4EA;color:var(--ok)}.badge.mal{background:#FBE9E7;color:var(--mal)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.chip{border:1px solid var(--linea);background:#fff;border-radius:20px;padding:5px 11px;font-size:13px;color:var(--suave)}
+.chip.on{background:var(--negro);border-color:var(--negro);color:#fff}
+.chip.admin.on{background:var(--naranja);border-color:var(--naranja)}
+.acc{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.sw{position:relative;width:44px;height:24px;flex:none}
+.sw input{opacity:0;width:0;height:0}
+.sw span{position:absolute;inset:0;background:#ccc;border-radius:24px;transition:.2s}
+.sw span:before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+.sw input:checked+span{background:var(--ok)}
+.sw input:checked+span:before{transform:translateX(20px)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:8px;border-bottom:1px solid var(--linea);text-align:left;vertical-align:top}
+th{font-weight:500;color:var(--suave);font-size:13px}
+.matriz td,.matriz th{text-align:center}.matriz td:first-child,.matriz th:first-child{text-align:left}
+.scroll{overflow-x:auto}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:16px;z-index:20}
+.modal .card{width:100%;max-width:400px}
+.modal h3{font-size:26px;margin-bottom:6px}
+.clave{font-family:ui-monospace,Menlo,monospace;font-size:22px;letter-spacing:.08em;background:#FFF3EB;border:1px dashed var(--naranja);border-radius:8px;padding:10px;text-align:center;margin:10px 0}
+.nota{font-size:13px;color:var(--suave)}
+.fila{display:flex;gap:8px;margin-top:14px;justify-content:flex-end;flex-wrap:wrap}
+.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--negro);color:#fff;padding:10px 16px;border-radius:8px;font-size:14px;z-index:30}
+.hide{display:none!important}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:600px){.grid2{grid-template-columns:1fr}.top h1{font-size:22px}.badges{margin-left:0;width:100%}}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <h1>ZEPPELIN <span>ACCESOS</span></h1>
+  <div class="quien hide" id="quien"></div>
+  <button class="hide" id="btnSalir">Salir</button>
+</div>
+
+<!-- LOGIN -->
+<div class="wrap" id="vLogin">
+  <div class="card login">
+    <h2>Ingresar</h2>
+    <p>Panel de administración de usuarios</p>
+    <form id="fLogin" autocomplete="on">
+      <label for="lDni">DNI</label>
+      <input class="in" id="lDni" inputmode="numeric" autocomplete="username" required>
+      <label for="lPass">Contraseña</label>
+      <input class="in" id="lPass" type="password" autocomplete="current-password" required>
+      <div class="err" id="lErr"></div>
+      <button class="btn" style="width:100%;margin-top:6px" id="lBtn">Entrar</button>
+    </form>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="wrap hide" id="vApp">
+  <div class="tabs">
+    <button data-t="usuarios" class="on">Usuarios</button>
+    <button data-t="roles">Roles</button>
+    <button data-t="log">Registro</button>
+  </div>
+
+  <section id="t-usuarios">
+    <div class="barra">
+      <input class="in" id="buscar" placeholder="Buscar por nombre, DNI o rol">
+      <button class="btn chico" id="btnNuevo">+ Nuevo usuario</button>
+      <span class="stat" id="stat"></span>
+    </div>
+    <div class="lista" id="lista"></div>
+  </section>
+
+  <section id="t-roles" class="hide">
+    <div class="card">
+      <h2 style="font-size:26px">Accesos por defecto de cada rol</h2>
+      <p class="nota">Se aplican al dar de alta un usuario o al cambiarle el rol (si elegís aplicarlos). Después podés ajustar cada persona individualmente.</p>
+      <div class="scroll"><table class="matriz" id="matriz"></table></div>
+      <div class="fila" style="justify-content:space-between">
+        <button class="btn sec chico" id="btnRolNuevo">+ Agregar rol</button>
+        <button class="btn" id="btnRolesGuardar">Guardar roles</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="t-log" class="hide">
+    <div class="card">
+      <div class="barra"><h2 style="font-size:26px;margin-right:auto">Últimos movimientos</h2><button class="btn sec chico" id="btnLog">Actualizar</button></div>
+      <div class="scroll"><table id="tablaLog"></table></div>
+    </div>
+  </section>
+</div>
+
+<div id="modal"></div>
+<div id="toast" class="toast hide"></div>
+
+<script>
+const API = 'https://script.google.com/macros/s/AKfycbyRC8Y2pb1eU7g8nvEmMrTIVS5V23YVa3Hcj6z77jS3UkWVWxiRInAhFJuaD3tnDGv8/exec';
+const LS = 'zpp_sesion';       // compartido por todos los sistemas de zeppelin-bar.com
+let S = null;                  // sesión {token, usuario}
+let D = { usuarios:[], roles:{}, sistemas:[] };
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.remove('hide'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.add('hide'),2600); }
+function lsGet(){ try{ return JSON.parse(localStorage.getItem(LS)||'null'); }catch(e){ return null; } }
+function lsSet(v){ try{ v ? localStorage.setItem(LS, JSON.stringify(v)) : localStorage.removeItem(LS); }catch(e){} }
+
+async function api(body){
+  const r = await fetch(API, { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(body) });
+  const j = await r.json();
+  if (!j.ok && j.error === 'sesion'){ salir('Tu sesión venció. Volvé a ingresar.'); throw new Error('sesion'); }
+  return j;
+}
+const apiA = body => api(Object.assign({ token:S.token }, body));
+
+/* ---------- login ---------- */
+$('#fLogin').addEventListener('submit', async e => {
+  e.preventDefault(); $('#lErr').textContent=''; $('#lBtn').disabled=true;
+  try{
+    const j = await api({ action:'login', dni:$('#lDni').value, pass:$('#lPass').value, sistema:'accesos' });
+    if (!j.ok){ $('#lErr').textContent = j.error; return; }
+    S = { token:j.token, usuario:j.usuario }; lsSet(S); $('#lPass').value=''; entrar();
+  }catch(err){ if (err.message!=='sesion') $('#lErr').textContent='No se pudo conectar'; }
+  finally{ $('#lBtn').disabled=false; }
+});
+function salir(msg){
+  S=null; lsSet(null); $('#vApp').classList.add('hide'); $('#vLogin').classList.remove('hide');
+  $('#quien').classList.add('hide'); $('#btnSalir').classList.add('hide'); if (msg) $('#lErr').textContent=msg;
+}
+$('#btnSalir').onclick = () => salir();
+
+async function entrar(){
+  $('#vLogin').classList.add('hide'); $('#vApp').classList.remove('hide');
+  $('#quien').innerHTML = esc(S.usuario.nombre+' '+S.usuario.apellido)+'<br>'+esc(S.usuario.rol);
+  $('#quien').classList.remove('hide'); $('#btnSalir').classList.remove('hide');
+  await cargar();
+}
+async function cargar(){
+  const j = await apiA({ action:'listar' });
+  if (!j.ok){ toast(j.error); return; }
+  D = j; pintarUsuarios(); pintarRoles();
+}
+
+/* ---------- tabs ---------- */
+document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on', x===b));
+  ['usuarios','roles','log'].forEach(t => $('#t-'+t).classList.toggle('hide', t!==b.dataset.t));
+  if (b.dataset.t==='log') cargarLog();
+});
+
+/* ---------- usuarios ---------- */
+$('#buscar').oninput = pintarUsuarios;
+function pintarUsuarios(){
+  const q = $('#buscar').value.trim().toLowerCase();
+  const roles = Object.keys(D.roles);
+  const us = D.usuarios.slice().sort((a,b)=> (b.activo-a.activo) || String(a.apellido).localeCompare(b.apellido))
+    .filter(u => !q || (u.nombre+' '+u.apellido+' '+u.dni+' '+u.rol).toLowerCase().includes(q));
+  $('#stat').textContent = D.usuarios.filter(u=>u.activo).length+' activos de '+D.usuarios.length;
+  $('#lista').innerHTML = us.map(u => `
+    <div class="u ${u.activo?'':'off'}" data-dni="${esc(u.dni)}">
+      <div class="cab">
+        <label class="sw" title="Activo"><input type="checkbox" data-act="activo" ${u.activo?'checked':''}><span></span></label>
+        <div><div class="nom">${esc(u.apellido)}, ${esc(u.nombre)}</div><div class="dni">DNI ${esc(u.dni)}</div></div>
+        <select data-act="rol">${(roles.indexOf(u.rol)<0?[u.rol]:[]).concat(roles).map(r=>`<option ${r===u.rol?'selected':''}>${esc(r)}</option>`).join('')}</select>
+        <div class="badges">
+          <span class="badge ${u.tiene_pass?'ok':'mal'}">${u.tiene_pass?'Con contraseña':'Sin contraseña'}</span>
+          <span class="badge ${u.tiene_pin?'ok':''}">${u.tiene_pin?'Con PIN':'Sin PIN'}</span>
+          ${u.ultimo_login?`<span class="badge">Último ingreso ${esc(String(u.ultimo_login).replace('T',' ').slice(0,16))}</span>`:''}
+        </div>
+      </div>
+      <div class="chips">${D.sistemas.map(s=>`<button class="chip ${s.id==='accesos'?'admin':''} ${u.accesos.includes(s.id)?'on':''}" data-sis="${s.id}">${esc(s.nombre)}</button>`).join('')}</div>
+      <div class="acc">
+        <button class="btn sec chico" data-act="pass">${u.tiene_pass?'Cambiar':'Asignar'} contraseña</button>
+        <button class="btn sec chico" data-act="pin">${u.tiene_pin?'Cambiar':'Asignar'} PIN</button>
+        ${u.tiene_pin?'<button class="btn sec chico" data-act="sinpin">Quitar PIN</button>':''}
+        <button class="btn sec chico" data-act="cerrar">Cerrar sesiones abiertas</button>
+      </div>
+    </div>`).join('') || '<p class="nota">Sin resultados.</p>';
+}
+$('#lista').addEventListener('click', async e => {
+  const card = e.target.closest('.u'); if (!card) return;
+  const dni = card.dataset.dni; const u = D.usuarios.find(x=>x.dni===dni);
+  const chip = e.target.closest('.chip');
+  if (chip){
+    const id = chip.dataset.sis; const acc = u.accesos.includes(id) ? u.accesos.filter(x=>x!==id) : u.accesos.concat(id);
+    return guardarU({ dni, accesos:acc }, (u.accesos.includes(id)?'Quitado: ':'Habilitado: ')+chip.textContent);
+  }
+  const act = e.target.dataset.act;
+  if (act==='pass') return modalClave(u, 'pass');
+  if (act==='pin') return modalClave(u, 'pin');
+  if (act==='sinpin'){ if (!confirmar('¿Quitar el PIN de '+u.nombre+'?')) return; const j=await apiA({action:'quitar_pin',dni}); j.ok?(toast('PIN quitado'),cargar()):toast(j.error); }
+  if (act==='cerrar'){ const j=await apiA({action:'cerrar_sesiones',dni}); j.ok?(toast('Sesiones cerradas'),cargar()):toast(j.error); }
+});
+$('#lista').addEventListener('change', async e => {
+  const card = e.target.closest('.u'); if (!card) return; const dni = card.dataset.dni;
+  if (e.target.dataset.act==='activo') return guardarU({ dni, activo:e.target.checked }, e.target.checked?'Usuario activado':'Usuario desactivado');
+  if (e.target.dataset.act==='rol'){
+    const rol = e.target.value; const def = (D.roles[rol]||[]).map(id=>(D.sistemas.find(s=>s.id===id)||{}).nombre).join(', ') || 'ninguno';
+    const aplicar = confirmar('¿Aplicar los accesos por defecto del rol "'+rol+'"?\n('+def+')\n\nAceptar = reemplaza sus accesos actuales\nCancelar = solo cambia el rol');
+    return guardarU({ dni, rol, aplicar_defecto:aplicar }, 'Rol actualizado');
+  }
+});
+function confirmar(m){ return window.confirm(m); }
+async function guardarU(datos, okMsg){
+  try{ const j = await apiA({ action:'guardar_usuario', usuario:datos });
+    if (!j.ok){ toast(j.error); return cargar(); }
+    const i = D.usuarios.findIndex(x=>x.dni===j.usuario.dni); if (i>=0) D.usuarios[i]=j.usuario; else D.usuarios.push(j.usuario);
+    pintarUsuarios(); toast(okMsg||'Guardado');
+  }catch(e){}
+}
+
+/* ---------- contraseña / PIN ---------- */
+function generar(tipo){
+  if (tipo==='pin'){ return String(Math.floor(1000 + crypto.getRandomValues(new Uint32Array(1))[0] % 9000)); }
+  const a='abcdefghjkmnpqrstuvwxyz23456789'; const r=crypto.getRandomValues(new Uint32Array(8));
+  return Array.from(r, x=>a[x % a.length]).join('');
+}
+function modalClave(u, tipo){
+  const esPin = tipo==='pin';
+  $('#modal').innerHTML = `<div class="modal"><div class="card">
+    <h3>${esPin?'PIN':'Contraseña'} de ${esc(u.nombre)}</h3>
+    <p class="nota">${esPin?'4 a 6 números. Sirve para cambiar de usuario rápido en equipos compartidos (ej. la Caja).':'Mínimo 6 caracteres.'} Después de guardarla no se puede volver a ver: anotala o pasásela ahora.</p>
+    <label>${esPin?'PIN':'Contraseña'}</label>
+    <div style="display:flex;gap:8px"><input class="in" id="mVal" ${esPin?'inputmode="numeric" maxlength="6"':''} autocomplete="off"><button class="btn sec chico" id="mGen">Generar</button></div>
+    <div class="err" id="mErr"></div>
+    <div class="fila"><button class="btn sec" id="mCan">Cancelar</button><button class="btn" id="mOk">Guardar</button></div>
+  </div></div>`;
+  $('#mGen').onclick = () => { $('#mVal').value = generar(tipo); };
+  $('#mCan').onclick = () => $('#modal').innerHTML='';
+  $('#mOk').onclick = async () => {
+    const v = $('#mVal').value.trim(); $('#mOk').disabled = true;
+    try{ const j = await apiA({ action: esPin?'set_pin':'set_pass', dni:u.dni, valor:v });
+      if (!j.ok){ $('#mErr').textContent=j.error; $('#mOk').disabled=false; return; }
+      $('#modal').innerHTML = `<div class="modal"><div class="card"><h3>Listo</h3>
+        <p class="nota">${esPin?'PIN':'Contraseña'} de <b>${esc(u.nombre)} ${esc(u.apellido)}</b> (DNI ${esc(u.dni)}):</p>
+        <div class="clave">${esc(v)}</div>
+        <p class="nota">Esta es la única vez que se muestra. Las sesiones abiertas de esta persona se cerraron.</p>
+        <div class="fila"><button class="btn" id="mFin">Entendido</button></div></div></div>`;
+      $('#mFin').onclick = () => { $('#modal').innerHTML=''; cargar(); };
+    }catch(e){ $('#mOk').disabled=false; }
+  };
+  setTimeout(()=>$('#mVal').focus(), 50);
+}
+
+/* ---------- alta ---------- */
+$('#btnNuevo').onclick = () => {
+  const roles = Object.keys(D.roles);
+  $('#modal').innerHTML = `<div class="modal"><div class="card">
+    <h3>Nuevo usuario</h3>
+    <label>DNI</label><input class="in" id="nDni" inputmode="numeric">
+    <div class="grid2"><div><label>Nombre</label><input class="in" id="nNom"></div><div><label>Apellido</label><input class="in" id="nApe"></div></div>
+    <label>Rol</label><select class="in" id="nRol">${roles.map(r=>`<option>${esc(r)}</option>`).join('')}</select>
+    <p class="nota">Se le asignan los accesos por defecto del rol. La contraseña la asignás después.</p>
+    <div class="err" id="nErr"></div>
+    <div class="fila"><button class="btn sec" id="nCan">Cancelar</button><button class="btn" id="nOk">Crear</button></div>
+  </div></div>`;
+  $('#nCan').onclick = () => $('#modal').innerHTML='';
+  $('#nOk').onclick = async () => {
+    const dni = $('#nDni').value.replace(/\D/g,'');
+    if (D.usuarios.some(u=>u.dni===dni)){ $('#nErr').textContent='Ya existe un usuario con ese DNI'; return; }
+    const j = await apiA({ action:'guardar_usuario', usuario:{ dni, nombre:$('#nNom').value, apellido:$('#nApe').value, rol:$('#nRol').value, activo:true } });
+    if (!j.ok){ $('#nErr').textContent=j.error; return; }
+    $('#modal').innerHTML=''; toast('Usuario creado'); await cargar(); modalClave(j.usuario,'pass');
+  };
+};
+
+/* ---------- roles ---------- */
+let R = {};
+function pintarRoles(){
+  R = JSON.parse(JSON.stringify(D.roles));
+  const sis = D.sistemas;
+  $('#matriz').innerHTML = `<tr><th>Rol</th>${sis.map(s=>`<th>${esc(s.nombre)}</th>`).join('')}</tr>` +
+    Object.keys(R).map(r => `<tr><td>${esc(r)}</td>${sis.map(s=>`<td><input type="checkbox" data-rol="${esc(r)}" data-sis="${s.id}" ${R[r].includes(s.id)?'checked':''}></td>`).join('')}</tr>`).join('');
+}
+$('#matriz').addEventListener('change', e => {
+  const r=e.target.dataset.rol, s=e.target.dataset.sis; if (!r) return;
+  R[r] = e.target.checked ? R[r].concat(s) : R[r].filter(x=>x!==s);
+});
+$('#btnRolNuevo').onclick = () => {
+  const n = (prompt('Nombre del nuevo rol') || '').trim(); if (!n) return;
+  if (R[n]) return toast('Ese rol ya existe');
+  R[n] = []; D.roles = R; pintarRoles();
+};
+$('#btnRolesGuardar').onclick = async () => {
+  const j = await apiA({ action:'guardar_roles', roles:R }); if (!j.ok) return toast(j.error);
+  D.roles = j.roles; pintarRoles(); pintarUsuarios(); toast('Roles guardados');
+};
+
+/* ---------- registro ---------- */
+$('#btnLog').onclick = cargarLog;
+async function cargarLog(){
+  const j = await apiA({ action:'log' }); if (!j.ok) return toast(j.error);
+  const nom = d => { const u=D.usuarios.find(x=>x.dni===String(d)); return u ? u.nombre+' '+u.apellido : d; };
+  $('#tablaLog').innerHTML = '<tr><th>Fecha</th><th>Usuario</th><th>Acción</th><th>Sistema</th><th>Resultado</th></tr>' +
+    j.log.map(r => `<tr><td>${esc(String(r[0]).replace('T',' '))}</td><td>${esc(nom(r[1]))}</td><td>${esc(r[2])}</td><td>${esc(r[3])}</td><td style="color:${r[5]==='OK'?'var(--ok)':'var(--mal)'}">${esc(r[5])}</td></tr>`).join('');
+}
+
+/* ---------- arranque ---------- */
+(async () => {
+  const s = lsGet();
+  if (s && s.token){
+    S = s;
+    try{ const j = await api({ action:'sesion', token:s.token, sistema:'accesos' });
+      if (j.ok){ S.usuario = j.usuario; lsSet(S); return entrar(); } }catch(e){}
+    salir();
+  }
+})();
+</script>
+</body>
+</html>
