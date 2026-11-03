@@ -9,8 +9,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script>
 /* ===== CONFIGURAR ANTES DE SUBIR ===== */
-const ENDPOINT   = 'https://script.google.com/macros/s/AKfycby2xWyn_9xAgSV7xsPaUYL7_NNj9yK60PL_DG3sWtuvCjiF8bTEewdE69qBnPSU9_yOHQ/exec';
-const STOCK_TOKEN = 'stock2026';   // el mismo STOCK_TOKEN del backend
+const ENDPOINT_CSF = 'https://script.google.com/macros/s/AKfycby2xWyn_9xAgSV7xsPaUYL7_NNj9yK60PL_DG3sWtuvCjiF8bTEewdE69qBnPSU9_yOHQ/exec';
+const ZPP_SISTEMAS = ['stock','costos'];   // quién puede entrar (permisos del panel de Accesos)
+const ZPP_TITULO = 'STOCK';
 </script>
 <style>
 :root{--bg:#0A0A0A;--surface:#151515;--surface2:#1d1d1d;--line:#2a2a2a;--orange:#FF5A00;--blue:#4aa3ff;--text:#f4f4f4;--muted:#8c8c8c;--yellow:#3a3414;--green:#35c759;--red:#ff453a}
@@ -101,24 +102,22 @@ function setStatus(t,c){const e=document.getElementById('status');e.textContent=
 async function load(){
   setStatus('Cargando…');
   try{
-    const r=await fetch(ENDPOINT+'?token='+encodeURIComponent(STOCK_TOKEN)+'&t='+Date.now());
-    const d=await r.json(); if(d.error) throw new Error(d.error);
+    const d=await zppApi({action:'stock_leer'});
     data={suppliers:d.suppliers||[],ingredients:d.ingredients||[]};
     setStatus('Actualizado','ok'); render();
-  }catch(e){ setStatus('Sin conexión','err'); document.getElementById('main').innerHTML='<div class="hint">No se pudo cargar. Revisá la conexión o el token.</div>'; }
+  }catch(e){ if(e.message==='sesion') return; setStatus('Sin conexión','err'); document.getElementById('main').innerHTML='<div class="hint">No se pudo cargar. Revisá la conexión.</div>'; }
 }
 function schedulePush(){ clearTimeout(pushTimer); dirty=true; setStatus('Guardando…'); pushTimer=setTimeout(runPush,1200); }
 async function runPush(){
   if(pushing) return; pushing=true;
   try{
     const updates=data.ingredients.map(i=>({id:i.id,stockZ:i.stockZ,stockD:i.stockD,reposicion:i.reposicion}));
-    const r=await fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({token:STOCK_TOKEN,updates})});
-    const d=await r.json(); if(d.error) throw new Error(d.error);
+    await zppApi({action:'stock_guardar',updates});
     dirty=false; setStatus('Guardado','ok');
   }catch(e){ setStatus('Error al guardar','err'); }
   pushing=false; if(dirty) schedulePush();
 }
-window.addEventListener('focus',()=>{ if(!dirty && !pushing && (Date.now()-(window._le||0))>4000) load(); });
+window.addEventListener('focus',()=>{ if(ZPP_TOKEN && !dirty && !pushing && (Date.now()-(window._le||0))>4000) load(); });
 
 /* ---- render ---- */
 function render(){ refill(); }
@@ -208,7 +207,75 @@ document.getElementById('modal').addEventListener('click',e=>{ if(e.target.id===
 
 /* ---- init ---- */
 (function(){ const tb=document.getElementById('topbar'); const upd=()=>document.documentElement.style.setProperty('--headh', tb.offsetHeight+'px'); if(window.ResizeObserver){ new ResizeObserver(upd).observe(tb); } window.addEventListener('resize',upd); upd(); setTimeout(upd,600); })();
-load();
+/* ===== Acceso por DNI + clave (sistema de Accesos · zeppelin-bar.com/accesos) ===== */
+const ACCESOS_URL = 'https://script.google.com/macros/s/AKfycbyRC8Y2pb1eU7g8nvEmMrTIVS5V23YVa3Hcj6z77jS3UkWVWxiRInAhFJuaD3tnDGv8/exec';
+const ZPP_LS = 'zpp_sesion';   // sesión compartida por todos los sistemas de zeppelin-bar.com
+let ZPP_TOKEN = null, ZPP_USR = null, ZPP_ONOK = null;
+function zppSesGet(){ try{ return JSON.parse(localStorage.getItem(ZPP_LS)||'null'); }catch(e){ return null; } }
+function zppSesSet(v){ try{ v ? localStorage.setItem(ZPP_LS, JSON.stringify(v)) : localStorage.removeItem(ZPP_LS); }catch(e){} }
+function zppTokenVigente(t){ try{ const p=JSON.parse(atob(String(t).split('.')[0].replace(/-/g,'+').replace(/_/g,'/'))); return p && p.e > Date.now(); }catch(e){ return false; } }
+function zppTiene(u){ const a=(u&&u.accesos)||[]; return ZPP_SISTEMAS.some(s=>a.indexOf(s)>=0); }
+function zppTieneSis(s){ return !!(ZPP_USR && (ZPP_USR.accesos||[]).indexOf(s)>=0); }
+function zppBarra(){
+  let b=document.getElementById('zppBar');
+  if(!b){ b=document.createElement('div'); b.id='zppBar'; b.style.cssText='position:fixed;left:10px;bottom:10px;z-index:9000;display:flex;gap:8px;align-items:center;background:#151515;border:1px solid #2a2a2a;border-radius:999px;padding:5px 6px 5px 12px;font:12px Oswald,system-ui,sans-serif;color:#8c8c8c';
+    b.innerHTML='<span id="zppQuien"></span><button type="button" style="background:none;border:1px solid #3a3a3a;color:#f4f4f4;border-radius:999px;padding:4px 11px;font:inherit;cursor:pointer" onclick="zppSalir()">Salir</button>';
+    document.body.appendChild(b); }
+  document.getElementById('zppQuien').textContent = ZPP_USR ? ((ZPP_USR.nombre||'')+' '+(ZPP_USR.apellido||'')).trim() : '';
+}
+function zppLogin(msg){
+  let ov=document.getElementById('zppLogin');
+  if(!ov){
+    ov=document.createElement('div'); ov.id='zppLogin';
+    ov.style.cssText='position:fixed;inset:0;z-index:99999;background:#0A0A0A;display:flex;align-items:center;justify-content:center;padding:16px;font-family:Oswald,system-ui,sans-serif';
+    ov.innerHTML='<form id="zppForm" autocomplete="on" style="width:100%;max-width:340px;background:#151515;border:1px solid #2a2a2a;border-radius:12px;padding:24px 20px;display:flex;flex-direction:column;gap:10px;color:#f4f4f4">'
+      +'<div style="font-family:\'Bebas Neue\',sans-serif;font-size:34px;letter-spacing:1px;line-height:1"><span style="color:#FF5A00">ZEPPELIN</span> '+ZPP_TITULO+'</div>'
+      +'<label for="zppDni" style="font-size:12px;color:#8c8c8c">DNI</label><input id="zppDni" inputmode="numeric" autocomplete="username" placeholder="Sin puntos" style="background:#0A0A0A;border:1px solid #2a2a2a;border-radius:8px;color:#f4f4f4;font-size:17px;padding:11px">'
+      +'<label for="zppPass" style="font-size:12px;color:#8c8c8c">Clave</label><input id="zppPass" type="password" autocomplete="current-password" style="background:#0A0A0A;border:1px solid #2a2a2a;border-radius:8px;color:#f4f4f4;font-size:17px;padding:11px">'
+      +'<div id="zppErr" style="min-height:18px;color:#ff453a;font-size:13px"></div>'
+      +'<button id="zppBtn" type="submit" style="background:#FF5A00;color:#0A0A0A;border:none;border-radius:8px;padding:12px;font:600 15px Oswald,sans-serif;letter-spacing:1px;cursor:pointer">INGRESAR</button>'
+      +'<div style="font-size:11px;color:#8c8c8c">La clave te la da Fernando.</div></form>';
+    document.body.appendChild(ov);
+    document.getElementById('zppForm').addEventListener('submit', zppEnviar);
+  }
+  ov.style.display='flex'; document.getElementById('zppErr').textContent=msg||'';
+  setTimeout(()=>{ const i=document.getElementById('zppDni'); if(i) i.focus(); },50);
+}
+async function zppEnviar(ev){
+  ev.preventDefault();
+  const dni=document.getElementById('zppDni').value.replace(/\D/g,''), pass=document.getElementById('zppPass').value;
+  const err=document.getElementById('zppErr'), btn=document.getElementById('zppBtn');
+  if(!dni||!pass){ err.textContent='Ingresá DNI y clave'; return; }
+  btn.disabled=true; err.textContent='Verificando…';
+  try{
+    const r=await fetch(ACCESOS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'login',dni,pass})});
+    const j=await r.json();
+    if(!j||!j.ok){ err.textContent=(j&&j.error)||'No se pudo ingresar'; return; }
+    if(!zppTiene(j.usuario)){ err.textContent='No tenés acceso a esta sección'; return; }
+    zppSesSet({token:j.token,usuario:j.usuario}); ZPP_TOKEN=j.token; ZPP_USR=j.usuario;
+    document.getElementById('zppPass').value=''; err.textContent='';
+    document.getElementById('zppLogin').style.display='none'; zppBarra();
+    if(ZPP_ONOK) ZPP_ONOK();
+  }catch(e){ err.textContent='No se pudo conectar'; }
+  finally{ btn.disabled=false; }
+}
+function zppSalir(){ zppSesSet(null); if(typeof zppAlSalir==='function') zppAlSalir(); location.reload(); }
+function zppVencida(){ ZPP_TOKEN=null; ZPP_USR=null; zppSesSet(null); zppLogin('Tu sesión venció o te quitaron el acceso. Volvé a ingresar.'); }
+function zppIniciar(onOk){
+  ZPP_ONOK=onOk;
+  const s=zppSesGet();
+  if(s&&s.token&&zppTiene(s.usuario)&&zppTokenVigente(s.token)){ ZPP_TOKEN=s.token; ZPP_USR=s.usuario; zppBarra(); onOk(); }
+  else zppLogin('');
+}
+/* Llama al backend de Costos/Stock/Fichas con la sesión. */
+async function zppApi(body){
+  const r=await fetch(ENDPOINT_CSF,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({token:ZPP_TOKEN},body))});
+  const d=await r.json();
+  if(d && d.error==='sesion'){ zppVencida(); throw new Error('sesion'); }
+  if(d && d.error) throw new Error(d.error);
+  return d;
+}
+zppIniciar(load);
 </script>
 </body>
 </html>
