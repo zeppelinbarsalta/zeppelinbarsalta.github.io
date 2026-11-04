@@ -1207,8 +1207,62 @@ let _tt; function toast(msg){ const t=document.getElementById('toast'); t.textCo
 /* ---------- init ---------- */
 renderTabs(); refreshStats(); render();
 (function(){var hd=document.querySelector('header'),nv=document.querySelector('nav');function upd(){var hh=hd?hd.offsetHeight:63;document.documentElement.style.setProperty('--headerh',hh+'px');var nh=nv?nv.offsetHeight:0;document.documentElement.style.setProperty('--chromeh',(hh+nh)+'px');}if(window.ResizeObserver){var ro=new ResizeObserver(upd);if(hd)ro.observe(hd);if(nv)ro.observe(nv);}window.addEventListener('resize',upd);upd();setTimeout(upd,600);})();
+/* ===== Proveedores: fuente única (zeppelin-bar.com/proveedores) ===== */
+var PROV_URL='https://script.google.com/macros/s/AKfycbww3YDOpbsU-YjTmxzGwZZFswKt7Odavmx4O0kP8cOBrAbYHShu8jSGsG8bhqemY89c/exec';
+var provSync='pendiente';
+function provNorm(s){ return (''+(s||'')).normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim(); }
+async function syncProveedores(){
+  if(!ZPP_TOKEN) return;
+  try{
+    const r=await fetch(PROV_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({token:ZPP_TOKEN,action:'listar',negocio:'zeppelin'})});
+    const d=await r.json();
+    if(!d||!d.ok||!Array.isArray(d.data)) throw new Error((d&&d.error)||'respuesta');
+    const uni=d.data;
+    const claves=u=>[u.id,u.nombre,u.razon_social].concat(u.alias||[]).map(provNorm).filter(Boolean);
+    const idMap={};
+    (state.suppliers||[]).forEach(s=>{
+      const u=uni.find(x=>x.id===s.id) || uni.find(x=>claves(x).indexOf(provNorm(s.name))>=0);
+      if(u) idMap[s.id]=u.id;
+    });
+    const nuevos=uni.map(u=>({id:u.id,name:u.nombre,phone:(''+(u.whatsapp||u.telefono||'')).replace(/[^0-9]/g,''),contact:u.contacto||'',notes:[u.rubro,u.notas].filter(Boolean).join(' · ')}));
+    // proveedores viejos que no están en /proveedores pero tienen ingredientes asignados: se conservan para no perder la asignación
+    const usados=new Set(state.ingredients.map(i=>i.proveedorId).filter(Boolean));
+    (state.suppliers||[]).forEach(s=>{ if(!idMap[s.id] && usados.has(s.id)){ const n=(s.notes||''); nuevos.push(Object.assign({},s,{notes:n.indexOf('⚠ No está en /proveedores')===0?n:('⚠ No está en /proveedores. '+n).trim()})); } });
+    let cambio=false;
+    state.ingredients.forEach(i=>{ if(i.proveedorId && idMap[i.proveedorId] && idMap[i.proveedorId]!==i.proveedorId){ i.proveedorId=idMap[i.proveedorId]; cambio=true; } });
+    if(JSON.stringify(nuevos)!==JSON.stringify(state.suppliers)){ state.suppliers=nuevos; cambio=true; }
+    provSync='ok';
+    if(cambio) save();
+    render();
+  }catch(e){ provSync='error'; if(ui.tab==='ajustes'||ui.tab==='stock') render(); }
+}
+/* Los proveedores se editan solo en /proveedores: acá quedan en solo lectura */
+function fillSuppliers(list){
+  const q=ui.search.toLowerCase();
+  const items=state.suppliers.filter(s=>(s.name||'').toLowerCase().includes(q)).sort((a,b)=>a.name.localeCompare(b.name));
+  const aviso = provSync==='error' ? '<b style="color:#ff453a">No se pudo actualizar desde Proveedores: se muestra la última copia.</b> ' : '';
+  list.innerHTML = `<div class="hint">${aviso}Los proveedores se cargan y editan en <a href="/proveedores/" target="_blank" style="color:#4aa3ff;font-weight:600">zeppelin-bar.com/proveedores</a> (fuente única). Acá aparecen los del bar para asignarlos a cada ingrediente en <b style="color:#4aa3ff">Stock</b>; la orden de compra usa su WhatsApp.</div>`+
+    (items.length ? items.map(supCard).join('') : '<div class="empty">Sin proveedores. Cargalos en /proveedores.</div>');
+}
+function supCard(s){
+  const count=state.ingredients.filter(i=>i.proveedorId===s.id).length;
+  return `<div class="card" style="border-left-color:#4aa3ff">
+    <div class="chead" style="cursor:default">
+      <div class="cname">${esc(s.name)}<small>${count} ingrediente${count!==1?'s':''}${s.phone?' · '+esc(s.phone):''}${s.contact?' · '+esc(s.contact):''}</small></div>
+      ${s.phone?`<button class="miniadd" onclick="waSupplier('${s.id}')">📲 WhatsApp</button>`:''}
+    </div>${s.notes?`<div class="cbody" style="display:block"><div class="hint" style="margin:0">${esc(s.notes)}</div></div>`:''}</div>`;
+}
+function openSupplier(cb){ window.open('/proveedores/','_blank'); toast('Cargalo en /proveedores y volvé a abrir Costos'); render(); }
+function setSup(){ toast('Los proveedores se editan en /proveedores'); }
+function delSupplier(){ toast('Los proveedores se editan en /proveedores'); }
+function supplierSelect(ing){
+  const opts=state.suppliers.slice().sort((a,b)=>a.name.localeCompare(b.name))
+    .map(s=>`<option value="${s.id}" ${ing.proveedorId===s.id?'selected':''}>${esc(s.name)}</option>`).join('');
+  return `<select onchange="setProv('${ing.id}',this.value)" style="width:150px">
+    <option value="">—</option>${opts}<option value="__new__">➕ Cargar en /proveedores…</option></select>`;
+}
 setSync('local');
-zppIniciar(()=>{ cfg={ url:DEFAULT_ENDPOINT, token:ZPP_TOKEN }; setSync('cargando'); initialPull(false); });
+zppIniciar(()=>{ cfg={ url:DEFAULT_ENDPOINT, token:ZPP_TOKEN }; setSync('cargando'); initialPull(false).then(syncProveedores); });
 </script>
 </body>
 </html>
