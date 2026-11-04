@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Zeppelin · Equipo</title>
+<meta name="theme-color" content="#0A0A0A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Zeppelin Equipo">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0A0A0A;--card:#151515;--card2:#1c1c1c;--line:#2a2a2a;--txt:#f4f4f4;--muted:#8c8c8c;--zepp:#FF5A00;--bad:#ff453a}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--txt);font:15px/1.4 Oswald,system-ui,sans-serif}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:720px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 18px) 16px calc(env(safe-area-inset-bottom) + 28px)}
+header{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.logo{font:400 clamp(26px,8vw,34px)/1 'Bebas Neue',sans-serif;letter-spacing:1px;white-space:nowrap}
+.logo span{color:var(--zepp)}
+.who{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);text-align:right}
+.btn-out{background:none;border:1px solid #3a3a3a;color:var(--txt);border-radius:999px;padding:5px 12px;font:500 12px Oswald,sans-serif;letter-spacing:.5px;cursor:pointer}
+.hola{font:500 20px Oswald,sans-serif;margin:14px 0 2px}
+.sub{color:var(--muted);font-size:13px;margin:0 0 18px}
+h2{font:400 22px/1 'Bebas Neue',sans-serif;letter-spacing:1px;color:var(--muted);margin:22px 0 10px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.tile{position:relative;display:flex;flex-direction:column;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 14px;min-height:128px;transition:transform .08s,border-color .15s}
+.tile.on{border-color:#3a2a20}
+.tile.on:active{transform:scale(.98)}
+.tile.on:hover{border-color:var(--zepp)}
+.tile .ico{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;background:rgba(255,90,0,.14);color:var(--zepp)}
+.tile .ico svg{width:22px;height:22px}
+.tile .nm{font:400 26px/1 'Bebas Neue',sans-serif;letter-spacing:1px}
+.tile .ds{font-size:12px;color:var(--muted);line-height:1.3}
+.tile .tag{position:absolute;top:12px;right:12px;font:600 10px Oswald,sans-serif;letter-spacing:.8px;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:#222;color:#bbb}
+.tile .tag.o{background:rgba(255,90,0,.15);color:var(--zepp)}
+.tile.off{opacity:.42;cursor:not-allowed}
+.tile.off .ico{background:#222;color:#777}
+.tile.soon{opacity:.55;border-style:dashed}
+.tile.soon .ico{background:#222;color:#999}
+.foot{margin-top:26px;font-size:12px;color:var(--muted);text-align:center}
+.foot a{color:var(--zepp)}
+/* login */
+#login{position:fixed;inset:0;z-index:50;background:var(--bg);display:none;align-items:center;justify-content:center;padding:16px}
+#login form{width:100%;max-width:340px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:24px 20px;display:flex;flex-direction:column;gap:10px}
+#login label{font-size:12px;color:var(--muted)}
+#login input{background:var(--bg);border:1px solid var(--line);border-radius:8px;color:var(--txt);font-size:17px;padding:11px;font-family:Oswald,sans-serif}
+#login button{background:var(--zepp);color:#0A0A0A;border:none;border-radius:8px;padding:12px;font:600 15px Oswald,sans-serif;letter-spacing:1px;cursor:pointer}
+#lErr{min-height:18px;color:var(--bad);font-size:13px}
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 22px);transform:translateX(-50%);background:#222;border:1px solid #333;border-radius:999px;padding:9px 16px;font-size:13px;opacity:0;transition:.2s;pointer-events:none;z-index:60;max-width:90vw;text-align:center}
+.toast.show{opacity:1}
+@media (min-width:560px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+</style>
+</head>
+<body>
+<div id="login">
+  <form id="lForm" autocomplete="on">
+    <div class="logo"><span>ZEPPELIN</span> EQUIPO</div>
+    <label for="lDni">DNI</label><input id="lDni" inputmode="numeric" autocomplete="username" placeholder="Sin puntos">
+    <label for="lPass">Clave</label><input id="lPass" type="password" autocomplete="current-password">
+    <div id="lErr"></div>
+    <button id="lBtn" type="submit">INGRESAR</button>
+    <div style="font-size:11px;color:var(--muted)">La clave te la da Fernando.</div>
+  </form>
+</div>
+
+<div class="wrap" id="app" style="display:none">
+  <header>
+    <div class="logo"><span>ZEPPELIN</span> EQUIPO</div>
+    <div class="who"><span id="quien"></span><button class="btn-out" id="salir">Salir</button></div>
+  </header>
+  <div class="hola" id="hola"></div>
+  <p class="sub">Tocá el sistema que necesites. Los que aparecen apagados no los tenés habilitados.</p>
+
+  <h2>Sistemas</h2>
+  <div class="grid" id="sistemas"></div>
+
+  <h2>Información</h2>
+  <div class="grid" id="info"></div>
+
+  <div class="foot">¿Te falta un acceso? Pedíselo a Fernando.</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const ACCESOS_URL='https://script.google.com/macros/s/AKfycbyRC8Y2pb1eU7g8nvEmMrTIVS5V23YVa3Hcj6z77jS3UkWVWxiRInAhFJuaD3tnDGv8/exec';
+const LS_SES='zpp_sesion';   // sesión compartida por todos los sistemas de zeppelin-bar.com
+
+const I={
+  caja:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h3"/></svg>',
+  stock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg>',
+  fichas:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg>',
+  reservas:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+  checklist:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m4 7 2 2 4-4M4 16l2 2 4-4M13 7h7M13 16h7"/></svg>',
+  manual:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5M9 7h6"/></svg>',
+  regla:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg>',
+  ig:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6" fill="currentColor"/></svg>'
+};
+
+/* Sistemas del equipo. "ver" decide si el botón se activa y qué etiqueta lleva según los permisos de Accesos. */
+const SISTEMAS=[
+  {k:'caja', nm:'Caja', url:'/caja-zeppelin/', ds:'Caja del día: ingresos, egresos y cierre.', ico:I.caja,
+   ver:a=> a.includes('caja_total') ? {on:true,tag:'Completa'} : a.includes('caja') ? {on:true,tag:'Solo hoy'} : {on:false}},
+  {k:'stock', nm:'Stock', url:'/stock/', ds:'Conteo de stock de barra y cocina.', ico:I.stock,
+   ver:a=> (a.includes('stock')||a.includes('costos')) ? {on:true} : {on:false}},
+  {k:'fichas', nm:'Fichas', url:'/fichas/', ds:'Fichas técnicas y recetas.', ico:I.fichas,
+   ver:a=> (a.includes('fichas')||a.includes('costos')) ? {on:true} : {on:false}},
+  {k:'reservas', nm:'Reservas', url:'/reservas/', ds:'Reservas y eventos.', ico:I.reservas,
+   ver:a=> a.includes('reservas') ? {on:true} : a.includes('reservas_ver') ? {on:true,tag:'Solo ver'} : {on:false}},
+  {k:'checklist', nm:'Checklist', url:'/Checklist/', ds:'Tareas de apertura y cierre.', ico:I.checklist,
+   ver:a=> a.includes('checklist') ? {on:true} : {on:false}}
+];
+/* Información para todo el equipo. Para activar uno: poné la URL en "url" y sacá "soon". */
+const INFO=[
+  {nm:'Manuales', ds:'Cómo se hace cada tarea.', ico:I.manual, soon:true},
+  {nm:'Reglamento', ds:'Normas de trabajo del bar.', ico:I.regla, soon:true},
+  {nm:'Instagram', ds:'@zeppelinbar.salta', ico:I.ig, url:'https://www.instagram.com/zeppelinbar.salta/', ext:true}
+];
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2400); }
+function sesGet(){ try{ return JSON.parse(localStorage.getItem(LS_SES)||'null'); }catch(e){ return null; } }
+function sesSet(v){ try{ v ? localStorage.setItem(LS_SES,JSON.stringify(v)) : localStorage.removeItem(LS_SES); }catch(e){} }
+function tokenVigente(t){ try{ const p=JSON.parse(atob(String(t).split('.')[0].replace(/-/g,'+').replace(/_/g,'/'))); return p && p.e > Date.now(); }catch(e){ return false; } }
+async function api(body){ const r=await fetch(ACCESOS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)}); return r.json(); }
+
+let SES=null;
+
+function tile(o, st){
+  const tag = st.tag ? `<span class="tag ${st.tag==='Solo hoy'||st.tag==='Solo ver'?'o':''}">${esc(st.tag)}</span>` : '';
+  const inner = `${tag}<div class="ico">${o.ico}</div><div class="nm">${esc(o.nm)}</div><div class="ds">${esc(st.ds||o.ds)}</div>`;
+  if(st.on) return `<a class="tile on" href="${esc(o.url)}"${o.ext?' target="_blank" rel="noopener"':''}>${inner}</a>`;
+  return `<div class="tile ${st.soon?'soon':'off'}" data-msg="${esc(st.msg)}">${inner}</div>`;
+}
+
+function render(){
+  const u=SES.usuario||{}; const a=u.accesos||[];
+  const nombre=(u.nombre||'').trim() || u.dni;
+  $('#quien').textContent=((u.nombre||'')+' '+(u.apellido||'')).trim()+(u.rol?' · '+u.rol:'');
+  const h=new Date().getHours();
+  $('#hola').textContent=(h<6?'Buenas noches':h<13?'Buen día':h<20?'Buenas tardes':'Buenas noches')+', '+nombre;
+  $('#sistemas').innerHTML=SISTEMAS.map(s=>{ const st=s.ver(a); return tile(s, st.on?st:{on:false,tag:'Sin acceso',msg:'No tenés acceso a '+s.nm+'. Pedíselo a Fernando.'}); }).join('');
+  $('#info').innerHTML=INFO.map(i=> i.soon ? tile(i,{on:false,soon:true,tag:'Próximamente',msg:i.nm+': próximamente.'}) : tile(i,{on:true})).join('');
+  document.querySelectorAll('.tile.off,.tile.soon').forEach(el=>el.addEventListener('click',()=>toast(el.dataset.msg)));
+}
+
+function entrar(){ $('#login').style.display='none'; $('#app').style.display='block'; render(); }
+function mostrarLogin(msg){ $('#app').style.display='none'; $('#login').style.display='flex'; $('#lErr').textContent=msg||''; setTimeout(()=>$('#lDni').focus(),50); }
+function salir(){ SES=null; sesSet(null); mostrarLogin(''); }
+
+$('#lForm').addEventListener('submit', async ev=>{
+  ev.preventDefault();
+  const dni=$('#lDni').value.replace(/\D/g,''), pass=$('#lPass').value, err=$('#lErr'), btn=$('#lBtn');
+  if(!dni||!pass){ err.textContent='Ingresá DNI y clave'; return; }
+  btn.disabled=true; err.textContent='Verificando…';
+  try{
+    const j=await api({action:'login',dni,pass});
+    if(!j||!j.ok){ err.textContent=(j&&j.error)||'No se pudo ingresar'; return; }
+    SES={token:j.token,usuario:j.usuario}; sesSet(SES);
+    $('#lPass').value=''; err.textContent=''; entrar();
+  }catch(e){ err.textContent='No se pudo conectar'; }
+  finally{ btn.disabled=false; }
+});
+$('#salir').addEventListener('click', salir);
+
+/* Arranque: usa la sesión compartida y refresca los permisos desde Accesos */
+(async()=>{
+  const s=sesGet();
+  if(!(s && s.token && tokenVigente(s.token))){ mostrarLogin(''); return; }
+  SES=s; entrar();
+  try{
+    const j=await api({action:'sesion',token:s.token});
+    if(j && j.ok && j.usuario){ SES.usuario=j.usuario; sesSet(SES); render(); }
+    else if(j && j.error==='sesion'){ salir(); $('#lErr').textContent='Tu sesión venció. Volvé a ingresar.'; }
+  }catch(e){ /* sin conexión: se muestran los permisos guardados */ }
+})();
+</script>
+</body>
+</html>
