@@ -10,23 +10,27 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Zeppelin Equipo">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0A0A0A;--card:#151515;--card2:#1c1c1c;--line:#2a2a2a;--txt:#f4f4f4;--muted:#8c8c8c;--zepp:#FF5A00;--bad:#ff453a}
+:root{--bg:#0A0A0A;--card:#151515;--card2:#1c1c1c;--line:#2a2a2a;--txt:#f4f4f4;--muted:#8c8c8c;--zepp:#FF5A00;--bad:#ff453a;--ok:#30d158}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;background:var(--bg);color:var(--txt);font:15px/1.4 Oswald,system-ui,sans-serif}
+html,body{margin:0;background:var(--bg);color:var(--txt);font:15px/1.45 Oswald,system-ui,sans-serif}
 a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit}
 .wrap{max-width:720px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 18px) 16px calc(env(safe-area-inset-bottom) + 28px)}
 header{display:flex;align-items:center;gap:12px;margin-bottom:6px}
 .logo{font:400 clamp(26px,8vw,34px)/1 'Bebas Neue',sans-serif;letter-spacing:1px;white-space:nowrap}
 .logo span{color:var(--zepp)}
 .who{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);text-align:right}
+.who{min-width:0}
+#quien{min-width:0;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.25}
+.btn-out{flex:none}
 .btn-out{background:none;border:1px solid #3a3a3a;color:var(--txt);border-radius:999px;padding:5px 12px;font:500 12px Oswald,sans-serif;letter-spacing:.5px;cursor:pointer}
 .hola{font:500 20px Oswald,sans-serif;margin:14px 0 2px}
 .sub{color:var(--muted);font-size:13px;margin:0 0 18px}
 h2{font:400 22px/1 'Bebas Neue',sans-serif;letter-spacing:1px;color:var(--muted);margin:22px 0 10px}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.tile{position:relative;display:flex;flex-direction:column;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 14px;min-height:128px;transition:transform .08s,border-color .15s}
+.tile{position:relative;display:flex;flex-direction:column;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 14px;min-height:128px;transition:transform .08s,border-color .15s;cursor:pointer;text-align:left}
 .tile.on{border-color:#3a2a20}
 .tile.on:active{transform:scale(.98)}
 .tile.on:hover{border-color:var(--zepp)}
@@ -34,14 +38,88 @@ h2{font:400 22px/1 'Bebas Neue',sans-serif;letter-spacing:1px;color:var(--muted)
 .tile .ico svg{width:22px;height:22px}
 .tile .nm{font:400 26px/1 'Bebas Neue',sans-serif;letter-spacing:1px}
 .tile .ds{font-size:12px;color:var(--muted);line-height:1.3}
-.tile .tag{position:absolute;top:12px;right:12px;font:600 10px Oswald,sans-serif;letter-spacing:.8px;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:#222;color:#bbb}
-.tile .tag.o{background:rgba(255,90,0,.15);color:var(--zepp)}
+.tag{position:absolute;top:12px;right:12px;font:600 10px Oswald,sans-serif;letter-spacing:.8px;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:#222;color:#bbb}
+.tag.o{background:rgba(255,90,0,.15);color:var(--zepp)}
+.tag.g{background:rgba(48,209,88,.13);color:var(--ok)}
+.tag.r{background:rgba(255,69,58,.15);color:var(--bad)}
 .tile.off{opacity:.42;cursor:not-allowed}
 .tile.off .ico{background:#222;color:#777}
-.tile.soon{opacity:.55;border-style:dashed}
-.tile.soon .ico{background:#222;color:#999}
 .foot{margin-top:26px;font-size:12px;color:var(--muted);text-align:center}
-.foot a{color:var(--zepp)}
+/* vistas internas */
+.top{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.back{background:var(--card);border:1px solid var(--line);border-radius:999px;width:38px;height:38px;display:grid;place-items:center;cursor:pointer;flex:none}
+.top h1{font:400 30px/1 'Bebas Neue',sans-serif;letter-spacing:1px;margin:0}
+.top small{display:block;font:400 12px Oswald,sans-serif;color:var(--muted);letter-spacing:.3px;margin-top:3px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0 14px}
+.chip{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font:500 13px Oswald,sans-serif;cursor:pointer;white-space:nowrap}
+.chip.on{background:var(--zepp);border-color:var(--zepp);color:#0A0A0A}
+.chip.mine{border-color:#5a3a20}
+.lbl{font:600 11px Oswald,sans-serif;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin:14px 0 6px}
+.meta{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 12px}
+.meta span{font-size:12px;color:#cfcfcf;background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:3px 9px}
+.acc{background:var(--card);border:1px solid var(--line);border-radius:12px;margin-bottom:8px;overflow:hidden}
+.acc>button{width:100%;background:none;border:none;text-align:left;padding:14px;display:flex;align-items:center;gap:10px;cursor:pointer;font:500 16px Oswald,sans-serif}
+.acc>button .n{color:var(--zepp);font:400 18px 'Bebas Neue',sans-serif;width:22px}
+.acc>button .ch{margin-left:auto;color:var(--muted);transition:transform .2s}
+.acc.open>button .ch{transform:rotate(180deg)}
+.acc .bd{display:none;padding:0 14px 14px;font:400 14px/1.55 Inter,system-ui,sans-serif;color:#dcdcdc}
+.acc.open .bd{display:block}
+.bd p{margin:0 0 8px}
+ul.it{margin:0;padding:0;list-style:none}
+ul.it li{position:relative;padding:7px 0 7px 22px;border-top:1px solid #1f1f1f}
+ul.it li:first-child{border-top:none}
+ul.it li:before{content:'';position:absolute;left:4px;top:15px;width:7px;height:7px;border-radius:2px;background:var(--zepp)}
+.nota{margin-top:10px;background:rgba(255,90,0,.07);border-left:3px solid var(--zepp);border-radius:6px;padding:9px 11px;font-size:13px;color:#e8e8e8}
+.pend{background:var(--card);border:1px dashed #3a3a3a;border-radius:12px;padding:18px;color:var(--muted);font:400 14px Inter,sans-serif}
+/* protocolos */
+.plist{display:grid;gap:10px}
+.pcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;cursor:pointer;display:flex;align-items:center;gap:12px}
+.pcard:hover{border-color:var(--zepp)}
+.pcard .nm{font:400 28px/1 'Bebas Neue',sans-serif;letter-spacing:1px}
+.pcard .ds{font-size:12px;color:var(--muted)}
+.pcard .go{margin-left:auto;color:var(--zepp)}
+.steps{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;scrollbar-width:none;margin:0 -16px;padding:0 16px 4px}
+.steps::-webkit-scrollbar{display:none}
+.step{flex:0 0 100%;scroll-snap-align:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 16px;min-height:60vh;font:400 14px/1.55 Inter,system-ui,sans-serif;color:#dcdcdc}
+.step .num{font:600 11px Oswald,sans-serif;letter-spacing:1.2px;color:var(--zepp);text-transform:uppercase}
+.step h3{font:400 32px/1 'Bebas Neue',sans-serif;letter-spacing:1px;color:var(--txt);margin:6px 0 4px}
+.step .sb{font:400 13px Oswald,sans-serif;color:var(--muted);margin-bottom:10px}
+.kv{display:flex;flex-direction:column;gap:6px;margin:10px 0 12px}
+.kv div{font-size:12.5px;background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:6px 10px}
+.kv b{font:600 10.5px Oswald,sans-serif;letter-spacing:1px;text-transform:uppercase;color:var(--muted);display:block}
+.sp{margin:10px 0;border:1px solid #3a2a20;background:#1a130e;border-radius:12px;padding:11px 13px}
+.sp .k{font:600 10.5px Oswald,sans-serif;letter-spacing:1px;text-transform:uppercase;color:var(--zepp);margin-bottom:4px}
+.sp q{display:block;font:400 16px/1.45 Oswald,sans-serif;color:var(--txt);quotes:"“" "”"}
+.no{margin-top:12px;border:1px solid #4a2020;background:#1a0f0f;border-radius:12px;padding:10px 13px}
+.no .k{font:600 10.5px Oswald,sans-serif;letter-spacing:1px;text-transform:uppercase;color:var(--bad);margin-bottom:4px}
+.no li:before{background:var(--bad)!important}
+.regla{margin-top:12px;border:1px solid #4a3a10;background:#17140b;border-radius:12px;padding:11px 13px;font:500 15px Oswald,sans-serif;color:#ffd36b}
+.nav{display:flex;align-items:center;gap:10px;margin-top:12px}
+.nav button{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:11px 16px;cursor:pointer;font:500 14px Oswald,sans-serif;letter-spacing:.5px}
+.nav button.pri{background:var(--zepp);border-color:var(--zepp);color:#0A0A0A;margin-left:auto}
+.nav button:disabled{opacity:.35}
+.dots{display:flex;gap:5px;flex:1;justify-content:center}
+.dots i{width:7px;height:7px;border-radius:50%;background:#333}
+.dots i.on{background:var(--zepp);width:18px;border-radius:4px}
+/* reglamento */
+.rg{font:400 14.5px/1.6 Inter,system-ui,sans-serif;color:#dcdcdc}
+.rg h3{font:400 24px/1.1 'Bebas Neue',sans-serif;letter-spacing:1px;color:var(--txt);margin:22px 0 8px}
+.rg h3 span{color:var(--zepp);margin-right:6px}
+.rg p{margin:0 0 8px}
+.rtab{width:100%;border-collapse:collapse;font-size:13.5px}
+.rtab td{border-top:1px solid var(--line);padding:9px 6px;vertical-align:top}
+.rtab td:first-child{font:500 14px Oswald,sans-serif;color:var(--txt);width:38%}
+.acept{margin-top:22px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;text-align:center}
+.acept .big{background:var(--zepp);color:#0A0A0A;border:none;border-radius:10px;padding:14px 18px;font:600 16px Oswald,sans-serif;letter-spacing:1px;cursor:pointer;width:100%}
+.acept .big:disabled{opacity:.35;cursor:not-allowed}
+.acept .ok{color:var(--ok);font:500 16px Oswald,sans-serif}
+.acept small{display:block;color:var(--muted);font:400 12px Inter,sans-serif;margin-top:8px}
+.banner{background:rgba(255,90,0,.08);border:1px solid #5a3a20;border-radius:12px;padding:12px 14px;margin:0 0 14px;font:400 13.5px Inter,sans-serif;display:flex;gap:10px;align-items:center;cursor:pointer}
+.banner b{font-family:Oswald,sans-serif;font-weight:500}
+.adm{margin-top:26px}
+.adm table{width:100%;border-collapse:collapse;font:400 13px Inter,sans-serif}
+.adm td{border-top:1px solid var(--line);padding:8px 4px}
+.adm td:last-child{text-align:right;white-space:nowrap}
 /* login */
 #login{position:fixed;inset:0;z-index:50;background:var(--bg);display:none;align-items:center;justify-content:center;padding:16px}
 #login form{width:100%;max-width:340px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:24px 20px;display:flex;flex-direction:column;gap:10px}
@@ -71,22 +149,16 @@ h2{font:400 22px/1 'Bebas Neue',sans-serif;letter-spacing:1px;color:var(--muted)
     <div class="logo"><span>ZEPPELIN</span> EQUIPO</div>
     <div class="who"><span id="quien"></span><button class="btn-out" id="salir">Salir</button></div>
   </header>
-  <div class="hola" id="hola"></div>
-  <p class="sub">Tocá el sistema que necesites. Los que aparecen apagados no los tenés habilitados.</p>
-
-  <h2>Sistemas</h2>
-  <div class="grid" id="sistemas"></div>
-
-  <h2>Información</h2>
-  <div class="grid" id="info"></div>
-
-  <div class="foot">¿Te falta un acceso? Pedíselo a Fernando.</div>
+  <main id="view"></main>
 </div>
 <div class="toast" id="toast"></div>
 
+<script src="contenido.js"></script>
 <script>
 const ACCESOS_URL='https://script.google.com/macros/s/AKfycbyRC8Y2pb1eU7g8nvEmMrTIVS5V23YVa3Hcj6z77jS3UkWVWxiRInAhFJuaD3tnDGv8/exec';
-const LS_SES='zpp_sesion';   // sesión compartida por todos los sistemas de zeppelin-bar.com
+const API_URL='https://script.google.com/macros/s/AKfycbww3YDOpbsU-YjTmxzGwZZFswKt7Odavmx4O0kP8cOBrAbYHShu8jSGsG8bhqemY89c/exec'; // backend de la Maestra (proveedores + reglamento)
+const LS_SES='zpp_sesion';
+const C=window.ZEP_CONTENIDO;
 
 const I={
   caja:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h3"/></svg>',
@@ -95,61 +167,205 @@ const I={
   reservas:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
   checklist:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m4 7 2 2 4-4M4 16l2 2 4-4M13 7h7M13 16h7"/></svg>',
   manual:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5M9 7h6"/></svg>',
+  proto:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg>',
   regla:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg>',
-  ig:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6" fill="currentColor"/></svg>'
+  ig:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6" fill="currentColor"/></svg>',
+  back:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
+  chev:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>',
+  go:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>'
 };
 
-/* Sistemas del equipo. "ver" decide si el botón se activa y qué etiqueta lleva según los permisos de Accesos. */
 const SISTEMAS=[
-  {k:'caja', nm:'Caja', url:'/caja-zeppelin/', ds:'Caja del día: ingresos, egresos y cierre.', ico:I.caja,
-   ver:a=> a.includes('caja_total') ? {on:true,tag:'Completa'} : a.includes('caja') ? {on:true,tag:'Solo hoy'} : {on:false}},
-  {k:'stock', nm:'Stock', url:'/stock/', ds:'Conteo de stock de barra y cocina.', ico:I.stock,
+  {nm:'Caja', url:'/caja-zeppelin/', ds:'Caja del día: ingresos, egresos y cierre.', ico:I.caja,
+   ver:a=> a.includes('caja_total') ? {on:true,tag:'Completa'} : a.includes('caja') ? {on:true,tag:'Solo hoy',o:1} : {on:false}},
+  {nm:'Stock', url:'/stock/', ds:'Conteo de stock de barra y cocina.', ico:I.stock,
    ver:a=> (a.includes('stock')||a.includes('costos')) ? {on:true} : {on:false}},
-  {k:'fichas', nm:'Fichas', url:'/fichas/', ds:'Fichas técnicas y recetas.', ico:I.fichas,
+  {nm:'Fichas', url:'/fichas/', ds:'Fichas técnicas y recetas.', ico:I.fichas,
    ver:a=> (a.includes('fichas')||a.includes('costos')) ? {on:true} : {on:false}},
-  {k:'reservas', nm:'Reservas', url:'/reservas/', ds:'Reservas y eventos.', ico:I.reservas,
-   ver:a=> a.includes('reservas') ? {on:true} : a.includes('reservas_ver') ? {on:true,tag:'Solo ver'} : {on:false}},
-  {k:'checklist', nm:'Checklist', url:'/Checklist/', ds:'Tareas de apertura y cierre.', ico:I.checklist,
+  {nm:'Reservas', url:'/reservas/', ds:'Reservas y eventos.', ico:I.reservas,
+   ver:a=> a.includes('reservas') ? {on:true} : a.includes('reservas_ver') ? {on:true,tag:'Solo ver',o:1} : {on:false}},
+  {nm:'Checklist', url:'/Checklist/', ds:'Tareas de apertura y cierre.', ico:I.checklist,
    ver:a=> a.includes('checklist') ? {on:true} : {on:false}}
-];
-/* Información para todo el equipo. Para activar uno: poné la URL en "url" y sacá "soon". */
-const INFO=[
-  {nm:'Manuales', ds:'Cómo se hace cada tarea.', ico:I.manual, soon:true},
-  {nm:'Reglamento', ds:'Normas de trabajo del bar.', ico:I.regla, soon:true},
-  {nm:'Instagram', ds:'@zeppelinbar.salta', ico:I.ig, url:'https://www.instagram.com/zeppelinbar.salta/', ext:true}
 ];
 
 const $=s=>document.querySelector(s);
 const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2400); }
+function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2600); }
 function sesGet(){ try{ return JSON.parse(localStorage.getItem(LS_SES)||'null'); }catch(e){ return null; } }
 function sesSet(v){ try{ v ? localStorage.setItem(LS_SES,JSON.stringify(v)) : localStorage.removeItem(LS_SES); }catch(e){} }
 function tokenVigente(t){ try{ const p=JSON.parse(atob(String(t).split('.')[0].replace(/-/g,'+').replace(/_/g,'/'))); return p && p.e > Date.now(); }catch(e){ return false; } }
-async function api(body){ const r=await fetch(ACCESOS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)}); return r.json(); }
+async function post(url, body){ const r=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)}); return r.json(); }
+const fechaAR=iso=>{ const d=new Date(iso); return isNaN(d)?'':d.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'}); };
 
 let SES=null;
+let REG={estado:'cargando', fecha:null};   // estado: cargando | aceptado | pendiente | error
+const LS_REG='zpp_reglamento_v1';
+function regCacheGet(){ try{ const c=JSON.parse(localStorage.getItem(LS_REG)||'null'); return (c && SES && c.dni===SES.usuario.dni && c.version===C.REGLAMENTO.version) ? c : null; }catch(e){ return null; } }
+function regCacheSet(fecha){ try{ localStorage.setItem(LS_REG, JSON.stringify({dni:SES.usuario.dni, version:C.REGLAMENTO.version, fecha})); }catch(e){} }
 
+const acc=()=>(SES&&SES.usuario&&SES.usuario.accesos)||[];
+const esAdmin=()=>acc().includes('accesos');
+const rol=()=>(SES&&SES.usuario&&SES.usuario.rol)||'';
+
+/* ===================== HOME ===================== */
 function tile(o, st){
-  const tag = st.tag ? `<span class="tag ${st.tag==='Solo hoy'||st.tag==='Solo ver'?'o':''}">${esc(st.tag)}</span>` : '';
+  const tag = st.tag ? `<span class="tag ${st.cls||''}">${esc(st.tag)}</span>` : '';
   const inner = `${tag}<div class="ico">${o.ico}</div><div class="nm">${esc(o.nm)}</div><div class="ds">${esc(st.ds||o.ds)}</div>`;
-  if(st.on) return `<a class="tile on" href="${esc(o.url)}"${o.ext?' target="_blank" rel="noopener"':''}>${inner}</a>`;
-  return `<div class="tile ${st.soon?'soon':'off'}" data-msg="${esc(st.msg)}">${inner}</div>`;
+  if(!st.on) return `<div class="tile off" data-msg="${esc(st.msg)}">${inner}</div>`;
+  if(o.hash) return `<a class="tile on" href="#${o.hash}">${inner}</a>`;
+  return `<a class="tile on" href="${esc(o.url)}"${o.ext?' target="_blank" rel="noopener"':''}>${inner}</a>`;
 }
-
-function render(){
-  const u=SES.usuario||{}; const a=u.accesos||[];
-  const nombre=(u.nombre||'').trim() || u.dni;
-  $('#quien').textContent=((u.nombre||'')+' '+(u.apellido||'')).trim()+(u.rol?' · '+u.rol:'');
+function vHome(){
+  const u=SES.usuario||{}; const a=acc();
   const h=new Date().getHours();
-  $('#hola').textContent=(h<6?'Buenas noches':h<13?'Buen día':h<20?'Buenas tardes':'Buenas noches')+', '+nombre;
-  $('#sistemas').innerHTML=SISTEMAS.map(s=>{ const st=s.ver(a); return tile(s, st.on?st:{on:false,tag:'Sin acceso',msg:'No tenés acceso a '+s.nm+'. Pedíselo a Fernando.'}); }).join('');
-  $('#info').innerHTML=INFO.map(i=> i.soon ? tile(i,{on:false,soon:true,tag:'Próximamente',msg:i.nm+': próximamente.'}) : tile(i,{on:true})).join('');
-  document.querySelectorAll('.tile.off,.tile.soon').forEach(el=>el.addEventListener('click',()=>toast(el.dataset.msg)));
+  const saludo=(h<6?'Buenas noches':h<13?'Buen día':h<20?'Buenas tardes':'Buenas noches')+', '+((u.nombre||'').trim()||u.dni);
+  const misSec=(C.PUESTO_MANUAL[rol()]||[]).map(id=>C.MANUAL.puestos.find(p=>p.id===id)).filter(Boolean);
+  const regTag = REG.estado==='aceptado' ? {tag:'Aceptado',cls:'g'} : REG.estado==='pendiente' ? {tag:'Pendiente',cls:'r'} : {};
+  const info=[
+    tile({nm:'Mi puesto', ds:'', ico:I.manual, hash:'manual'}, {on:true, ds: misSec.length ? 'Manual de '+misSec[0].nombre.toLowerCase()+' y del resto de los puestos.' : 'Manual de procedimientos de cada puesto.'}),
+    tile({nm:'Protocolos', ds:'Cumpleaños y descorche, paso a paso.', ico:I.proto, hash:'protocolos'}, {on:true}),
+    tile({nm:'Reglamento', ds:'Reglamento interno del personal.', ico:I.regla, hash:'reglamento'}, Object.assign({on:true}, regTag)),
+    tile({nm:'Instagram', ds:'@zeppelinbar.salta', ico:I.ig, url:'https://www.instagram.com/zeppelinbar.salta/', ext:true}, {on:true})
+  ].join('');
+  const banner = REG.estado==='pendiente' ? `<a class="banner" href="#reglamento">${I.regla}<div><b>Tenés el reglamento pendiente.</b><br>Leelo y aceptalo desde acá: son 5 minutos.</div></a>` : '';
+  $('#view').innerHTML=`
+    <div class="hola">${esc(saludo)}</div>
+    <p class="sub">Tocá el sistema que necesites. Los que aparecen apagados no los tenés habilitados.</p>
+    ${banner}
+    <h2>Sistemas</h2>
+    <div class="grid">${SISTEMAS.map(s=>{ const st=s.ver(a); return tile(s, st.on?Object.assign({},st,{cls:st.o?'o':''}):{on:false,tag:'Sin acceso',msg:'No tenés acceso a '+s.nm+'. Pedíselo a Fernando.'}); }).join('')}</div>
+    <h2>Información</h2>
+    <div class="grid">${info}</div>
+    <div class="foot">¿Te falta un acceso? Pedíselo a Fernando.</div>`;
+  document.querySelectorAll('.tile.off').forEach(el=>el.addEventListener('click',()=>toast(el.dataset.msg)));
 }
 
-function entrar(){ $('#login').style.display='none'; $('#app').style.display='block'; render(); }
+/* ===================== MANUAL ===================== */
+function cabecera(titulo, sub, backTo){ return `<div class="top"><a class="back" href="#${backTo||''}" aria-label="Volver">${I.back}</a><div><h1>${esc(titulo)}</h1>${sub?`<small>${esc(sub)}</small>`:''}</div></div>`; }
+function bloqueItems(items){ return items&&items.length ? `<ul class="it">${items.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>` : ''; }
+function vManual(id){
+  const P=C.MANUAL.puestos;
+  const mios=(C.PUESTO_MANUAL[rol()]||[]);
+  if(!id) id = mios[0] || P[0].id;
+  const p=P.find(x=>x.id===id) || P[0];
+  const orden=[...mios, ...P.map(x=>x.id).filter(x=>!mios.includes(x))];
+  const chip=x=>{ const q=P.find(y=>y.id===x); return `<a class="chip ${x===p.id?'on':''} ${mios.includes(x)?'mine':''}" href="#manual/${x}">${esc(q.nombre)}</a>`; };
+  const cuerpo = p.pendiente
+    ? `<div class="pend">Esta sección del manual todavía no está escrita. Mientras tanto, seguí las indicaciones del encargado.</div>`
+    : p.secciones.map((s,i)=>`<div class="acc ${i===0?'open':''}"><button type="button"><span class="n">${i+1}</span>${esc(s.t)}<span class="ch">${I.chev}</span></button>
+        <div class="bd">${s.p?`<p>${esc(s.p)}</p>`:''}${bloqueItems(s.items)}${s.nota?`<div class="nota">${esc(s.nota)}</div>`:''}</div></div>`).join('');
+  $('#view').innerHTML = cabecera(C.MANUAL.titulo, mios.length ? 'Tu puesto aparece primero' : C.MANUAL.sub) + `
+    ${mios.length?`<div class="lbl">Tu puesto</div><div class="chips">${mios.map(chip).join('')}</div><div class="lbl">Otros puestos</div>`:''}
+    <div class="chips">${orden.filter(x=>!mios.includes(x)).map(chip).join('')}</div>
+    <h2 style="color:var(--txt);margin-top:10px">${esc(p.nombre)}</h2>
+    ${p.meta&&p.meta.length?`<div class="meta">${p.meta.map(m=>`<span>${esc(m)}</span>`).join('')}</div>`:''}
+    ${cuerpo}`;
+  document.querySelectorAll('.acc>button').forEach(b=>b.addEventListener('click',()=>b.parentElement.classList.toggle('open')));
+}
+
+/* ===================== PROTOCOLOS ===================== */
+function vProtocolos(){
+  $('#view').innerHTML = cabecera('Protocolos','Paso a paso, para repasar antes de ir a la mesa') + `<div class="plist">${C.PROTOCOLOS.map(p=>`
+    <a class="pcard" href="#protocolo/${p.id}"><div><div class="nm">${esc(p.titulo)}</div><div class="ds">${esc(p.sub)} · ${p.pasos.length} pasos</div></div><span class="go">${I.go}</span></a>`).join('')}</div>`;
+}
+function vProtocolo(id, paso){
+  const p=C.PROTOCOLOS.find(x=>x.id===id); if(!p){ location.hash='protocolos'; return; }
+  const N=p.pasos.length;
+  const card=(s,i)=>`<section class="step" data-i="${i}">
+      <div class="num">Paso ${i+1} de ${N}</div>
+      <h3>${esc(s.t)}</h3>${s.sub?`<div class="sb">${esc(s.sub)}</div>`:''}
+      ${(s.quien||s.cuando)?`<div class="kv">${s.quien?`<div><b>Responsable</b>${esc(s.quien)}</div>`:''}${s.cuando?`<div><b>Cuándo</b>${esc(s.cuando)}</div>`:''}</div>`:''}
+      ${s.p?`<p>${esc(s.p)}</p>`:''}
+      ${bloqueItems(s.items)}
+      ${(s.speech||[]).map(([k,q])=>`<div class="sp"><div class="k">${esc(k)}</div><q>${esc(q)}</q></div>`).join('')}
+      ${s.no?`<div class="no"><div class="k">Lo que no se hace</div>${bloqueItems(s.no)}</div>`:''}
+      ${s.regla?`<div class="regla">Regla de oro: ${esc(s.regla)}</div>`:''}
+      ${s.nota?`<div class="nota">${esc(s.nota)}</div>`:''}
+    </section>`;
+  $('#view').innerHTML = cabecera(p.titulo, p.sub, 'protocolos') + `
+    <div class="steps" id="steps">${p.pasos.map(card).join('')}</div>
+    <div class="nav"><button id="prev" type="button">Anterior</button><div class="dots" id="dots">${p.pasos.map(()=>'<i></i>').join('')}</div><button id="next" class="pri" type="button">Siguiente</button></div>`;
+  const box=$('#steps'), dots=[...document.querySelectorAll('#dots i')];
+  let cur=0;
+  const go=i=>{ i=Math.max(0,Math.min(N-1,i)); const w=box.children[0].getBoundingClientRect().width+12; box.scrollTo({left:i*w, behavior:'smooth'}); };
+  const sync=()=>{ const w=box.children[0].getBoundingClientRect().width+12; cur=Math.round(box.scrollLeft/w); dots.forEach((d,k)=>d.classList.toggle('on',k===cur)); $('#prev').disabled=cur===0; $('#next').textContent= cur===N-1?'Terminar':'Siguiente'; };
+  box.addEventListener('scroll',()=>{ clearTimeout(box._t); box._t=setTimeout(sync,60); });
+  $('#prev').onclick=()=>go(cur-1);
+  $('#next').onclick=()=>{ if(cur===N-1){ location.hash='protocolos'; return; } go(cur+1); };
+  sync(); if(paso) setTimeout(()=>go(+paso),50);
+}
+
+/* ===================== REGLAMENTO ===================== */
+function vReglamento(){
+  const R=C.REGLAMENTO;
+  const secs=R.secciones.map((s,i)=>`<h3><span>${i+1}.</span>${esc(s.t)}</h3>${(s.p||[]).map(x=>`<p>${esc(x)}</p>`).join('')}${bloqueItems(s.items)}${s.tabla?`<table class="rtab">${s.tabla.map(([a,b])=>`<tr><td>${esc(a)}</td><td>${esc(b)}</td></tr>`).join('')}</table>`:''}`).join('');
+  $('#view').innerHTML = cabecera('Reglamento interno','Versión '+R.version) + `<div class="rg">${secs}</div>
+    <div class="acept" id="acept"></div><div id="fin" style="height:1px"></div>
+    <div class="adm" id="adm"></div>`;
+  pintarAceptacion();
+  if(esAdmin()) cargarAdmin();
+}
+let leidoHastaElFinal=false;
+function pintarAceptacion(){
+  const box=$('#acept'); if(!box) return;
+  if(REG.estado==='aceptado'){ box.innerHTML=`<div class="ok">✓ Aceptaste este reglamento el ${fechaAR(REG.fecha)}</div><small>Si cambia, te vamos a pedir que lo vuelvas a aceptar.</small>`; return; }
+  if(REG.estado==='cargando'){ box.innerHTML=`<small>Consultando…</small>`; return; }
+  box.innerHTML=`<button class="big" id="btnAcept" ${leidoHastaElFinal?'':'disabled'}>LEÍ Y ACEPTO</button>
+    <small id="hintAcept">${leidoHastaElFinal?'Queda registrado con tu nombre, DNI y la fecha de hoy.':'Leé hasta el final para poder aceptar.'}</small>
+    ${REG.estado==='error'?'<small style="color:var(--bad)">No se pudo consultar tu estado. Revisá la conexión.</small>':''}`;
+  const fin=$('#fin');
+  if(!leidoHastaElFinal && 'IntersectionObserver' in window){
+    const io=new IntersectionObserver(es=>{ if(es.some(e=>e.isIntersecting)){ leidoHastaElFinal=true; io.disconnect(); const b=$('#btnAcept'); if(b){ b.disabled=false; $('#hintAcept').textContent='Queda registrado con tu nombre, DNI y la fecha de hoy.'; } } });
+    io.observe(fin);
+  } else if(!('IntersectionObserver' in window)){ leidoHastaElFinal=true; }
+  $('#btnAcept').onclick=async ()=>{
+    const b=$('#btnAcept'); b.disabled=true; b.textContent='REGISTRANDO…';
+    try{
+      const j=await post(API_URL,{token:SES.token, action:'reg_aceptar', version:C.REGLAMENTO.version});
+      if(j&&j.ok&&j.aceptado){ REG={estado:'aceptado', fecha:j.fecha}; regCacheSet(j.fecha); pintarAceptacion(); toast('Listo, quedó registrado. ¡Gracias!'); if(esAdmin()) cargarAdmin(); }
+      else throw new Error((j&&j.error)||'error');
+    }catch(e){ b.disabled=false; b.textContent='LEÍ Y ACEPTO'; toast(e.message==='sesion'?'Tu sesión venció. Volvé a ingresar.':'No se pudo registrar. Probá de nuevo.'); if(e.message==='sesion') salir(); }
+  };
+}
+async function cargarAdmin(){
+  const box=$('#adm'); if(!box) return;
+  box.innerHTML='<h2>Quién lo aceptó</h2><small style="color:var(--muted)">Cargando…</small>';
+  try{
+    const j=await post(API_URL,{token:SES.token, action:'reg_lista', version:C.REGLAMENTO.version});
+    if(!j||!j.ok) throw new Error();
+    const ps=j.personas.sort((a,b)=>(!!a.fecha-!!b.fecha)||a.nombre.localeCompare(b.nombre,'es'));
+    const n=ps.filter(p=>p.fecha).length;
+    box.innerHTML=`<h2>Quién lo aceptó · ${n} de ${ps.length}</h2><small style="color:var(--muted);font:400 12px Inter,sans-serif">Solo lo ves vos. Personal activo de Zeppelin_Maestro, versión ${esc(C.REGLAMENTO.version)}.</small>
+      <table>${ps.map(p=>`<tr><td>${esc(p.nombre)}<br><span style="color:var(--muted);font-size:12px">${esc(p.puesto)}</span></td><td>${p.fecha?`<span class="tag g" style="position:static">${fechaAR(p.fecha)}</span>`:`<span class="tag r" style="position:static">Pendiente</span>`}</td></tr>`).join('')}</table>`;
+  }catch(e){ box.innerHTML='<h2>Quién lo aceptó</h2><small style="color:var(--bad)">No se pudo cargar la lista.</small>'; }
+}
+async function cargarRegEstado(){
+  const c=regCacheGet(); if(c){ REG={estado:'aceptado', fecha:c.fecha}; refrescarReg(); return; }
+  try{
+    const j=await post(API_URL,{token:SES.token, action:'reg_estado', version:C.REGLAMENTO.version});
+    if(j&&j.ok){ REG = j.aceptado ? {estado:'aceptado', fecha:j.fecha} : {estado:'pendiente'}; if(j.aceptado) regCacheSet(j.fecha); }
+    else REG={estado:'error'};
+  }catch(e){ REG={estado:'error'}; }
+  refrescarReg();
+}
+function refrescarReg(){ const v=(location.hash.slice(1)||'').split('/')[0]; if(!v) vHome(); else if(v==='reglamento') pintarAceptacion(); }
+
+/* ===================== ROUTER / SESIÓN ===================== */
+function route(){
+  if(!SES) return;
+  const [v,a,b]=(location.hash.slice(1)||'').split('/');
+  if(v==='manual') vManual(a);
+  else if(v==='protocolos') vProtocolos();
+  else if(v==='protocolo') vProtocolo(a,b);
+  else if(v==='reglamento') vReglamento();
+  else vHome();
+}
+window.addEventListener('hashchange',()=>{ route(); window.scrollTo(0,0); });
+
+function pintarQuien(){ const u=SES.usuario||{}; $('#quien').textContent=((u.nombre||'')+' '+(u.apellido||'')).trim()+(u.rol?' · '+u.rol:''); }
+function entrar(){ $('#login').style.display='none'; $('#app').style.display='block'; pintarQuien(); route(); cargarRegEstado(); }
 function mostrarLogin(msg){ $('#app').style.display='none'; $('#login').style.display='flex'; $('#lErr').textContent=msg||''; setTimeout(()=>$('#lDni').focus(),50); }
-function salir(){ SES=null; sesSet(null); mostrarLogin(''); }
+function salir(){ SES=null; sesSet(null); REG={estado:'cargando'}; mostrarLogin(''); }
 
 $('#lForm').addEventListener('submit', async ev=>{
   ev.preventDefault();
@@ -157,7 +373,7 @@ $('#lForm').addEventListener('submit', async ev=>{
   if(!dni||!pass){ err.textContent='Ingresá DNI y clave'; return; }
   btn.disabled=true; err.textContent='Verificando…';
   try{
-    const j=await api({action:'login',dni,pass});
+    const j=await post(ACCESOS_URL,{action:'login',dni,pass});
     if(!j||!j.ok){ err.textContent=(j&&j.error)||'No se pudo ingresar'; return; }
     SES={token:j.token,usuario:j.usuario}; sesSet(SES);
     $('#lPass').value=''; err.textContent=''; entrar();
@@ -166,16 +382,15 @@ $('#lForm').addEventListener('submit', async ev=>{
 });
 $('#salir').addEventListener('click', salir);
 
-/* Arranque: usa la sesión compartida y refresca los permisos desde Accesos */
 (async()=>{
   const s=sesGet();
   if(!(s && s.token && tokenVigente(s.token))){ mostrarLogin(''); return; }
   SES=s; entrar();
   try{
-    const j=await api({action:'sesion',token:s.token});
-    if(j && j.ok && j.usuario){ SES.usuario=j.usuario; sesSet(SES); render(); }
+    const j=await post(ACCESOS_URL,{action:'sesion',token:s.token});
+    if(j && j.ok && j.usuario){ SES.usuario=j.usuario; sesSet(SES); pintarQuien(); route(); }
     else if(j && j.error==='sesion'){ salir(); $('#lErr').textContent='Tu sesión venció. Volvé a ingresar.'; }
-  }catch(e){ /* sin conexión: se muestran los permisos guardados */ }
+  }catch(e){}
 })();
 </script>
 </body>
