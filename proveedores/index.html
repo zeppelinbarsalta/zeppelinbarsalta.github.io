@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Proveedores · Zeppelin + Sex Shop</title>
+<meta name="theme-color" content="#0A0A0A">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{
+  --bg:#0A0A0A; --card:#141414; --card2:#1b1b1b; --line:#2a2a2a; --txt:#f4f4f4; --muted:#8c8c8c;
+  --zepp:#FF5A00; --sss:#DD01D0; --ok:#30d158; --warn:#ffb020; --bad:#ff453a; --wa:#25D366;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--txt);font:15px/1.45 Inter,system-ui,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+header{position:sticky;top:0;z-index:50;background:rgba(10,10,10,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+.top{display:flex;align-items:center;gap:12px;padding:12px 0 8px}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:1px;line-height:1}
+.logo .z{color:var(--zepp)} .logo .s{color:var(--sss)}
+.sync{margin-left:auto;font:500 12px Oswald,sans-serif;letter-spacing:.5px;color:var(--muted);display:flex;align-items:center;gap:6px;white-space:nowrap}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.sync.saved .dot{background:var(--ok)} .sync.saving .dot,.sync.pending .dot{background:var(--warn)} .sync.error .dot{background:var(--bad)}
+.tabs{display:flex;gap:4px;overflow-x:auto;padding-bottom:8px}
+.tab{background:none;border:1px solid var(--line);border-radius:999px;padding:6px 14px;font:500 13px Oswald,sans-serif;letter-spacing:.6px;color:var(--muted);cursor:pointer;white-space:nowrap}
+.tab.on{background:var(--txt);color:var(--bg);border-color:var(--txt)}
+.tab.z.on{background:var(--zepp);border-color:var(--zepp);color:#0A0A0A}
+.tab.s.on{background:var(--sss);border-color:var(--sss);color:#fff}
+.bar{display:flex;gap:8px;flex-wrap:wrap;padding:14px 0}
+.bar input,.bar select{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:10px 12px;min-width:0}
+.bar input{flex:1 1 220px}
+.btn{background:var(--card2);border:1px solid var(--line);border-radius:9px;padding:10px 14px;cursor:pointer;font:500 14px Oswald,sans-serif;letter-spacing:.5px;white-space:nowrap}
+.btn:hover{border-color:#444}
+.btn.pri{background:var(--zepp);border-color:var(--zepp);color:#0A0A0A}
+.btn.sm{padding:6px 10px;font-size:12px}
+a.btn{text-decoration:none;display:inline-block}
+.btn.wa{background:var(--wa);border-color:var(--wa);color:#05290f}
+.btn.danger{color:var(--bad)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.stat .k{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+.stat .v{font:600 22px Oswald,sans-serif}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:10px;padding-bottom:90px}
+.card{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--muted);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.card.z{border-left-color:var(--zepp)} .card.s{border-left-color:var(--sss)}
+.card.zs{border-left-color:transparent;border-image:linear-gradient(var(--zepp),var(--sss)) 1;border-left-width:4px;border-radius:0 12px 12px 0}
+.card.off{opacity:.5}
+.ch{display:flex;align-items:flex-start;gap:8px}
+.ch h3{margin:0;font:600 18px Oswald,sans-serif;letter-spacing:.3px;flex:1;min-width:0;overflow-wrap:anywhere}
+.badges{display:flex;gap:4px;flex-wrap:wrap}
+.bdg{font:600 10px Oswald,sans-serif;letter-spacing:.8px;padding:2px 7px;border-radius:999px;text-transform:uppercase}
+.bdg.z{background:rgba(255,90,0,.15);color:var(--zepp)} .bdg.s{background:rgba(221,1,208,.15);color:#ff5cf4}
+.bdg.r{background:#222;color:#bbb} .bdg.w{background:rgba(255,176,32,.12);color:var(--warn)}
+.meta{font-size:13px;color:#cfcfcf;display:grid;gap:3px}
+.meta span{color:var(--muted)}
+.meta a{color:#cfcfcf}
+.chips{display:flex;flex-wrap:wrap;gap:4px}
+.chip{font-size:11px;background:#1f1f1f;border:1px solid var(--line);border-radius:6px;padding:1px 6px;color:#bbb}
+.acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto;padding-top:4px}
+.empty{color:var(--muted);text-align:center;padding:40px 10px;grid-column:1/-1}
+.hint{font-size:13px;color:var(--muted);margin:0 0 12px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px}
+.panel h3{margin:0 0 6px;font:600 17px Oswald,sans-serif;letter-spacing:.4px}
+.panel p{margin:0 0 10px;font-size:13px;color:var(--muted)}
+.res{font-size:13px;margin-top:8px;white-space:pre-line}
+/* modal */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;display:none;align-items:flex-start;justify-content:center;padding:20px 12px;overflow:auto}
+.ov.on{display:flex}
+.modal{background:var(--card);border:1px solid var(--line);border-radius:14px;width:100%;max-width:680px;padding:18px}
+.modal h2{margin:0 0 12px;font:400 28px 'Bebas Neue',sans-serif;letter-spacing:1px}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.f{display:flex;flex-direction:column;gap:4px;min-width:0}
+.f.full{grid-column:1/-1}
+.f label{font-size:12px;color:var(--muted)}
+.f input,.f select,.f textarea{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 10px;width:100%}
+.f textarea{min-height:70px;resize:vertical}
+.sec{grid-column:1/-1;font:600 12px Oswald,sans-serif;letter-spacing:1px;color:var(--muted);text-transform:uppercase;border-top:1px solid var(--line);padding-top:10px;margin-top:4px}
+.checks{display:flex;gap:6px;flex-wrap:wrap}
+.ck{display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:7px 10px;cursor:pointer;font-size:13px;user-select:none}
+.ck input{accent-color:var(--zepp)}
+.mf{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
+.mf .btn.danger{margin-right:auto}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#222;border:1px solid #333;border-radius:999px;padding:9px 16px;font-size:13px;z-index:200;opacity:0;transition:.2s;pointer-events:none}
+.toast.on{opacity:1}
+.banner{background:rgba(255,176,32,.1);border:1px solid rgba(255,176,32,.35);color:var(--warn);border-radius:10px;padding:10px 12px;font-size:13px;margin-top:12px}
+table.t{width:100%;border-collapse:collapse;font-size:13px}
+table.t td,table.t th{border-bottom:1px solid var(--line);padding:6px;text-align:left}
+@media (max-width:640px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .fg{grid-template-columns:1fr}
+  .grid{grid-template-columns:1fr}
+  .logo{font-size:24px}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="top">
+      <div class="logo">PROVEEDORES <span class="z">ZEPPELIN</span> + <span class="s">SEX SHOP</span></div>
+      <div class="sync" id="sync"><span class="dot"></span><span id="syncTxt">local</span></div>
+    </div>
+    <div class="tabs" id="tabs">
+      <button class="tab on" data-v="todos">TODOS</button>
+      <button class="tab z" data-v="zeppelin">ZEPPELIN</button>
+      <button class="tab s" data-v="sexshop">SEX SHOP</button>
+      <button class="tab" data-v="revisar">A COMPLETAR</button>
+      <button class="tab" data-v="importar">IMPORTAR / EXPORTAR</button>
+    </div>
+  </div>
+</header>
+<main class="wrap" id="main"></main>
+
+<div class="ov" id="ov"><div class="modal" id="modal"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===================== CONFIG ===================== */
+// URL /exec del Apps Script de Proveedores (Code.gs). Vacía = modo local (solo este navegador).
+const ENDPOINT = '';
+// Backend de Costos/Stock/Fichas (para importar proveedores del bar)
+const ENDPOINT_CSF = 'https://script.google.com/macros/s/AKfycby2xWyn_9xAgSV7xsPaUYL7_NNj9yK60PL_DG3sWtuvCjiF8bTEewdE69qBnPSU9_yOHQ/exec';
+const ACCESOS_URL  = 'https://script.google.com/macros/s/AKfycbyRC8Y2pb1eU7g8nvEmMrTIVS5V23YVa3Hcj6z77jS3UkWVWxiRInAhFJuaD3tnDGv8/exec';
+const ZPP_SISTEMAS = ['proveedores','costos'];
+const ZPP_TITULO = 'PROVEEDORES';
+const KEY = 'zpp_proveedores_v1', DIRTYKEY = 'zpp_proveedores_dirty_v1';
+
+const NEG = {zeppelin:{n:'Zeppelin',c:'z'}, sexshop:{n:'Sex Shop',c:'s'}};
+const RUBROS = ['Bebidas','Cerveza','Vinos','Gaseosas / Aguas','Alimentos','Lácteos / Quesos','Carnes','Verdulería','Almacén','Descartables','Limpieza','Juguetes / Accesorios','Lencería','Cosmética / Lubricantes','Servicios','Mantenimiento','Otros'];
+const PAGOS = ['','Contado','Transferencia','Cuenta corriente','Cheque','7 días','15 días','30 días','Consignación'];
+const DIAS = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+
+/* ===================== SESIÓN (Accesos zeppelin-bar.com) ===================== */
+const ZPP_LS = 'zpp_sesion';
+let ZPP_TOKEN=null, ZPP_USR=null, ZPP_ONOK=null;
+function zppSesGet(){ try{ return JSON.parse(localStorage.getItem(ZPP_LS)||'null'); }catch(e){ return null; } }
+function zppSesSet(v){ try{ v ? localStorage.setItem(ZPP_LS, JSON.stringify(v)) : localStorage.removeItem(ZPP_LS); }catch(e){} }
+function zppTokenVigente(t){ try{ const p=JSON.parse(atob(String(t).split('.')[0].replace(/-/g,'+').replace(/_/g,'/'))); return p && p.e > Date.now(); }catch(e){ return false; } }
+function zppTiene(u){ const a=(u&&u.accesos)||[]; return ZPP_SISTEMAS.some(s=>a.indexOf(s)>=0); }
+function zppTieneSis(s){ return !!(ZPP_USR && (ZPP_USR.accesos||[]).indexOf(s)>=0); }
+function zppLogin(msg){
+  let ov=document.getElementById('zppLogin');
+  if(!ov){
+    ov=document.createElement('div'); ov.id='zppLogin';
+    ov.style.cssText='position:fixed;inset:0;z-index:99999;background:#0A0A0A;display:flex;align-items:center;justify-content:center;padding:16px;font-family:Oswald,system-ui,sans-serif';
+    ov.innerHTML='<form id="zppForm" autocomplete="on" style="width:100%;max-width:340px;background:#151515;border:1px solid #2a2a2a;border-radius:12px;padding:24px 20px;display:flex;flex-direction:column;gap:10px;color:#f4f4f4">'
+      +'<div style="font-family:\'Bebas Neue\',sans-serif;font-size:34px;letter-spacing:1px;line-height:1"><span style="color:#FF5A00">ZEPPELIN</span> '+ZPP_TITULO+'</div>'
+      +'<label for="zppDni" style="font-size:12px;color:#8c8c8c">DNI</label><input id="zppDni" inputmode="numeric" autocomplete="username" placeholder="Sin puntos" style="background:#0A0A0A;border:1px solid #2a2a2a;border-radius:8px;color:#f4f4f4;font-size:17px;padding:11px">'
+      +'<label for="zppPass" style="font-size:12px;color:#8c8c8c">Clave</label><input id="zppPass" type="password" autocomplete="current-password" style="background:#0A0A0A;border:1px solid #2a2a2a;border-radius:8px;color:#f4f4f4;font-size:17px;padding:11px">'
+      +'<div id="zppErr" style="min-height:18px;color:#ff453a;font-size:13px"></div>'
+      +'<button id="zppBtn" type="submit" style="background:#FF5A00;color:#0A0A0A;border:none;border-radius:8px;padding:12px;font:600 15px Oswald,sans-serif;letter-spacing:1px;cursor:pointer">INGRESAR</button>'
+      +'<div style="font-size:11px;color:#8c8c8c">La clave te la da Fernando.</div></form>';
+    document.body.appendChild(ov);
+    document.getElementById('zppForm').addEventListener('submit', zppEnviar);
+  }
+  ov.style.display='flex'; document.getElementById('zppErr').textContent=msg||'';
+  setTimeout(()=>{ const i=document.getElementById('zppDni'); if(i) i.focus(); },50);
+}
+async function zppEnviar(ev){
+  ev.preventDefault();
+  const dni=document.getElementById('zppDni').value.replace(/\D/g,''), pass=document.getElementById('zppPass').value;
+  const err=document.getElementById('zppErr'), btn=document.getElementById('zppBtn');
+  if(!dni||!pass){ err.textContent='Ingresá DNI y clave'; return; }
+  btn.disabled=true; err.textContent='Verificando…';
+  try{
+    const r=await fetch(ACCESOS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'login',dni,pass})});
+    const j=await r.json();
+    if(!j||!j.ok){ err.textContent=(j&&j.error)||'No se pudo ingresar'; return; }
+    if(!zppTiene(j.usuario)){ err.textContent='No tenés acceso a esta sección'; return; }
+    zppSesSet({token:j.token,usuario:j.usuario}); ZPP_TOKEN=j.token; ZPP_USR=j.usuario;
+    document.getElementById('zppPass').value=''; err.textContent='';
+    document.getElementById('zppLogin').style.display='none';
+    if(ZPP_ONOK) ZPP_ONOK();
+  }catch(e){ err.textContent='No se pudo conectar'; }
+  finally{ btn.disabled=false; }
+}
+function zppVencida(){ ZPP_TOKEN=null; ZPP_USR=null; zppSesSet(null); zppLogin('Tu sesión venció o te quitaron el acceso. Volvé a ingresar.'); }
+function zppIniciar(onOk){
+  ZPP_ONOK=onOk;
+  const s=zppSesGet();
+  if(s&&s.token&&zppTiene(s.usuario)&&zppTokenVigente(s.token)){ ZPP_TOKEN=s.token; ZPP_USR=s.usuario; onOk(); }
+  else zppLogin('');
+}
+async function post(url, body){
+  const r=await fetch(url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({token:ZPP_TOKEN},body))});
+  const d=await r.json();
+  if(d && d.error==='sesion'){ zppVencida(); throw new Error('sesion'); }
+  if(d && d.ok===false) throw new Error(d.error||'error');
+  if(d && d.error) throw new Error(d.error);
+  return d;
+}
+
+/* ===================== UTILS ===================== */
+const $=s=>document.querySelector(s);
+const esc=s=>(''+(s==null?'':s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const norm=s=>(''+(s||'')).normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+const uid=()=>'pv'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const digits=s=>(''+(s||'')).replace(/\D/g,'');
+const uniq=a=>{ const seen=new Set(), o=[]; (a||[]).forEach(x=>{ x=(''+x).trim(); const k=norm(x); if(x&&!seen.has(k)){ seen.add(k); o.push(x); } }); return o; };
+function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('on'),2200); }
+function waNum(p){ let d=digits(p); if(!d) return ''; if(d.length===10) d='549'+d; else if(d.length===11 && d.startsWith('0')) d='549'+d.slice(1); else if(d.startsWith('54') && !d.startsWith('549') && d.length===12) d='549'+d.slice(2); return d; }
+
+function blank(){ return {id:uid(),nombre:'',razon_social:'',cuit:'',negocios:[],rubro:'',contacto:'',whatsapp:'',telefono:'',email:'',direccion:'',web:'',condicion_pago:'',dias_pedido:[],dias_entrega:[],pedido_minimo:'',cbu_alias:'',marcas:[],alias:[],notas:'',activo:true,creado:Date.now(),actualizado:Date.now()}; }
+function fix(p){ const b=blank(); const o=Object.assign(b,p||{}); ['negocios','marcas','alias','dias_pedido','dias_entrega'].forEach(k=>{ if(!Array.isArray(o[k])) o[k]=(''+(o[k]||'')).split(/[|,]/).map(x=>x.trim()).filter(Boolean); }); o.activo=o.activo!==false; return o; }
+function faltantes(p){ const f=[]; if(!p.whatsapp&&!p.telefono) f.push('WhatsApp'); if(!p.rubro) f.push('rubro'); if(!p.negocios.length) f.push('negocio'); return f; }
+
+/* ===================== ESTADO + SYNC ===================== */
+let state = load();
+let ui = {v:'todos', q:'', rubro:'', inactivos:false};
+function load(){ try{ const a=JSON.parse(localStorage.getItem(KEY)||'null'); if(Array.isArray(a)) return a.map(fix); }catch(e){} return []; }
+
+let dirty=false, pushing=false, pushTimer=null;
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
+  if(!ENDPOINT){ setSync('local','modo local'); return; }
+  dirty=true; try{ localStorage.setItem(DIRTYKEY,'1'); }catch(e){}
+  setSync('pending','guardando…'); clearTimeout(pushTimer); pushTimer=setTimeout(runPush, 1200);
+}
+async function runPush(){
+  if(!ENDPOINT||pushing) return; pushing=true; setSync('saving','guardando…');
+  try{ await post(ENDPOINT,{action:'guardar',data:state}); dirty=false; try{ localStorage.removeItem(DIRTYKEY); }catch(e){} setSync('saved','guardado'); }
+  catch(e){ setSync('error','error al guardar'); if(e.message!=='sesion') toast('No se pudo guardar en la nube: '+e.message); }
+  pushing=false; if(dirty){ clearTimeout(pushTimer); pushTimer=setTimeout(runPush,3000); }
+}
+async function pull(){
+  if(!ENDPOINT){ setSync('local','modo local'); return; }
+  setSync('saving','bajando…');
+  try{
+    const d=await post(ENDPOINT,{action:'leer'});
+    const remote=(d.data||[]).map(fix);
+    let pendiente=false; try{ pendiente=localStorage.getItem(DIRTYKEY)==='1'; }catch(e){}
+    if(pendiente && state.length){ dirty=true; runPush(); }          // cambios locales sin subir: mandan los locales
+    else if(!remote.length && state.length){ dirty=true; runPush(); } // nube vacía: sube lo local
+    else { state=remote; try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} setSync('saved','sincronizado'); }
+    render();
+  }catch(e){ setSync('error','sin conexión'); }
+}
+function setSync(c,t){ const s=$('#sync'); s.className='sync '+c; $('#syncTxt').textContent=t; }
+window.addEventListener('beforeunload',e=>{ if(dirty){ e.preventDefault(); e.returnValue=''; } });
+
+/* ===================== MERGE (deduplicado) ===================== */
+function findMatch(nombre, extraKeys){
+  const keys=[nombre].concat(extraKeys||[]).map(norm).filter(Boolean);
+  return state.find(p=>{ const pk=[p.nombre,p.razon_social].concat(p.alias).map(norm).filter(Boolean); return keys.some(k=>pk.indexOf(k)>=0); });
+}
+// devuelve 'nuevo' | 'actualizado' | 'igual'
+function upsert(d){
+  const nombre=(d.nombre||'').trim(); if(!nombre) return null;
+  let p=findMatch(nombre, d.alias);
+  if(!p){ p=fix(Object.assign(blank(), d, {nombre})); p.negocios=uniq(p.negocios); p.marcas=uniq(p.marcas); p.alias=uniq(p.alias); state.push(p); return 'nuevo'; }
+  const antes=JSON.stringify(p);
+  Object.keys(d).forEach(k=>{
+    const v=d[k];
+    if(Array.isArray(v)) p[k]=uniq((p[k]||[]).concat(v));
+    else if(v!=null && v!=='' && (p[k]==null || p[k]==='')) p[k]=v;
+  });
+  if(norm(nombre)!==norm(p.nombre)) p.alias=uniq(p.alias.concat([nombre]));
+  if(JSON.stringify(p)===antes) return 'igual';
+  p.actualizado=Date.now(); return 'actualizado';
+}
+function resumen(res){ const c={nuevo:0,actualizado:0,igual:0}; res.forEach(r=>{ if(r) c[r]++; }); return `${c.nuevo} nuevos · ${c.actualizado} actualizados · ${c.igual} sin cambios`; }
+
+/* ===================== RENDER ===================== */
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{ ui.v=b.dataset.v; document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===b)); render(); }));
+
+function filtrados(){
+  const q=norm(ui.q);
+  return state.filter(p=>{
+    if(!ui.inactivos && !p.activo) return false;
+    if(ui.v==='zeppelin' && p.negocios.indexOf('zeppelin')<0) return false;
+    if(ui.v==='sexshop' && p.negocios.indexOf('sexshop')<0) return false;
+    if(ui.v==='revisar' && !faltantes(p).length) return false;
+    if(ui.rubro && p.rubro!==ui.rubro) return false;
+    if(q){ const hay=norm([p.nombre,p.razon_social,p.cuit,p.rubro,p.contacto,p.notas].concat(p.marcas,p.alias).join(' ')); if(hay.indexOf(q)<0) return false; }
+    return true;
+  }).sort((a,b)=>a.nombre.localeCompare(b.nombre,'es'));
+}
+
+function render(){
+  const m=$('#main');
+  if(ui.v==='importar'){ renderImport(m); return; }
+  const rubros=uniq(RUBROS.concat(state.map(p=>p.rubro))).filter(Boolean);
+  const act=state.filter(p=>p.activo);
+  m.innerHTML=`
+    ${!ENDPOINT?'<div class="banner">Modo local: los datos se guardan solo en este navegador. Pegá la URL del Apps Script en ENDPOINT para compartirlos entre equipos.</div>':''}
+    <div class="bar">
+      <input id="q" placeholder="Buscar proveedor, marca, CUIT, contacto…" value="${esc(ui.q)}">
+      <select id="rub"><option value="">Todos los rubros</option>${rubros.map(r=>`<option ${ui.rubro===r?'selected':''}>${esc(r)}</option>`).join('')}</select>
+      <label class="ck"><input type="checkbox" id="inac" ${ui.inactivos?'checked':''}> Inactivos</label>
+      <button class="btn pri" onclick="editar()">＋ PROVEEDOR</button>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="k">Activos</div><div class="v">${act.length}</div></div>
+      <div class="stat"><div class="k" style="color:var(--zepp)">Zeppelin</div><div class="v">${act.filter(p=>p.negocios.includes('zeppelin')).length}</div></div>
+      <div class="stat"><div class="k" style="color:#ff5cf4">Sex Shop</div><div class="v">${act.filter(p=>p.negocios.includes('sexshop')).length}</div></div>
+      <div class="stat"><div class="k" style="color:var(--warn)">A completar</div><div class="v">${act.filter(p=>faltantes(p).length).length}</div></div>
+    </div>
+    ${ui.v==='revisar'?'<p class="hint">Proveedores a los que les falta WhatsApp/teléfono, rubro o negocio.</p>':''}
+    <div class="grid" id="grid"></div>`;
+  $('#q').addEventListener('input',e=>{ ui.q=e.target.value; renderGrid(); });
+  $('#rub').addEventListener('change',e=>{ ui.rubro=e.target.value; renderGrid(); });
+  $('#inac').addEventListener('change',e=>{ ui.inactivos=e.target.checked; renderGrid(); });
+  renderGrid();
+}
+
+function renderGrid(){
+  const g=$('#grid'); if(!g) return;
+  const l=filtrados();
+  if(!state.length){ g.innerHTML='<div class="empty">Todavía no hay proveedores.<br><br><button class="btn pri" onclick="irImportar()">IMPORTAR DE COSTOS Y REPOSICIÓN</button></div>'; return; }
+  g.innerHTML = l.length ? l.map(card).join('') : '<div class="empty">Sin resultados.</div>';
+}
+
+function card(p){
+  const z=p.negocios.includes('zeppelin'), s=p.negocios.includes('sexshop');
+  const cls=(z&&s)?'zs':z?'z':s?'s':'';
+  const wa=waNum(p.whatsapp||p.telefono);
+  const fal=faltantes(p);
+  const line=(k,v)=>v?`<div><span>${k}:</span> ${v}</div>`:'';
+  return `<div class="card ${cls} ${p.activo?'':'off'}">
+    <div class="ch"><h3>${esc(p.nombre)}</h3>
+      <div class="badges">${z?'<span class="bdg z">Zeppelin</span>':''}${s?'<span class="bdg s">Sex Shop</span>':''}</div></div>
+    <div class="badges">${p.rubro?`<span class="bdg r">${esc(p.rubro)}</span>`:''}${!p.activo?'<span class="bdg r">Inactivo</span>':''}${fal.length?`<span class="bdg w">Falta: ${esc(fal.join(', '))}</span>`:''}</div>
+    <div class="meta">
+      ${line('Razón social',esc(p.razon_social)+(p.cuit?` · CUIT ${esc(p.cuit)}`:''))}
+      ${!p.razon_social&&p.cuit?line('CUIT',esc(p.cuit)):''}
+      ${line('Contacto',esc(p.contacto))}
+      ${line('WhatsApp',p.whatsapp?esc(p.whatsapp):'')}
+      ${line('Tel',p.telefono?`<a href="tel:${digits(p.telefono)}">${esc(p.telefono)}</a>`:'')}
+      ${line('Email',p.email?`<a href="mailto:${esc(p.email)}">${esc(p.email)}</a>`:'')}
+      ${line('Pago',esc(p.condicion_pago))}
+      ${line('Pedido',p.dias_pedido.join(', '))}
+      ${line('Entrega',p.dias_entrega.join(', '))}
+      ${line('Mínimo',esc(p.pedido_minimo))}
+      ${line('CBU/Alias',esc(p.cbu_alias))}
+    </div>
+    ${p.marcas.length?`<div class="chips">${p.marcas.map(x=>`<span class="chip">${esc(x)}</span>`).join('')}</div>`:''}
+    ${p.notas?`<div class="meta"><div>${esc(p.notas)}</div></div>`:''}
+    <div class="acts">
+      ${wa?`<a class="btn sm wa" href="https://wa.me/${wa}" target="_blank" rel="noopener">WHATSAPP</a>`:''}
+      ${p.cbu_alias?`<button class="btn sm" onclick="copiar('${esc(p.cbu_alias).replace(/'/g,"\\'")}')">COPIAR CBU/ALIAS</button>`:''}
+      <button class="btn sm" onclick="editar('${p.id}')">EDITAR</button>
+    </div>
+  </div>`;
+}
+function copiar(t){ navigator.clipboard.writeText(t).then(()=>toast('Copiado')); }
+function irImportar(){ document.querySelector('.tab[data-v="importar"]').click(); }
+
+/* ===================== EDITOR ===================== */
+function editar(id){
+  const p = id ? fix(JSON.parse(JSON.stringify(state.find(x=>x.id===id)))) : blank();
+  if(!id){ if(ui.v==='zeppelin') p.negocios=['zeppelin']; if(ui.v==='sexshop') p.negocios=['sexshop']; }
+  const inp=(k,l,ph,full,type)=>`<div class="f ${full?'full':''}"><label>${l}</label><input id="e_${k}" type="${type||'text'}" value="${esc(p[k])}" placeholder="${esc(ph||'')}"></div>`;
+  const dias=(k)=>`<div class="checks">${DIAS.map(d=>`<label class="ck"><input type="checkbox" data-g="${k}" value="${d}" ${p[k].includes(d)?'checked':''}>${d}</label>`).join('')}</div>`;
+  const rubros=uniq(RUBROS.concat(state.map(x=>x.rubro))).filter(Boolean);
+  $('#modal').innerHTML=`
+    <h2>${id?'EDITAR':'NUEVO'} PROVEEDOR</h2>
+    <div class="fg">
+      ${inp('nombre','Nombre (como lo llamás)','Ej: Extasy',true)}
+      <div class="f full"><label>Negocio</label><div class="checks">
+        <label class="ck"><input type="checkbox" data-g="negocios" value="zeppelin" ${p.negocios.includes('zeppelin')?'checked':''}> <b style="color:var(--zepp)">Zeppelin</b></label>
+        <label class="ck"><input type="checkbox" data-g="negocios" value="sexshop" ${p.negocios.includes('sexshop')?'checked':''}> <b style="color:#ff5cf4">Sex Shop</b></label>
+      </div></div>
+      <div class="f"><label>Rubro</label><input id="e_rubro" list="rubList" value="${esc(p.rubro)}" placeholder="Elegí o escribí"><datalist id="rubList">${rubros.map(r=>`<option value="${esc(r)}">`).join('')}</datalist></div>
+      <div class="f"><label>Estado</label><select id="e_activo"><option value="1" ${p.activo?'selected':''}>Activo</option><option value="0" ${!p.activo?'selected':''}>Inactivo</option></select></div>
+      <div class="sec">Contacto</div>
+      ${inp('contacto','Persona de contacto','Nombre del vendedor')}
+      ${inp('whatsapp','WhatsApp','549387…','', 'tel')}
+      ${inp('telefono','Teléfono fijo / otro','','', 'tel')}
+      ${inp('email','Email','','', 'email')}
+      ${inp('direccion','Dirección','',true)}
+      ${inp('web','Web / catálogo','https://…',true)}
+      <div class="sec">Fiscal y pagos</div>
+      ${inp('razon_social','Razón social')}
+      ${inp('cuit','CUIT','30-12345678-9')}
+      <div class="f"><label>Condición de pago</label><input id="e_condicion_pago" list="pagList" value="${esc(p.condicion_pago)}"><datalist id="pagList">${PAGOS.filter(Boolean).map(x=>`<option value="${x}">`).join('')}</datalist></div>
+      ${inp('cbu_alias','CBU / Alias')}
+      <div class="sec">Pedidos</div>
+      <div class="f full"><label>Días de pedido</label>${dias('dias_pedido')}</div>
+      <div class="f full"><label>Días de entrega</label>${dias('dias_entrega')}</div>
+      ${inp('pedido_minimo','Pedido mínimo','Ej: $150.000 o 2 cajas',true)}
+      <div class="sec">Vínculos con otros sistemas</div>
+      <div class="f full"><label>Marcas que trae (separadas por coma)</label><textarea id="e_marcas">${esc(p.marcas.join(', '))}</textarea></div>
+      <div class="f full"><label>Otros nombres / alias (como aparece en Costos, Caja o Reposición)</label><input id="e_alias" value="${esc(p.alias.join(', '))}"></div>
+      <div class="f full"><label>Notas</label><textarea id="e_notas">${esc(p.notas)}</textarea></div>
+    </div>
+    <div class="mf">
+      ${id?`<button class="btn danger" onclick="borrar('${p.id}')">ELIMINAR</button>`:''}
+      <button class="btn" onclick="cerrar()">CANCELAR</button>
+      <button class="btn pri" id="e_ok">GUARDAR</button>
+    </div>`;
+  $('#ov').classList.add('on');
+  setTimeout(()=>$('#e_nombre').focus(),30);
+  $('#e_ok').onclick=()=>{
+    const g=k=>{ const el=$('#e_'+k); return el?el.value.trim():''; };
+    const grp=k=>[...document.querySelectorAll(`input[data-g="${k}"]:checked`)].map(x=>x.value);
+    const nombre=g('nombre'); if(!nombre){ toast('Falta el nombre'); return; }
+    const dup=state.find(x=>x.id!==p.id && norm(x.nombre)===norm(nombre));
+    if(dup && !confirm(`Ya existe "${dup.nombre}". ¿Guardar igual?`)) return;
+    ['nombre','rubro','contacto','whatsapp','telefono','email','direccion','web','razon_social','cuit','condicion_pago','cbu_alias','pedido_minimo','notas'].forEach(k=>p[k]=g(k));
+    p.activo=$('#e_activo').value==='1';
+    p.negocios=grp('negocios'); p.dias_pedido=grp('dias_pedido'); p.dias_entrega=grp('dias_entrega');
+    p.marcas=uniq(g('marcas').split(',')); p.alias=uniq(g('alias').split(','));
+    p.actualizado=Date.now();
+    const i=state.findIndex(x=>x.id===p.id); if(i>=0) state[i]=p; else state.push(p);
+    save(); cerrar(); render(); toast('Guardado');
+  };
+}
+function borrar(id){
+  const p=state.find(x=>x.id===id);
+  if(!confirm(`¿Eliminar "${p.nombre}"? Si solo dejó de trabajar con ustedes, mejor marcalo Inactivo.`)) return;
+  state=state.filter(x=>x.id!==id); save(); cerrar(); render(); toast('Eliminado');
+}
+function cerrar(){ $('#ov').classList.remove('on'); }
+$('#ov').addEventListener('click',e=>{ if(e.target.id==='ov') cerrar(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') cerrar(); });
+
+/* ===================== IMPORTAR / EXPORTAR ===================== */
+function renderImport(m){
+  m.innerHTML=`
+    <div style="height:14px"></div>
+    <p class="hint">Cada importación <b>suma sin pisar</b>: si el proveedor ya existe (por nombre o alias) solo completa los datos vacíos y agrega marcas/negocio. Podés correrlas las veces que quieras.</p>
+    <div class="panel">
+      <h3><span style="color:var(--zepp)">●</span> Costos del bar · Ajustes → Proveedores</h3>
+      <p>Lee la lista de proveedores de zeppelin-bar.com/costos con tu sesión (nombre, WhatsApp, contacto, notas) y la cantidad de ingredientes que tiene asignados cada uno.</p>
+      <button class="btn" onclick="impCostos()">IMPORTAR DE COSTOS</button><div class="res" id="r_costos"></div>
+    </div>
+    <div class="panel">
+      <h3><span style="color:#ff5cf4">●</span> Reposición Sex Shop · Proveedores</h3>
+      <p>Lee el mapa Marca → Proveedor y los WhatsApp que cargaste en zeppelin-bar.com/gestionstocksss (desde este navegador; si no aparecen, abrí Reposición, tocá "Bajar de la nube" y volvé).</p>
+      <button class="btn" onclick="impSSS()">IMPORTAR DE REPOSICIÓN</button><div class="res" id="r_sss"></div>
+    </div>
+    <div class="panel">
+      <h3><span style="color:var(--zepp)">●</span> Caja Zeppelin · categorías de mercadería</h3>
+      <p>En la caja, los egresos de mercadería se cargan por proveedor (CCU, Zeta, Vital…). Esto los suma como proveedores del bar para que queden con sus datos. Los genéricos (Almacén, Verdulería…) quedan marcados para revisar.</p>
+      <button class="btn" onclick="impCaja()">IMPORTAR DE LA CAJA</button><div class="res" id="r_caja"></div>
+    </div>
+    <div class="panel">
+      <h3>Excel / CSV</h3>
+      <p>Cualquier planilla con columnas tipo Nombre, Negocio, Rubro, WhatsApp, Contacto, CUIT, Email, Marcas, Notas. También sirve para volver a subir un export editado.</p>
+      <input type="file" id="fx" accept=".xlsx,.xls,.csv" style="display:none" onchange="impArchivo(this)">
+      <button class="btn" onclick="$('#fx').click()">ELEGIR ARCHIVO</button><div class="res" id="r_file"></div>
+    </div>
+    <div class="panel">
+      <h3>Exportar</h3>
+      <p>Descarga la lista completa en Excel (una hoja por negocio + una con todo).</p>
+      <button class="btn" onclick="exportar()">DESCARGAR EXCEL</button>
+      ${ENDPOINT?`<button class="btn" onclick="pull()">VOLVER A BAJAR DE LA NUBE</button>`:''}
+    </div>
+    <div class="panel">
+      <h3>Para conectar las otras herramientas</h3>
+      <p>Costos y Reposición pueden leer esta lista en vez de tener la suya: <code>POST ENDPOINT {token, action:"listar", negocio:"zeppelin"|"sexshop"}</code> o <code>GET ENDPOINT?clave=…&negocio=sexshop</code>. Devuelve <code>{ok, data:[…]}</code> con nombre, whatsapp, marcas, alias, etc.</p>
+    </div>`;
+}
+
+async function impCostos(){
+  const r=$('#r_costos');
+  if(!ZPP_TOKEN){ r.textContent='Necesitás iniciar sesión (usuario con acceso a Costos).'; zppLogin(''); return; }
+  if(!zppTieneSis('costos')){ r.textContent='Tu usuario no tiene acceso a Costos.'; return; }
+  r.textContent='Leyendo Costos…';
+  try{
+    const d=await post(ENDPOINT_CSF,{action:'leer'});
+    const st=buscarState(d);
+    if(!st){ r.textContent='Costos respondió, pero no encontré la lista de proveedores.'; return; }
+    const sups=st.suppliers||[], ings=st.ingredients||[];
+    if(!sups.length){ r.textContent='Costos no tiene proveedores cargados.'; return; }
+    const res=sups.map(s=>{
+      const n=ings.filter(i=>i.proveedorId===s.id).length;
+      return upsert({nombre:s.name, negocios:['zeppelin'], whatsapp:s.phone||'', contacto:s.contact||'', notas:s.notes||'', alias:[s.name]});
+    });
+    save(); r.textContent=`Costos: ${sups.length} proveedores → ${resumen(res)}`;
+  }catch(e){ r.textContent='Error leyendo Costos: '+e.message; }
+}
+function buscarState(o,depth){ depth=depth||0; if(!o||typeof o!=='object'||depth>4) return null; if(Array.isArray(o.suppliers)) return o; for(const k in o){ const v=o[k]; if(typeof v==='string' && v.indexOf('"suppliers"')>=0){ try{ const x=buscarState(JSON.parse(v),depth+1); if(x) return x; }catch(e){} } else { const x=buscarState(v,depth+1); if(x) return x; } } return null; }
+
+function impSSS(){
+  const r=$('#r_sss');
+  let map={}, tel={}, disp={};
+  try{ map=JSON.parse(localStorage.getItem('ss_repos_prov_v1')||'{}'); tel=JSON.parse(localStorage.getItem('ss_repos_provtel_v1')||'{}'); disp=JSON.parse(localStorage.getItem('ss_repos_branddisp_v1')||'{}'); }catch(e){}
+  const provs={};
+  Object.entries(map).forEach(([marcaN,prov])=>{ prov=(prov||'').trim(); if(!prov) return; (provs[prov]=provs[prov]||[]).push(disp[marcaN]||marcaN); });
+  Object.keys(tel).forEach(p=>{ if(!provs[p]) provs[p]=[]; });
+  const nombres=Object.keys(provs);
+  if(!nombres.length){ r.textContent='No encontré datos de Reposición en este navegador. Abrí zeppelin-bar.com/gestionstocksss, bajá de la nube y volvé a intentar.'; return; }
+  const res=nombres.map(p=>{
+    const marcas=provs[p].filter(m=>norm(m)!==norm(p));
+    return upsert({nombre:p, negocios:['sexshop'], whatsapp:tel[p]||'', marcas, alias:[p], rubro:'Juguetes / Accesorios'});
+  });
+  save(); r.textContent=`Reposición: ${nombres.length} proveedores, ${Object.keys(map).length} marcas → ${resumen(res)}`+(nombres.some(n=>norm(n)==='yo')?'\nOjo: hay un proveedor "yo" (marca Dosevital). Revisalo y renombralo si corresponde.':'');
+}
+
+const CAJA_GENERICOS = {'gaseosas':'Gaseosas / Aguas','muzarella':'Lácteos / Quesos','almacen':'Almacén','carniceria':'Carnes','verduleria':'Verdulería','especias':'Alimentos'};
+const CAJA_RUBRO = {'ccu cervezas':'Cerveza','ccu fernet':'Bebidas'};
+function impCaja(){
+  const r=$('#r_caja');
+  let cfg=null; try{ cfg=JSON.parse(localStorage.getItem('zc_config_v1')||'null'); }catch(e){}
+  const lista=(cfg&&cfg.mercaderia)||[];
+  if(!lista.length){ r.textContent='No encontré la configuración de la caja en este navegador. Abrí la caja una vez desde acá y volvé.'; return; }
+  const res=lista.map(n=>{
+    const k=norm(n), gen=CAJA_GENERICOS[k];
+    return upsert({nombre:n, negocios:['zeppelin'], alias:[n], rubro: gen || CAJA_RUBRO[k] || '', notas: gen ? 'Categoría genérica de la caja: reemplazá por el proveedor real (o marcalo inactivo).' : ''});
+  });
+  save(); r.textContent=`Caja: ${lista.length} categorías de mercadería → ${resumen(res)}`;
+}
+
+function impArchivo(inp){
+  const f=inp.files[0]; if(!f) return; const r=$('#r_file'); r.textContent='Leyendo…';
+  const rd=new FileReader();
+  rd.onload=e=>{
+    try{
+      const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'});
+      let rows=[];
+      wb.SheetNames.forEach(sn=>{ if(wb.SheetNames.length>1 && norm(sn)!=='todos' && wb.SheetNames.some(x=>norm(x)==='todos')) return; rows=rows.concat(XLSX.utils.sheet_to_json(wb.Sheets[sn],{defval:''})); });
+      const pick=(row,names)=>{ for(const k of Object.keys(row)){ const nk=norm(k); if(names.some(n=>nk===n||nk.indexOf(n)>=0)) return (''+row[k]).trim(); } return ''; };
+      const res=rows.map(row=>{
+        const nombre=pick(row,['nombre','proveedor','name']); if(!nombre) return null;
+        const negTxt=norm(pick(row,['negocio','negocios']));
+        const negocios=[]; if(/zepp|bar/.test(negTxt)) negocios.push('zeppelin'); if(/sex|shop|sss/.test(negTxt)) negocios.push('sexshop');
+        const lst=s=>s.split(/[|,]/).map(x=>x.trim()).filter(Boolean);
+        return upsert({nombre, negocios, rubro:pick(row,['rubro','categoria']), whatsapp:pick(row,['whatsapp','wsp','celular']), telefono:pick(row,['telefono','tel ']),
+          contacto:pick(row,['contacto','vendedor']), email:pick(row,['email','mail']), cuit:pick(row,['cuit']), razon_social:pick(row,['razon social']),
+          direccion:pick(row,['direccion','domicilio']), condicion_pago:pick(row,['condicion','pago']), cbu_alias:pick(row,['cbu','alias cbu']),
+          pedido_minimo:pick(row,['minimo']), web:pick(row,['web','catalogo']), notas:pick(row,['notas','observ']), marcas:lst(pick(row,['marcas','marca']))});
+      });
+      save(); r.textContent=`${f.name}: ${rows.length} filas → ${resumen(res)}`;
+    }catch(err){ r.textContent='No pude leer el archivo: '+err.message; }
+    inp.value='';
+  };
+  rd.readAsArrayBuffer(f);
+}
+
+function exportar(){
+  if(!state.length){ toast('No hay nada para exportar'); return; }
+  const fila=p=>({Nombre:p.nombre, Negocio:p.negocios.map(n=>NEG[n]?NEG[n].n:n).join(', '), Rubro:p.rubro, Estado:p.activo?'Activo':'Inactivo', Contacto:p.contacto, WhatsApp:p.whatsapp, 'Teléfono':p.telefono, Email:p.email,
+    'Dirección':p.direccion, Web:p.web, 'Razón social':p.razon_social, CUIT:p.cuit, 'Condición de pago':p.condicion_pago, 'CBU/Alias':p.cbu_alias,
+    'Días de pedido':p.dias_pedido.join(', '), 'Días de entrega':p.dias_entrega.join(', '), 'Pedido mínimo':p.pedido_minimo, Marcas:p.marcas.join(', '), Alias:p.alias.join(', '), Notas:p.notas});
+  const ord=state.slice().sort((a,b)=>a.nombre.localeCompare(b.nombre,'es'));
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(ord.map(fila)),'Todos');
+  [['zeppelin','Zeppelin'],['sexshop','Sex Shop']].forEach(([k,n])=>{ const rows=ord.filter(p=>p.negocios.includes(k)).map(fila); XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows.length?rows:[{}]),n); });
+  XLSX.writeFile(wb,'Proveedores_'+new Date().toISOString().slice(0,10)+'.xlsx');
+}
+
+/* ===================== INICIO ===================== */
+render();
+if(ENDPOINT){ zppIniciar(()=>{ pull(); }); }
+else { setSync('local','modo local'); const s=zppSesGet(); if(s&&s.token&&zppTokenVigente(s.token)){ ZPP_TOKEN=s.token; ZPP_USR=s.usuario; } }
+</script>
+</body>
+</html>
