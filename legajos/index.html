@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Legajos · Zeppelin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F6F3EF; --panel:#FFFFFF; --panel2:#FBF8F4; --line:#E4DDD4; --txt:#0A0A0A; --muted:#6B645C;
+    --accent:#FF5A00; --accent-soft:rgba(255,90,0,.10); --ok:#1E9E57; --warn:#C98800; --danger:#D63A2F;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--txt);font-family:'Oswald',sans-serif;font-weight:300;line-height:1.4;min-height:100vh}
+  button{font-family:'Oswald',sans-serif;cursor:pointer}
+  input,select,textarea{font-family:'Oswald',sans-serif;font-size:15px;color:var(--txt)}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 16px 80px}
+
+  /* login */
+  #login{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:16px}
+  #login[hidden]{display:none}
+  #login form{width:100%;max-width:360px;background:var(--panel);border:1px solid var(--line);border-top:4px solid var(--accent);border-radius:12px;padding:26px 22px;display:flex;flex-direction:column;gap:10px}
+  #login h2{font-family:'Bebas Neue';font-weight:400;font-size:38px;letter-spacing:1.5px;line-height:1}
+  #login h2 span{color:var(--accent)}
+  label.l{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+  #login input{border:1px solid var(--line);border-radius:8px;padding:11px 12px;font-size:18px;background:var(--panel2)}
+  .err{min-height:20px;color:var(--danger);font-size:14px}
+  .nota{font-size:12px;color:var(--muted)}
+
+  .btn{border:1px solid var(--line);background:var(--panel);color:var(--txt);border-radius:8px;padding:9px 14px;font-size:13px;letter-spacing:.5px;text-transform:uppercase;font-weight:500}
+  .btn:hover{border-color:var(--accent)}
+  .btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+  .btn.neg{color:var(--danger);border-color:rgba(214,58,47,.4)}
+  .btn:disabled{opacity:.5;cursor:default}
+
+  header{display:flex;align-items:center;gap:12px;padding:18px 0 12px;flex-wrap:wrap}
+  header h1{font-family:'Bebas Neue';font-weight:400;font-size:34px;letter-spacing:2px;line-height:1}
+  header h1 span{color:var(--accent)}
+  .who{margin-left:auto;font-size:13px;color:var(--muted);display:flex;gap:10px;align-items:center}
+  .who b{color:var(--txt);font-weight:500}
+  .tabs{display:flex;gap:6px;border-bottom:2px solid var(--line);margin-bottom:14px}
+  .tab{padding:9px 16px;font-family:'Bebas Neue';font-size:19px;letter-spacing:1px;color:var(--muted);border:none;background:none;border-bottom:3px solid transparent;margin-bottom:-2px}
+  .tab.on{color:var(--txt);border-bottom-color:var(--accent)}
+  .tab .n{font-family:'Oswald';font-size:11px;background:var(--accent);color:#fff;border-radius:10px;padding:1px 7px;margin-left:4px;vertical-align:middle}
+
+  .bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+  .bar input,.bar select{border:1px solid var(--line);border-radius:8px;padding:9px 11px;background:var(--panel)}
+  .bar input{flex:1;min-width:180px}
+  .resumen{font-size:13px;color:var(--muted);margin-bottom:10px}
+
+  table.lista{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .lista th{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);text-align:left;padding:9px 10px;background:var(--panel2);border-bottom:1px solid var(--line);font-weight:500}
+  .lista td{padding:10px;border-bottom:1px solid var(--line);font-size:14px;vertical-align:middle}
+  .lista tr.fila{cursor:pointer}
+  .lista tr.fila:hover td{background:var(--accent-soft)}
+  .lista .nom{font-weight:500}
+  .chip{display:inline-block;font-size:11px;letter-spacing:.5px;border-radius:20px;padding:2px 9px;border:1px solid var(--line);white-space:nowrap}
+  .chip.Activo{color:var(--ok);border-color:rgba(30,158,87,.35)}
+  .chip.Baja{color:var(--danger);border-color:rgba(214,58,47,.35)}
+  .chip.sin{color:var(--warn);border-color:rgba(201,136,0,.4)}
+  .falt{color:var(--accent);font-weight:500}
+  .falt.cero{color:var(--ok);font-weight:400}
+  .vacio{color:var(--muted);text-align:center;padding:30px}
+
+  /* ficha */
+  #ficha{position:fixed;inset:0;z-index:50;background:rgba(10,10,10,.35);display:none;overflow:auto;padding:24px 12px}
+  #ficha.show{display:block}
+  .hoja{max-width:900px;margin:0 auto;background:var(--panel);border-radius:12px;border-top:5px solid var(--accent);box-shadow:0 10px 40px rgba(0,0,0,.18)}
+  .hoja-head{display:flex;gap:12px;align-items:flex-start;padding:20px 22px 12px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+  .hoja-head h2{font-family:'Bebas Neue';font-weight:400;font-size:32px;letter-spacing:1px;line-height:1}
+  .hoja-head .sub{font-size:13px;color:var(--muted);margin-top:4px}
+  .hoja-head .acc{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+  .avisos{padding:10px 22px 0}
+  .aviso{font-size:13px;background:var(--accent-soft);border:1px solid rgba(255,90,0,.3);border-radius:8px;padding:8px 11px;margin-bottom:8px}
+  .aviso.ok{background:rgba(30,158,87,.08);border-color:rgba(30,158,87,.3)}
+  .sec{padding:14px 22px 6px}
+  .sec h3{font-family:'Bebas Neue';font-weight:400;font-size:20px;letter-spacing:1px;color:var(--accent);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+  .sec h3 small{font-family:'Oswald';font-size:11px;color:var(--muted);letter-spacing:.5px;font-weight:300}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px 14px}
+  .f{display:flex;flex-direction:column;gap:3px;min-width:0}
+  .f.ancho{grid-column:1/-1}
+  .f label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted)}
+  .f input,.f select,.f textarea{border:1px solid var(--line);border-radius:7px;padding:8px 10px;background:var(--panel2);width:100%}
+  .f textarea{min-height:64px;resize:vertical}
+  .f input:focus,.f select:focus,.f textarea:focus{outline:none;border-color:var(--accent);background:#fff}
+  .f.req.falta input,.f.req.falta select{border-color:var(--accent);background:#FFF5EE}
+  .f.req label::after{content:' *';color:var(--accent)}
+  .f.cambio input,.f.cambio select,.f.cambio textarea{border-color:#1E6FD9;background:#F2F7FF}
+  .f .ro{padding:8px 10px;border:1px dashed var(--line);border-radius:7px;min-height:36px;font-size:14px;color:var(--muted)}
+  table.cargas{width:100%;border-collapse:collapse}
+  .cargas th{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);text-align:left;padding:4px 6px}
+  .cargas td{padding:3px}
+  .cargas input{border:1px solid var(--line);border-radius:6px;padding:7px 8px;width:100%;background:var(--panel2)}
+  .x{border:none;background:none;color:var(--danger);font-size:20px;line-height:1;padding:0 6px}
+  .pie{display:flex;gap:8px;padding:16px 22px 20px;border-top:1px solid var(--line);margin-top:10px;flex-wrap:wrap;position:sticky;bottom:0;background:var(--panel);border-radius:0 0 12px 12px}
+  .pie .grow{flex:1}
+  .firma{display:none}
+
+  /* revisar */
+  .rv{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:8px;display:grid;grid-template-columns:1fr auto;gap:6px 12px}
+  .rv .t{font-weight:500}
+  .rv .p{font-size:13px;color:var(--muted)}
+  .rv .d{font-size:13px;grid-column:1/-1}
+  .rv .acc{display:flex;gap:6px;align-items:center;grid-column:1/-1;flex-wrap:wrap}
+  .rv .acc input{flex:1;min-width:200px;border:1px solid var(--line);border-radius:7px;padding:7px 9px;background:var(--panel2)}
+  .rv .acc select{border:1px solid var(--line);border-radius:7px;padding:7px 9px;background:var(--panel2)}
+  .rv.Resuelto,.rv.Descartado{opacity:.6}
+
+  .modal{position:fixed;inset:0;z-index:60;background:rgba(10,10,10,.35);display:none;align-items:center;justify-content:center;padding:16px}
+  .modal.show{display:flex}
+  .modal .card{background:var(--panel);border-radius:12px;border-top:4px solid var(--accent);padding:20px;width:100%;max-width:520px;display:flex;flex-direction:column;gap:10px}
+  .modal h3{font-family:'Bebas Neue';font-weight:400;font-size:26px;letter-spacing:1px}
+  .modal .grid{grid-template-columns:1fr 1fr}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(80px);background:var(--txt);color:#fff;padding:10px 16px;border-radius:8px;font-size:14px;z-index:200;transition:transform .25s;max-width:90vw}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+
+  @media (max-width:720px){
+    .grid{grid-template-columns:1fr 1fr}
+    .lista .h-sm{display:none}
+    #ficha{padding:0}
+    .hoja{border-radius:0;min-height:100vh}
+  }
+  @media (max-width:440px){ .grid,.modal .grid{grid-template-columns:1fr} }
+
+  /* impresión: solo la ficha, fondo claro */
+  @media print{
+    @page{size:A4;margin:14mm}
+    body{background:#fff}
+    .wrap,#login,.modal,.toast,.pie,.hoja-head .acc,.avisos,.no-print{display:none!important}
+    #ficha{position:static;display:block!important;background:#fff;padding:0;overflow:visible}
+    .hoja{box-shadow:none;border-radius:0;max-width:none;border-top:6px solid var(--accent)}
+    .f input,.f select,.f textarea,.f .ro,.cargas input{border:none;border-bottom:1px solid #ccc;border-radius:0;background:#fff!important;padding:3px 0;color:#000}
+    .f.req label::after{content:''}
+    ::placeholder{color:transparent!important}
+    .f.req.falta input,.f.req.falta select{border-bottom-color:#ccc!important}
+    .chip{border:none;padding:0}
+    .f select{appearance:none}
+    .sec{padding:8px 0 2px;break-inside:avoid}
+    .hoja-head{padding:10px 0}
+    .grid{grid-template-columns:repeat(3,1fr)!important}
+    .x{display:none}
+    .firma{display:flex;justify-content:space-between;gap:40px;margin-top:40px;font-size:12px}
+    .firma div{flex:1;border-top:1px solid #000;padding-top:4px;text-align:center}
+  }
+</style>
+</head>
+<body>
+
+<div id="login">
+  <form id="loginForm" autocomplete="on">
+    <h2>Legajos <span>Zeppelin</span></h2>
+    <label class="l" for="liDni">DNI</label>
+    <input id="liDni" inputmode="numeric" autocomplete="username" placeholder="Sin puntos">
+    <label class="l" for="liPass">Clave</label>
+    <input id="liPass" type="password" autocomplete="current-password">
+    <div class="err" id="liErr"></div>
+    <button class="btn pri" type="submit" id="liBtn">Ingresar</button>
+    <div class="nota">Acceso con permiso “Legajos” en zeppelin-bar.com/accesos.</div>
+  </form>
+</div>
+
+<div class="wrap" id="app" hidden>
+  <header>
+    <h1>LEGAJOS · <span>ZEPPELIN</span></h1>
+    <div class="who"><span id="quien"></span><button class="btn" id="btnSalir">Salir</button></div>
+  </header>
+  <div class="tabs">
+    <button class="tab on" data-tab="personal">Personal</button>
+    <button class="tab" data-tab="revisar">Revisar <span class="n" id="nRev" hidden></span></button>
+  </div>
+
+  <section id="vPersonal">
+    <div class="bar">
+      <input id="q" placeholder="Buscar por nombre, DNI, legajo o puesto">
+      <select id="fEstado">
+        <option value="Activo">Activos</option><option value="Baja">Bajas</option>
+        <option value="Sin legajo">Sin legajo</option><option value="">Todos</option>
+      </select>
+      <button class="btn pri" id="btnAlta">+ Alta</button>
+      <button class="btn" id="btnRecargar" title="Volver a leer la planilla maestra">↻</button>
+    </div>
+    <div class="resumen" id="resumen"></div>
+    <table class="lista">
+      <thead><tr><th>Leg.</th><th>Apellido y nombres</th><th>Puesto</th><th class="h-sm">DNI</th><th class="h-sm">Ingreso</th><th>Estado</th><th>Faltan</th></tr></thead>
+      <tbody id="tbody"><tr><td colspan="7" class="vacio">Cargando…</td></tr></tbody>
+    </table>
+  </section>
+
+  <section id="vRevisar" hidden>
+    <div class="bar">
+      <select id="fRev"><option value="Pendiente">Pendientes</option><option value="">Todos</option></select>
+    </div>
+    <div id="rvLista"></div>
+  </section>
+</div>
+
+<div id="ficha"><div class="hoja" id="hoja"></div></div>
+
+<div class="modal" id="mAlta"><div class="card">
+  <h3>Alta de personal</h3>
+  <div class="grid">
+    <div class="f req"><label>DNI</label><input id="aDni" inputmode="numeric" placeholder="Sin puntos"></div>
+    <div class="f req"><label>Puesto</label><select id="aPuesto"></select></div>
+    <div class="f req"><label>Apellido</label><input id="aApellido"></div>
+    <div class="f req"><label>Nombres</label><input id="aNombres"></div>
+    <div class="f"><label>Fecha de ingreso</label><input id="aIngreso" placeholder="dd/mm/aaaa"></div>
+    <div class="f"><label>Teléfono</label><input id="aTel" inputmode="tel"></div>
+  </div>
+  <div class="nota">Al darlo de alta se crea su usuario en Accesos (sin clave) y queda pre-aprobado en Asistencia. En la Caja aparece con jornal $0 hasta que lo cargues en Equipo.</div>
+  <div class="err" id="aErr"></div>
+  <div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn" data-cerrar="mAlta">Cancelar</button><button class="btn pri" id="aOk">Dar de alta</button></div>
+</div></div>
+
+<div class="modal" id="mBaja"><div class="card">
+  <h3 id="bTit">Dar de baja</h3>
+  <div class="grid">
+    <div class="f"><label>Fecha de egreso</label><input id="bFecha" placeholder="dd/mm/aaaa"></div>
+    <div class="f"><label>Motivo</label><input id="bMotivo" placeholder="Opcional"></div>
+  </div>
+  <div class="nota">Se desactiva su usuario en Accesos (se cortan sus sesiones), pasa a BAJA en Asistencia y queda marcado como baja en la Caja. No se borra nada.</div>
+  <div class="err" id="bErr"></div>
+  <div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn" data-cerrar="mBaja">Cancelar</button><button class="btn neg" id="bOk">Confirmar baja</button></div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const ACCESOS_URL = "https://script.google.com/macros/s/AKfycbyRC8Y2pb1eU7g8nvEmMrTIVS5V23YVa3Hcj6z77jS3UkWVWxiRInAhFJuaD3tnDGv8/exec";
+const LS_SES = "zpp_sesion";
+let SES = null, D = null, ACTUAL = null, ORIG = {}, CARGAS_EDIT = [];
+
+/* ---------- campos ---------- */
+const ETQ = {
+  legajo:'N° de legajo', apellido:'Apellido', nombres:'Nombres', puesto:'Puesto', empleador:'Empleador', fecha_ingreso:'Fecha de ingreso',
+  categoria_cct:'Categoría CCT', jornada:'Jornada', modalidad:'Modalidad', dni:'DNI', dni_formato:'DNI (con puntos)', cuil:'CUIL',
+  nacimiento:'Nacimiento', estado_civil:'Estado civil', nacionalidad:'Nacionalidad', telefono:'Teléfono', whatsapp:'WhatsApp', email:'Email',
+  calle:'Domicilio', barrio:'Barrio', localidad:'Localidad', provincia_cp:'Provincia / CP', emergencia_nombre:'Contacto de emergencia',
+  emergencia_telefono:'Teléfono de emergencia', emergencia_vinculo:'Vínculo', alta_arca:'Alta ARCA', art:'ART', obra_social:'Obra social',
+  banco:'Banco', nro_cuenta:'N° de cuenta', cbu:'CBU', observaciones:'Observaciones', jornal:'Jornal (Caja)', valor_hora:'Valor hora',
+  dias:'Días (Asistencia)', horarios:'Horarios (Asistencia)', rol_accesos:'Rol en Accesos', rol_asistencia:'Rol en Asistencia', rol_caja:'Puesto en Caja',
+  id_caja:'ID en Caja', asistencia_estado:'Estado en Asistencia', celular_vinculado:'Celular vinculado', fuentes:'Fuentes', actualizado:'Actualizado',
+  cargas_familia:'Cargas de familia', fecha_egreso:'Fecha de egreso', estado:'Estado'
+};
+const GRUPOS = [
+  ['Datos laborales', ['legajo','puesto','empleador','fecha_ingreso','categoria_cct','jornada','modalidad']],
+  ['Datos personales', ['apellido','nombres','dni','cuil','nacimiento','estado_civil','nacionalidad']],
+  ['Contacto y domicilio', ['telefono','whatsapp','email','calle','barrio','localidad','provincia_cp']],
+  ['Emergencia', ['emergencia_nombre','emergencia_telefono','emergencia_vinculo']],
+  ['Registración y cobro', ['alta_arca','art','obra_social','banco','nro_cuenta','cbu']],
+];
+const OCULTOS = ['dni_formato','estado'];
+const LECTURA = ['jornal','valor_hora','dias','horarios','rol_accesos','rol_asistencia','rol_caja','id_caja','asistencia_estado','celular_vinculado','fecha_egreso','fuentes','actualizado'];
+const SELECTS = { estado_civil:['','Soltero/a','Casado/a','Unión convivencial','Divorciado/a','Viudo/a'], empleador:null, modalidad:['','Presencial','Eventual','Temporada','Part time','Full time'] };
+
+/* ---------- utilidades ---------- */
+const $ = id => document.getElementById(id);
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+let tT; function toast(m){ const t=$('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(tT); tT=setTimeout(()=>t.classList.remove('show'),2800); }
+function sesGet(){ try{ return JSON.parse(localStorage.getItem(LS_SES)||'null'); }catch(e){ return null; } }
+function sesSet(v){ try{ v ? localStorage.setItem(LS_SES, JSON.stringify(v)) : localStorage.removeItem(LS_SES); }catch(e){} }
+function tokenVigente(t){ try{ const p=JSON.parse(atob(String(t).split('.')[0].replace(/-/g,'+').replace(/_/g,'/'))); return p && p.e > Date.now(); }catch(e){ return false; } }
+function tieneLegajos(u){ const a=(u&&u.accesos)||[]; return a.indexOf('legajos')>=0 || a.indexOf('accesos')>=0; }
+function hoyDMA(){ const d=new Date(); return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear(); }
+function nombreCompleto(p){ return [p.apellido, p.nombres].filter(Boolean).join(', ') || '(sin nombre)'; }
+function faltantes(p){ if(p.estado!=='Activo' || p.puesto==='Dueño') return []; return (D.requeridos||[]).filter(k => !String(p[k]||'').trim()); }
+function cargasDe(dni){ return (D.cargas||[]).filter(c => c.dni_empleado===dni); }
+
+async function api(action, body){
+  const r = await fetch(ACCESOS_URL, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(Object.assign({action, token: SES && SES.token}, body||{}))});
+  const j = await r.json();
+  if(!j.ok && j.error==='sesion'){ salir('Tu sesión venció o no tenés permiso de Legajos.'); throw new Error('sesion'); }
+  return j;
+}
+
+/* ---------- sesión ---------- */
+function mostrarLogin(msg){ $('login').hidden=false; $('app').hidden=true; $('liErr').textContent=msg||''; setTimeout(()=>$('liDni').focus(),50); }
+function salir(msg){ SES=null; sesSet(null); D=null; cerrarFicha(); $('tbody').innerHTML=''; mostrarLogin(msg||''); }
+$('loginForm').addEventListener('submit', async ev => {
+  ev.preventDefault();
+  const dni=$('liDni').value.replace(/\D/g,''), pass=$('liPass').value, err=$('liErr'), btn=$('liBtn');
+  if(!dni||!pass){ err.textContent='Ingresá DNI y clave'; return; }
+  btn.disabled=true; err.textContent='Verificando…';
+  try{
+    const r=await fetch(ACCESOS_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'login',dni,pass})});
+    const j=await r.json();
+    if(!j||!j.ok){ err.textContent=(j&&j.error)||'No se pudo ingresar'; return; }
+    if(!tieneLegajos(j.usuario)){ err.textContent='No tenés acceso a Legajos'; return; }
+    SES={token:j.token,usuario:j.usuario}; sesSet(SES); $('liPass').value=''; err.textContent='';
+    iniciar();
+  }catch(e){ err.textContent='No se pudo conectar'; }
+  finally{ btn.disabled=false; }
+});
+$('btnSalir').onclick = ()=>salir('');
+
+async function iniciar(){
+  const u=SES.usuario;
+  $('quien').innerHTML='<b>'+esc(((u.nombre||'')+' '+(u.apellido||'')).trim()||u.dni)+'</b>';
+  $('login').hidden=true; $('app').hidden=false;
+  await cargar();
+}
+async function cargar(){
+  $('tbody').innerHTML='<tr><td colspan="7" class="vacio">Cargando…</td></tr>';
+  try{
+    const j = await api('leg_listar');
+    if(!j.ok){ $('tbody').innerHTML='<tr><td colspan="7" class="vacio">'+esc(j.error||'Error')+'</td></tr>'; return; }
+    D = j;
+    $('aPuesto').innerHTML = '<option value="">Elegí…</option>' + D.puestos.map(p=>`<option>${esc(p)}</option>`).join('');
+    render(); renderRevisar();
+  }catch(e){ if(e.message!=='sesion') $('tbody').innerHTML='<tr><td colspan="7" class="vacio">No se pudo conectar. Tocá ↻ para reintentar.</td></tr>'; }
+}
+$('btnRecargar').onclick = cargar;
+
+/* ---------- lista ---------- */
+function render(){
+  if(!D) return;
+  const q=$('q').value.trim().toLowerCase(), est=$('fEstado').value;
+  const todos = D.personal.filter(p => p.dni || p.apellido);
+  const lista = todos.filter(p => (!est || p.estado===est) &&
+    (!q || [p.apellido,p.nombres,p.dni,p.legajo,p.puesto].join(' ').toLowerCase().includes(q)))
+    .sort((a,b)=>nombreCompleto(a).localeCompare(nombreCompleto(b),'es',{sensitivity:'base'}));
+  const act = todos.filter(p=>p.estado==='Activo');
+  const incompletos = act.filter(p=>faltantes(p).length).length;
+  $('resumen').textContent = act.length+' activos · '+todos.filter(p=>p.estado==='Baja').length+' bajas · '+todos.filter(p=>p.estado==='Sin legajo').length+' sin legajo · '+incompletos+' legajos activos incompletos';
+  $('tbody').innerHTML = lista.length ? lista.map(p=>{
+    const f=faltantes(p);
+    const chip = p.estado==='Activo'?'Activo':p.estado==='Baja'?'Baja':'sin';
+    return `<tr class="fila" data-dni="${esc(p.dni)}" data-ape="${esc(p.apellido)}">
+      <td>${esc(p.legajo||'—')}</td><td class="nom">${esc(nombreCompleto(p))}</td><td>${esc(p.puesto||'—')}</td>
+      <td class="h-sm">${esc(p.dni_formato||p.dni||'—')}</td><td class="h-sm">${esc(p.fecha_ingreso||'—')}</td>
+      <td><span class="chip ${chip}">${esc(p.estado||'—')}</span></td>
+      <td>${p.estado==='Activo'?`<span class="falt ${f.length?'':'cero'}">${f.length?f.length+' datos':'Completo'}</span>`:''}</td></tr>`;
+  }).join('') : '<tr><td colspan="7" class="vacio">Sin resultados</td></tr>';
+  document.querySelectorAll('tr.fila').forEach(tr=>tr.onclick=()=>abrirFicha(tr.dataset.dni, tr.dataset.ape));
+}
+$('q').oninput = render; $('fEstado').onchange = render;
+
+/* ---------- ficha ---------- */
+function campo(k, p){
+  const v = p[k]==null?'':p[k];
+  const req = (D.requeridos||[]).includes(k), falta = req && p.estado==='Activo' && !String(v).trim();
+  const ro = (D.no_editables||[]).includes(k) || !p.dni;
+  const cls = 'f'+(req?' req':'')+(falta?' falta':'')+(k==='observaciones'?' ancho':'');
+  const lab = `<label for="c_${k}">${esc(ETQ[k]||k)}</label>`;
+  if(ro) return `<div class="${cls}">${lab}<div class="ro">${esc(k==='dni'?(p.dni_formato||v):v)||'—'}</div></div>`;
+  if(k==='puesto') return `<div class="${cls}">${lab}<select id="c_${k}" data-k="${k}">${['',...D.puestos].map(o=>`<option ${o===v?'selected':''}>${esc(o)}</option>`).join('')}${v&&!D.puestos.includes(v)?`<option selected>${esc(v)}</option>`:''}</select></div>`;
+  if(k==='empleador'){ const ops=[...new Set(['','Zeppbar SRL',...D.personal.map(x=>x.empleador).filter(Boolean)])]; return `<div class="${cls}">${lab}<select id="c_${k}" data-k="${k}">${ops.map(o=>`<option ${o===v?'selected':''}>${esc(o)}</option>`).join('')}${v&&!ops.includes(v)?`<option selected>${esc(v)}</option>`:''}</select></div>`; }
+  if(SELECTS[k]){ const ops=SELECTS[k]; return `<div class="${cls}">${lab}<select id="c_${k}" data-k="${k}">${ops.map(o=>`<option ${o===v?'selected':''}>${esc(o)}</option>`).join('')}${v&&!ops.includes(v)?`<option selected>${esc(v)}</option>`:''}</select></div>`; }
+  if(k==='observaciones') return `<div class="${cls}">${lab}<textarea id="c_${k}" data-k="${k}">${esc(v)}</textarea></div>`;
+  const ph = /fecha|nacimiento|alta_arca/.test(k)?'dd/mm/aaaa':k==='cuil'?'20-12345678-9':k==='cbu'?'22 dígitos':'';
+  const im = /telefono|whatsapp|cbu|nro_cuenta|legajo/.test(k)?' inputmode="numeric"':'';
+  return `<div class="${cls}">${lab}<input id="c_${k}" data-k="${k}" value="${esc(v)}" placeholder="${ph}"${im}></div>`;
+}
+function abrirFicha(dni, ape){
+  const p = D.personal.find(x => dni ? x.dni===dni : x.apellido===ape); if(!p) return;
+  ACTUAL = p; ORIG = Object.assign({}, p);
+  CARGAS_EDIT = cargasDe(p.dni).map(c=>Object.assign({}, c));
+  const usados = new Set(GRUPOS.flatMap(g=>g[1]).concat(OCULTOS, LECTURA, ['observaciones','cargas_familia']));
+  const otros = (D.campos||[]).filter(k => k && !usados.has(k));
+  const f = faltantes(p);
+  const rv = (D.revisar||[]).filter(r => r.dni===p.dni && r.estado!=='Resuelto' && r.estado!=='Descartado');
+  const chip = p.estado==='Activo'?'Activo':p.estado==='Baja'?'Baja':'sin';
+  let h = `<div class="hoja-head">
+      <div><h2>${esc(nombreCompleto(p))}</h2>
+      <div class="sub">Legajo ${esc(p.legajo||'—')} · ${esc(p.puesto||'sin puesto')} · DNI ${esc(p.dni_formato||p.dni||'—')} · <span class="chip ${chip}">${esc(p.estado)}</span></div></div>
+      <div class="acc"><button class="btn" id="fImprimir">Imprimir</button><button class="btn" id="fCerrar">✕</button></div>
+    </div><div class="avisos">`;
+  if(!p.dni) h += `<div class="aviso">Esta persona no tiene DNI cargado: no se puede editar ni se sincroniza con ningún sistema. Cargale el DNI en la planilla maestra o dala de alta con su DNI.</div>`;
+  if(f.length) h += `<div class="aviso">Faltan ${f.length} datos: ${f.map(k=>esc(ETQ[k]||k)).join(', ')}.</div>`;
+  rv.forEach(r => h += `<div class="aviso">Revisar · <b>${esc(r.tema)}</b>: ${esc(r.detalle)}${r.que_hacer?' — '+esc(r.que_hacer):''}</div>`);
+  h += `</div>`;
+  GRUPOS.forEach(([tit, ks]) => { h += `<div class="sec"><h3>${tit}</h3><div class="grid">${ks.filter(k=>(D.campos||[]).includes(k)||k==='dni').map(k=>campo(k,p)).join('')}</div></div>`; });
+  if(otros.length) h += `<div class="sec"><h3>Otros datos</h3><div class="grid">${otros.map(k=>campo(k,p)).join('')}</div></div>`;
+  h += `<div class="sec"><h3>Cargas de familia <small>hijos y otras cargas declaradas</small></h3><div id="cargasBox"></div></div>`;
+  h += `<div class="sec"><h3>Observaciones</h3><div class="grid">${campo('observaciones',p)}</div></div>`;
+  h += `<div class="sec no-print"><h3>Desde otros sistemas <small>solo lectura · se cambian en Caja › Equipo, Asistencia o Accesos</small></h3><div class="grid">${LECTURA.filter(k=>(D.campos||[]).includes(k)).map(k=>`<div class="f"><label>${esc(ETQ[k]||k)}</label><div class="ro">${esc(k==='jornal'&&p[k]?'$'+Number(p[k]).toLocaleString('es-AR'):p[k])||'—'}</div></div>`).join('')}</div></div>`;
+  h += `<div class="sec firma"><div>Firma del empleado</div><div>Firma del empleador</div><div>Fecha</div></div>`;
+  h += `<div class="pie">
+      ${p.dni?(p.estado==='Baja'?`<button class="btn" id="fReactivar">Reactivar</button>`:p.estado==='Activo'?`<button class="btn neg" id="fBaja">Dar de baja</button>`:''):''}
+      <span class="grow"></span><span class="nota" id="fEstadoCambios"></span>
+      <button class="btn" id="fCerrar2">Cerrar</button>
+      ${p.dni?`<button class="btn pri" id="fGuardar" disabled>Guardar cambios</button>`:''}
+    </div>`;
+  $('hoja').innerHTML = h;
+  renderCargas();
+  $('ficha').classList.add('show'); $('ficha').scrollTop = 0; document.body.style.overflow='hidden';
+  $('fCerrar').onclick = cerrarFicha; $('fCerrar2').onclick = cerrarFicha;
+  $('fImprimir').onclick = ()=>window.print();
+  $('hoja').querySelectorAll('[data-k]').forEach(el => el.addEventListener('input', marcarCambios));
+  if($('fGuardar')) $('fGuardar').onclick = guardar;
+  if($('fBaja')) $('fBaja').onclick = ()=>{ $('bFecha').value=hoyDMA(); $('bMotivo').value=''; $('bErr').textContent=''; $('bTit').textContent='Dar de baja a '+nombreCompleto(p); $('mBaja').classList.add('show'); };
+  if($('fReactivar')) $('fReactivar').onclick = reactivar;
+}
+function cambiosPendientes(){
+  const c = {};
+  $('hoja').querySelectorAll('[data-k]').forEach(el => { const k=el.dataset.k; const v=el.value.trim(); if(v !== String(ORIG[k]==null?'':ORIG[k]).trim()) c[k]=v; });
+  return c;
+}
+function cargasCambiaron(){
+  const norm = l => JSON.stringify(l.map(c=>[c.vinculo||'',c.apellido_nombre||'',String(c.dni||'').replace(/\D/g,''),c.nacimiento||'']).filter(x=>x[1]||x[2]));
+  return norm(CARGAS_EDIT) !== norm(cargasDe(ACTUAL.dni));
+}
+function marcarCambios(){
+  const c = cambiosPendientes(); const n = Object.keys(c).length + (cargasCambiaron()?1:0);
+  $('hoja').querySelectorAll('[data-k]').forEach(el => el.closest('.f').classList.toggle('cambio', el.dataset.k in c));
+  if($('fGuardar')) $('fGuardar').disabled = !n;
+  $('fEstadoCambios').textContent = n ? n+' cambio'+(n>1?'s':'')+' sin guardar' : '';
+}
+function renderCargas(){
+  const box=$('cargasBox'); if(!box) return; const ed=!!ACTUAL.dni;
+  box.innerHTML = `<table class="cargas"><thead><tr><th>Vínculo</th><th>Apellido y nombre</th><th>DNI</th><th>Nacimiento</th><th></th></tr></thead><tbody>${
+    CARGAS_EDIT.map((c,i)=>`<tr>${['vinculo','apellido_nombre','dni','nacimiento'].map(k=>`<td><input data-ci="${i}" data-ck="${k}" value="${esc(c[k]||'')}" ${ed?'':'disabled'} placeholder="${k==='nacimiento'?'dd/mm/aaaa':k==='vinculo'?'Hijo/a, cónyuge…':''}"></td>`).join('')}<td>${ed?`<button class="x" data-cx="${i}" title="Quitar">×</button>`:''}</td></tr>`).join('')
+    || '<tr><td colspan="5" class="nota" style="padding:6px">Sin cargas declaradas</td></tr>'}</tbody></table>
+    ${ed?'<button class="btn no-print" id="cAdd" style="margin-top:6px">+ Agregar carga</button>':''}`;
+  box.querySelectorAll('[data-ci]').forEach(el=>el.addEventListener('input',()=>{ CARGAS_EDIT[+el.dataset.ci][el.dataset.ck]=el.value; marcarCambios(); }));
+  box.querySelectorAll('[data-cx]').forEach(el=>el.onclick=()=>{ CARGAS_EDIT.splice(+el.dataset.cx,1); renderCargas(); marcarCambios(); });
+  if($('cAdd')) $('cAdd').onclick=()=>{ CARGAS_EDIT.push({vinculo:'',apellido_nombre:'',dni:'',nacimiento:''}); renderCargas(); marcarCambios(); };
+}
+function cerrarFicha(){
+  if(ACTUAL && $('fGuardar') && !$('fGuardar').disabled && !confirm('Hay cambios sin guardar. ¿Cerrar igual?')) return;
+  $('ficha').classList.remove('show'); document.body.style.overflow=''; ACTUAL=null;
+}
+$('ficha').addEventListener('click', e=>{ if(e.target.id==='ficha') cerrarFicha(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape' && $('ficha').classList.contains('show') && !document.querySelector('.modal.show')) cerrarFicha(); });
+
+async function guardar(){
+  const btn=$('fGuardar'); const c=cambiosPendientes(); const cc=cargasCambiaron(); const dni=ACTUAL.dni;
+  if(!Object.keys(c).length && !cc) return;
+  btn.disabled=true; btn.textContent='Guardando…';
+  try{
+    if(Object.keys(c).length){
+      const j = await api('leg_guardar', {dni, cambios:c});
+      if(!j.ok){ toast(j.error||'No se pudo guardar'); btn.disabled=false; btn.textContent='Guardar cambios'; return; }
+      const i = D.personal.findIndex(x=>x.dni===dni); if(i>=0 && j.persona) D.personal[i]=j.persona;
+    }
+    if(cc){
+      const j2 = await api('leg_cargas', {dni, cargas: CARGAS_EDIT});
+      if(!j2.ok){ toast(j2.error||'No se pudieron guardar las cargas'); btn.disabled=false; btn.textContent='Guardar cambios'; return; }
+      D.cargas = D.cargas.filter(x=>x.dni_empleado!==dni).concat(j2.cargas||[]);
+      const i = D.personal.findIndex(x=>x.dni===dni); if(i>=0) D.personal[i].cargas_familia=String((j2.cargas||[]).length);
+    }
+    toast('Legajo guardado'+(['apellido','nombres','puesto','telefono'].some(k=>k in c)?' · actualizado en Accesos y Asistencia':''));
+    ACTUAL=null; abrirFicha(dni); render();
+  }catch(e){ if(e.message!=='sesion'){ toast('No se pudo conectar'); btn.disabled=false; btn.textContent='Guardar cambios'; } }
+}
+$('bOk').onclick = async ()=>{
+  const btn=$('bOk'); btn.disabled=true; $('bErr').textContent='';
+  try{
+    const dni=ACTUAL.dni;
+    const j = await api('leg_baja', {dni, fecha:$('bFecha').value.trim(), motivo:$('bMotivo').value.trim()});
+    if(!j.ok){ $('bErr').textContent=j.error||'No se pudo'; return; }
+    const i=D.personal.findIndex(x=>x.dni===dni); if(i>=0) D.personal[i]=j.persona;
+    $('mBaja').classList.remove('show'); toast('Baja registrada en todos los sistemas'); ACTUAL=null; abrirFicha(dni); render();
+  }catch(e){ if(e.message!=='sesion') $('bErr').textContent='No se pudo conectar'; }
+  finally{ btn.disabled=false; }
+};
+async function reactivar(){
+  if(!confirm('¿Reactivar a '+nombreCompleto(ACTUAL)+'? Vuelve a estar activo en Accesos, Asistencia y Caja.')) return;
+  try{
+    const dni=ACTUAL.dni; const j=await api('leg_reactivar',{dni});
+    if(!j.ok){ toast(j.error||'No se pudo'); return; }
+    const i=D.personal.findIndex(x=>x.dni===dni); if(i>=0) D.personal[i]=j.persona;
+    toast('Reactivado'); ACTUAL=null; abrirFicha(dni); render();
+  }catch(e){ if(e.message!=='sesion') toast('No se pudo conectar'); }
+}
+
+/* ---------- alta ---------- */
+$('btnAlta').onclick = ()=>{ ['aDni','aApellido','aNombres','aIngreso','aTel'].forEach(id=>$(id).value=''); $('aPuesto').value=''; $('aErr').textContent=''; $('mAlta').classList.add('show'); setTimeout(()=>$('aDni').focus(),50); };
+$('aOk').onclick = async ()=>{
+  const p = { dni:$('aDni').value.replace(/\D/g,''), apellido:$('aApellido').value.trim(), nombres:$('aNombres').value.trim(), puesto:$('aPuesto').value, fecha_ingreso:$('aIngreso').value.trim(), telefono:$('aTel').value.trim(), empleador:'Zeppbar SRL' };
+  if(p.dni.length<7){ $('aErr').textContent='DNI inválido'; return; }
+  if(!p.apellido||!p.nombres){ $('aErr').textContent='Completá apellido y nombres'; return; }
+  if(!p.puesto){ $('aErr').textContent='Elegí el puesto'; return; }
+  const btn=$('aOk'); btn.disabled=true; $('aErr').textContent='Dando de alta…';
+  try{
+    const j = await api('leg_alta', {persona:p});
+    if(!j.ok){ $('aErr').textContent=j.error||'No se pudo'; return; }
+    D.personal.push(j.persona); $('mAlta').classList.remove('show'); $('fEstado').value='Activo'; render();
+    toast('Alta registrada · usuario creado en Accesos (falta asignarle clave)'); abrirFicha(j.persona.dni);
+  }catch(e){ if(e.message!=='sesion') $('aErr').textContent='No se pudo conectar'; }
+  finally{ btn.disabled=false; }
+};
+document.querySelectorAll('[data-cerrar]').forEach(b=>b.onclick=()=>$(b.dataset.cerrar).classList.remove('show'));
+
+/* ---------- revisar ---------- */
+function renderRevisar(){
+  if(!D) return;
+  const pend = D.revisar.filter(r=>!r.estado||r.estado==='Pendiente');
+  $('nRev').hidden = !pend.length; $('nRev').textContent = pend.length;
+  const f=$('fRev').value; const lista = f ? pend : D.revisar;
+  $('rvLista').innerHTML = lista.length ? lista.map(r=>`<div class="rv ${esc(r.estado||'Pendiente')}">
+      <div><div class="t">${esc(r.tema)}</div><div class="p">${esc(r.persona||'—')}${r.dni?' · DNI '+esc(r.dni):''}</div></div>
+      <div>${r.dni&&D.personal.some(p=>p.dni===r.dni)?`<button class="btn" data-ver="${esc(r.dni)}">Ver legajo</button>`:''}</div>
+      <div class="d">${esc(r.detalle)}</div>
+      <div class="acc"><input data-qh="${r._fila}" value="${esc(r.que_hacer)}" placeholder="Qué hacer / nota">
+        <select data-es="${r._fila}">${['Pendiente','Resuelto','Descartado'].map(o=>`<option ${o===(r.estado||'Pendiente')?'selected':''}>${o}</option>`).join('')}</select>
+        <button class="btn pri" data-gr="${r._fila}">Guardar</button></div>
+    </div>`).join('') : '<div class="vacio">No hay pendientes 🎉</div>';
+  $('rvLista').querySelectorAll('[data-ver]').forEach(b=>b.onclick=()=>abrirFicha(b.dataset.ver));
+  $('rvLista').querySelectorAll('[data-gr]').forEach(b=>b.onclick=async ()=>{
+    const fila=+b.dataset.gr; const r=D.revisar.find(x=>x._fila===fila);
+    const estado=document.querySelector(`[data-es="${fila}"]`).value, que_hacer=document.querySelector(`[data-qh="${fila}"]`).value.trim();
+    b.disabled=true;
+    try{
+      const j=await api('leg_revisar',{fila, tema:r.tema, estado, que_hacer});
+      if(!j.ok){ toast(j.error||'No se pudo'); return; }
+      r.estado=estado; r.que_hacer=que_hacer; toast('Guardado'); renderRevisar();
+    }catch(e){ if(e.message!=='sesion') toast('No se pudo conectar'); }
+    finally{ b.disabled=false; }
+  });
+}
+$('fRev').onchange = renderRevisar;
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===t));
+  $('vPersonal').hidden = t.dataset.tab!=='personal'; $('vRevisar').hidden = t.dataset.tab!=='revisar';
+});
+
+/* ---------- arranque ---------- */
+(function(){
+  const s=sesGet();
+  if(s&&s.token&&tieneLegajos(s.usuario)&&tokenVigente(s.token)){ SES=s; iniciar(); }
+  else mostrarLogin('');
+})();
+</script>
+</body>
+</html>
