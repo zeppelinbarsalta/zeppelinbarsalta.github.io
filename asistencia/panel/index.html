@@ -809,7 +809,7 @@ function modalPersona(p, aprobar) {
     { k: 'rol', label: 'Rol', type: 'select', options: [['', 'Sin rol']].concat(rl.map(r => [r, r]), [['__nuevo', '+ Agregar rol nuevo…']]), value: p.rol },
     { k: 'horarios', label: 'Días y horario de cada día', type: 'horarios', value: hor }
   ];
-  if (modo !== 'HORA') campos.push({ k: 'valor_jornada', label: 'Valor jornada ($)', type: 'number', value: p.valor_jornada });
+  if (modo !== 'HORA') campos.push({ k: 'valor_jornada', label: 'Valor jornada ($) — lo manda la Caja (Equipo); se cambia ahí', type: 'number', value: p.valor_jornada, ro: true });
   if (modo !== 'JORNADA') campos.push({ k: 'valor_hora', label: modo === 'AMBAS' ? 'Valor hora ($) — si tiene valor jornada, se usa para las horas extra' : 'Valor hora ($)', type: 'number', value: p.valor_hora });
   modal(aprobar ? 'Aprobar a ' + nom(p) : 'Editar ' + nom(p), campos, async v => {
     if (v.rol === '__nuevo') v.rol = '';
@@ -1047,7 +1047,7 @@ function modal(titulo, campos, onOk, okTxt) {
       const sel = String(c.value || '').split(',');
       h += '<div class="dias" id="' + id + '">' + DIAS.map(([v, l]) => '<label><input type="checkbox" value="' + v + '"' + (sel.includes(v) ? ' checked' : '') + '>' + l + '</label>').join('') + '</div>';
     } else {
-      h += '<input id="' + id + '" type="' + c.type + '" value="' + esc(c.value || '') + '"' + (c.ph ? ' placeholder="' + esc(c.ph) + '"' : '') + (c.type === 'number' ? ' step="any" min="0"' : '') + '>';
+      h += '<input id="' + id + '" type="' + c.type + '" value="' + esc(c.value || '') + '"' + (c.ph ? ' placeholder="' + esc(c.ph) + '"' : '') + (c.type === 'number' ? ' step="any" min="0"' : '') + (c.ro ? ' readonly tabindex="-1" style="opacity:.65;cursor:not-allowed"' : '') + '>';
     }
   });
   h += '<div class="err" id="eMod"></div><div class="pie"><button type="button" class="btn alt" id="mCancel">Cancelar</button><button type="submit" class="btn nar" id="mOk">' + esc(okTxt || 'Guardar') + '</button></div></form>';
