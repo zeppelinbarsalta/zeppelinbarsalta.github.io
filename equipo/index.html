@@ -129,6 +129,59 @@ ul.it li:before{content:'';position:absolute;left:4px;top:15px;width:7px;height:
 #lErr{min-height:18px;color:var(--bad);font-size:13px}
 .toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 22px);transform:translateX(-50%);background:#222;border:1px solid #333;border-radius:999px;padding:9px 16px;font-size:13px;opacity:0;transition:.2s;pointer-events:none;z-index:60;max-width:90vw;text-align:center}
 .toast.show{opacity:1}
+/* ausencias */
+.mut{color:var(--muted);font:400 12.5px Inter,sans-serif}
+.opts{display:grid;gap:10px;margin-bottom:6px}
+.opt{display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;cursor:pointer}
+.opt:hover{border-color:var(--zepp)}
+.opt b{display:block;font:400 26px/1 'Bebas Neue',sans-serif;letter-spacing:1px;font-weight:400}
+.opt small{display:block;color:var(--muted);font:400 13px/1.4 Inter,sans-serif;margin-top:6px}
+.cont{display:flex;align-items:baseline;gap:8px;margin:14px 0 0;font:400 13px Inter,sans-serif;color:var(--muted)}
+.cont b{font:400 24px/1 'Bebas Neue',sans-serif;color:var(--txt);letter-spacing:1px;font-weight:400}
+.frm{display:flex;flex-direction:column}
+.frm>label,.frm .fl{font:600 11px Oswald,sans-serif;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin:16px 0 6px}
+.frm input[type=date],.frm input[type=time],.frm input[type=text],.frm textarea{background:var(--card);border:1px solid var(--line);border-radius:10px;color:var(--txt);font:400 16px Inter,sans-serif;padding:11px 12px;width:100%;color-scheme:dark}
+.frm textarea{min-height:88px;resize:vertical}
+.frm input:focus,.frm textarea:focus{outline:none;border-color:var(--zepp)}
+.seg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.seg button{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:11px 12px;text-align:left;cursor:pointer}
+.seg button.on{border-color:var(--zepp);background:rgba(255,90,0,.1)}
+.seg button b{display:block;font:400 21px/1 'Bebas Neue',sans-serif;letter-spacing:1px;font-weight:400}
+.seg button small{display:block;color:var(--muted);font:400 12px Inter,sans-serif;margin-top:3px}
+.frm label.chk{display:flex;gap:10px;align-items:center;text-transform:none;letter-spacing:0;font:400 14px Inter,sans-serif;color:var(--txt);margin:14px 0 4px;cursor:pointer}
+.chk input{width:20px;height:20px;accent-color:var(--zepp)}
+.frm>label.file{text-transform:none;letter-spacing:0;margin:0;display:flex;align-items:center;gap:10px;background:var(--card);border:1px dashed #3a3a3a;border-radius:10px;padding:12px;cursor:pointer;font:400 14px Inter,sans-serif;color:#dcdcdc}
+.file input{display:none}
+[hidden]{display:none!important}
+.msg{font:400 13.5px/1.45 Inter,sans-serif;margin-top:14px;padding:10px 12px;border-radius:10px}
+.msg:empty{display:none}
+.msg.err{background:#1a0f0f;border:1px solid #4a2020;color:#ffc2bd}
+.msg.ok{background:rgba(48,209,88,.07);border:1px solid #1f4a2a;color:#b9f0c8}
+.btnz{background:var(--zepp);color:#0A0A0A;border:none;border-radius:10px;padding:14px 18px;font:600 16px Oswald,sans-serif;letter-spacing:1px;cursor:pointer;width:100%;margin-top:18px}
+.btnz:disabled{opacity:.35;cursor:not-allowed}
+.sol{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:8px}
+.sol .h{display:flex;gap:8px;align-items:center}
+.sol .t{font:500 16px Oswald,sans-serif}
+.sol .tag{position:static;margin-left:auto;flex:none}
+.sol .f{font:400 13px Inter,sans-serif;color:var(--zepp);margin-top:2px}
+.sol .d{font:400 13px/1.45 Inter,sans-serif;color:#cfcfcf;margin-top:6px;white-space:pre-wrap}
+.sol .c{font:400 12.5px Inter,sans-serif;color:var(--muted);margin-top:6px}
+.sol .c a{color:var(--zepp);text-decoration:underline}
+.sol .acts{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.sol .acts button,.sol .acts label{flex:1;min-width:120px;background:var(--card2);border:1px solid var(--line);border-radius:9px;padding:9px 10px;font:500 13.5px Oswald,sans-serif;letter-spacing:.4px;cursor:pointer;text-align:center}
+.sol .acts .si{background:var(--zepp);border-color:var(--zepp);color:#0A0A0A}
+.sol .acts .no2{border-color:#4a2020;color:#ffb4ae}
+.sol .acts input{display:none}
+.dia{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:8px}
+.dia .dh{display:flex;font:500 15px Oswald,sans-serif;text-transform:capitalize}
+.dia .dh span{margin-left:auto;color:var(--muted);font:400 12.5px Inter,sans-serif;text-transform:none}
+.dia .dh span.full{color:var(--bad)}
+.dia .dl{font:400 13.5px Inter,sans-serif;color:#dcdcdc;padding:5px 0;border-top:1px solid #1f1f1f}
+.dia .dl:first-of-type{border-top:none}
+.row{display:flex;gap:8px}
+.row>*{flex:1;min-width:0}
+.row button{flex:none;background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:0 16px;cursor:pointer;font:500 14px Oswald,sans-serif}
+.xbtn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;padding:0 4px}
 @media (min-width:560px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 </style>
 </head>
@@ -170,6 +223,7 @@ const I={
   proto:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg>',
   regla:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg>',
   ig:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6" fill="currentColor"/></svg>',
+  aus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M9 15.5h6"/></svg>',
   back:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
   chev:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>',
   go:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>'
@@ -222,6 +276,7 @@ function vHome(){
   const misSec=(C.PUESTO_MANUAL[rol()]||[]).map(id=>C.MANUAL.puestos.find(p=>p.id===id)).filter(Boolean);
   const regTag = REG.estado==='aceptado' ? {tag:'Aceptado',cls:'g'} : REG.estado==='pendiente' ? {tag:'Pendiente',cls:'r'} : {};
   const info=[
+    tile({nm:'Ausencias', ds:'Pedí un día o avisá una falta.', ico:I.aus, hash:'ausencias'}, Object.assign({on:true}, ausTag())),
     tile({nm:'Mi puesto', ds:'', ico:I.manual, hash:'manual'}, {on:true, ds: misSec.length ? 'Manual de '+misSec[0].nombre.toLowerCase()+' y del resto de los puestos.' : 'Manual de procedimientos de cada puesto.'}),
     tile({nm:'Protocolos', ds:'Cumpleaños y descorche, paso a paso.', ico:I.proto, hash:'protocolos'}, {on:true}),
     tile({nm:'Reglamento', ds:'Reglamento interno del personal.', ico:I.regla, hash:'reglamento'}, Object.assign({on:true}, regTag)),
@@ -350,6 +405,273 @@ async function cargarRegEstado(){
 }
 function refrescarReg(){ const v=(location.hash.slice(1)||'').split('/')[0]; if(!v) vHome(); else if(v==='reglamento') pintarAceptacion(); }
 
+/* ===================== AUSENCIAS ===================== */
+// Reglas (el servidor vuelve a controlar todo; esto es para avisar antes de enviar)
+const AUS_CFG={ ANT:{4:48,5:72,6:72}, ANT_DEF:48, ANT_EXAMEN:48, HORA:{4:'20:00'}, HORA_DEF:'20:30', TOPE_EXAMEN:10, CUPO:2 };
+const AUS_TIPOS={
+  franco:{nm:'Día libre', ds:'No venís esa noche'},
+  tarde:{nm:'Llego tarde', ds:'Entrás más tarde', hora:'¿A qué hora llegás?'},
+  temprano:{nm:'Salgo antes', ds:'Te vas antes del cierre', hora:'¿A qué hora te vas?'},
+  examen:{nm:'Examen', ds:'Licencia por estudio'}
+};
+const AUS_MOTIVOS={enfermedad:'Enfermedad', familiar:'Familiar', transporte:'Transporte', otro:'Otro'};
+const AUS_ESTADO={pendiente:['Pendiente','o'], aprobada:['Aprobada','g'], rechazada:['Rechazada','r'], avisada:['Avisada',''], cancelada:['Cancelada','']};
+const DIAS=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+let AUSR=null;   // {items, examenUsados, tope, adminPend}
+
+const hoyISO=()=>new Date(Date.now()-3*3600e3).toISOString().slice(0,10);   // Argentina, UTC-3
+const sumDias=(iso,n)=>{ const d=new Date(iso+'T12:00:00Z'); d.setUTCDate(d.getUTCDate()+n); return d.toISOString().slice(0,10); };
+const dowISO=iso=>new Date(iso+'T12:00:00Z').getUTCDay();
+const horasHasta=iso=>(new Date(iso+'T'+(AUS_CFG.HORA[dowISO(iso)]||AUS_CFG.HORA_DEF)+':00-03:00')-Date.now())/3.6e6;
+const fechaLarga=iso=>{ if(!/^\d{4}-\d{2}-\d{2}$/.test(iso||'')) return iso||''; const [y,m,d]=iso.split('-'); return DIAS[dowISO(iso)]+' '+d+'/'+m; };
+const etiquetaTipo=s=> s.tipo==='aviso' ? 'Falta: '+(AUS_MOTIVOS[s.motivo]||s.motivo||'') : ((AUS_TIPOS[s.tipo]||{}).nm||s.tipo) + (s.hora?' ('+s.hora+')':'');
+
+async function apiAus(action, data){
+  const j=await post(API_URL, Object.assign({token:SES.token, action}, data||{}));
+  if(j && j.error==='sesion'){ toast('Tu sesión venció. Volvé a ingresar.'); salir(); throw new Error('sesion'); }
+  return j;
+}
+async function cargarAusResumen(){
+  try{ const j=await apiAus('aus_mias'); if(j&&j.ok){ AUSR=j; const v=(location.hash.slice(1)||'').split('/')[0]; if(!v) vHome(); } }catch(e){}
+}
+function ausTag(){
+  if(!AUSR) return {};
+  if(esAdmin() && AUSR.adminPend) return {tag:AUSR.adminPend+' para revisar', cls:'o'};
+  if((AUSR.items||[]).some(s=>s.estado==='pendiente')) return {tag:'Pendiente', cls:'o'};
+  return {};
+}
+
+async function leerArchivo(f){
+  if(!f) return null;
+  if(f.type==='application/pdf'){
+    if(f.size>8e6) throw new Error('El PDF pesa más de 8 MB.');
+    const b64=await new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(String(r.result).split(',')[1]); r.onerror=()=>rej(new Error('No se pudo leer el archivo.')); r.readAsDataURL(f); });
+    return {nombre:f.name, mime:f.type, b64};
+  }
+  if(!/^image\//.test(f.type)) throw new Error('Subí una foto o un PDF.');
+  const url=URL.createObjectURL(f);
+  try{
+    const img=await new Promise((res,rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=()=>rej(new Error('No se pudo abrir la foto.')); i.src=url; });
+    const k=Math.min(1,1600/Math.max(img.naturalWidth,img.naturalHeight));
+    const c=document.createElement('canvas'); c.width=Math.round(img.naturalWidth*k); c.height=Math.round(img.naturalHeight*k);
+    c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+    return {nombre:(f.name||'foto').replace(/\.[^.]+$/,'')+'.jpg', mime:'image/jpeg', b64:c.toDataURL('image/jpeg',.82).split(',')[1]};
+  } finally { URL.revokeObjectURL(url); }
+}
+
+function solItem(s, admin){
+  const [en,cls]=AUS_ESTADO[s.estado]||[s.estado,''];
+  const rango = s.hasta && s.hasta!==s.fecha ? fechaLarga(s.fecha)+' y '+fechaLarga(s.hasta) : fechaLarga(s.fecha);
+  const det = s.tipo==='examen' ? [s.institucion, s.materia].filter(Boolean).join(', ') + (s.dias>1?' (2 días)':'')
+            : s.tipo==='aviso' ? s.detalle : s.motivo;
+  const hoy=hoyISO(), acts=[], info=[];
+  if(admin){
+    if(s.estado==='pendiente'){ acts.push(`<button class="si" data-act="aprobar" data-id="${esc(s.id)}">Aprobar</button>`, `<button class="no2" data-act="rechazar" data-id="${esc(s.id)}">Rechazar</button>`); }
+    if(s.adjunto) info.push(`<a href="${esc(s.adjunto)}" target="_blank" rel="noopener">Ver certificado</a>`);
+    if(s.constancia) info.push(`<a href="${esc(s.constancia)}" target="_blank" rel="noopener">Ver constancia</a>`);
+  } else {
+    if(s.estado==='pendiente') acts.push(`<button data-act="cancelar" data-id="${esc(s.id)}">Cancelar pedido</button>`);
+    if(s.tipo==='examen' && (s.estado==='aprobada'||s.estado==='pendiente')){
+      if(s.constancia) info.push('Constancia de examen cargada ✓');
+      else if((s.hasta||s.fecha)<=hoy) acts.push(`<label>Subir constancia de examen<input type="file" accept="image/*,application/pdf" data-subir="constancia" data-id="${esc(s.id)}"></label>`);
+      else info.push('Después de rendir, subí acá la constancia.');
+    }
+    if(s.tipo==='aviso'){
+      if(s.adjunto) info.push('Comprobante cargado ✓');
+      else acts.push(`<label>${s.motivo==='enfermedad'?'Subir certificado médico':'Adjuntar comprobante'}<input type="file" accept="image/*,application/pdf" data-subir="adjunto" data-id="${esc(s.id)}"></label>`);
+    }
+  }
+  if(s.comentario) info.push('Fernando: '+esc(s.comentario));
+  return `<div class="sol"><div class="h"><span class="t">${admin?esc(s.nombre)+': ':''}${esc(etiquetaTipo(s))}</span><span class="tag ${cls}">${esc(en)}</span></div>
+    <div class="f">${esc(rango)}</div>${det?`<div class="d">${esc(det)}</div>`:''}
+    ${info.length?`<div class="c">${info.join('<br>')}</div>`:''}${acts.length?`<div class="acts">${acts.join('')}</div>`:''}</div>`;
+}
+
+/* --- inicio de ausencias --- */
+async function vAus(){
+  $('#view').innerHTML = cabecera('Ausencias','Pedí un día o avisá que no podés venir') + `
+    <div class="opts">
+      <a class="opt" href="#ausencias/pedir"><b>Pedir con anticipación</b><small>Día libre, llegar tarde, salir antes o examen. Con 72 h para viernes y sábado, 48 h para jueves.</small></a>
+      <a class="opt" href="#ausencias/avisar"><b>Avisar una falta</b><small>Para imprevistos: enfermedad, un problema familiar o de transporte.</small></a>
+    </div>
+    ${esAdmin()?`<a class="banner" href="#ausencias/panel">${I.aus}<div><b>Panel de ausencias</b><br><span id="admTxt">Revisá y aprobá los pedidos.</span></div></a>`:''}
+    <div class="cont" id="cont"></div>
+    <h2>Mis pedidos</h2><div id="mias"><span class="mut">Cargando…</span></div>`;
+  try{
+    const j=await apiAus('aus_mias'); if(!$('#mias')) return;
+    if(!j||!j.ok) throw new Error((j&&j.error)||'');
+    AUSR=j;
+    $('#cont').innerHTML = `<b>${j.examenUsados} de ${j.tope}</b> días por examen usados en ${new Date().getFullYear()}`;
+    if(esAdmin() && $('#admTxt')) $('#admTxt').textContent = j.adminPend ? `Tenés ${j.adminPend} ${j.adminPend===1?'pedido':'pedidos'} para revisar.` : 'No hay pedidos para revisar.';
+    $('#mias').innerHTML = j.items.length ? j.items.map(s=>solItem(s,false)).join('') : '<div class="pend">Todavía no hiciste ningún pedido.</div>';
+  }catch(e){ if(e.message!=='sesion' && $('#mias')) $('#mias').innerHTML='<div class="msg err">No se pudieron cargar tus pedidos. Revisá la conexión.</div>'; }
+}
+
+/* --- pedido anticipado --- */
+function ausCheck(F){
+  if(!F.fecha) return {ok:false, msg:''};
+  if(F.fecha<hoyISO()) return {ok:false, msg:'Esa fecha ya pasó.', err:1};
+  const primer = F.tipo==='examen' && F.diaAnterior ? sumDias(F.fecha,-1) : F.fecha;
+  const dow=dowISO(primer);
+  const min = F.tipo==='examen' ? AUS_CFG.ANT_EXAMEN : (AUS_CFG.ANT[dow]||AUS_CFG.ANT_DEF);
+  const h=horasHasta(primer);
+  if(h<min) return {ok:false, err:1, msg:`Para el ${DIAS[dow]} ${primer.slice(8,10)}/${primer.slice(5,7)} se pide con ${min} h de anticipación y faltan ${Math.max(0,Math.floor(h))} h. Si es un imprevisto, usá «Avisar una falta».`};
+  if(F.tipo==='examen'){
+    const usados=(AUSR&&AUSR.examenUsados)||0, d=F.diaAnterior?2:1;
+    if(usados+d>AUS_CFG.TOPE_EXAMEN) return {ok:false, err:1, msg:`Ya usaste ${usados} de ${AUS_CFG.TOPE_EXAMEN} días por examen este año.`};
+    if(!F.institucion.trim()||!F.materia.trim()) return {ok:false, msg:''};
+  } else {
+    if(AUS_TIPOS[F.tipo].hora && !F.hora) return {ok:false, msg:''};
+    if(F.motivo.trim().length<5) return {ok:false, msg:''};
+  }
+  return {ok:true, msg:`Faltan ${Math.floor(h)} h: alcanza (para el ${DIAS[dow]} se piden ${min} h).`};
+}
+function vAusPedir(){
+  const F={tipo:'franco', fecha:'', hora:'', motivo:'', institucion:'', materia:'', diaAnterior:false};
+  $('#view').innerHTML = cabecera('Pedir con anticipación','72 h para viernes y sábado, 48 h para jueves','ausencias') + `
+    <div class="frm">
+      <span class="fl">Qué necesitás</span>
+      <div class="seg" id="tipos">${Object.entries(AUS_TIPOS).map(([k,t])=>`<button type="button" data-t="${k}" class="${k===F.tipo?'on':''}"><b>${t.nm}</b><small>${t.ds}</small></button>`).join('')}</div>
+      <label for="fFecha" id="lFecha">Fecha</label>
+      <input type="date" id="fFecha" min="${hoyISO()}">
+      <div id="bHora" hidden class="frm"><label for="fHora" id="lHora">Hora</label><input type="time" id="fHora"></div>
+      <div id="bExa" hidden class="frm">
+        <label for="fInst">Institución</label><input type="text" id="fInst" placeholder="Ej.: UNSa, UCASAL, un terciario">
+        <label for="fMat">Carrera y materia</label><input type="text" id="fMat" placeholder="Ej.: Abogacía, Derecho Civil I">
+        <label class="chk"><input type="checkbox" id="fAnt">Pido también el día anterior al examen</label>
+        <div class="nota">La ley te da hasta 2 días corridos por examen y 10 días por año. Después de rendir, subí la constancia desde «Mis pedidos».</div>
+      </div>
+      <div id="bMot" class="frm"><label for="fMot">Motivo</label><textarea id="fMot" placeholder="Contá brevemente por qué lo necesitás"></textarea></div>
+      <div id="chk" class="msg"></div>
+      <button class="btnz" id="enviar" type="button" disabled>Enviar pedido</button>
+    </div>`;
+  const pintar=()=>{
+    document.querySelectorAll('#tipos button').forEach(b=>b.classList.toggle('on', b.dataset.t===F.tipo));
+    const t=AUS_TIPOS[F.tipo];
+    $('#bHora').hidden=!t.hora; if(t.hora) $('#lHora').textContent=t.hora;
+    $('#bExa').hidden=F.tipo!=='examen'; $('#bMot').hidden=F.tipo==='examen';
+    $('#lFecha').textContent = F.tipo==='examen' ? 'Fecha del examen' : 'Fecha';
+    const r=ausCheck(F); const m=$('#chk');
+    m.textContent=r.msg; m.className='msg'+(r.msg?(r.err?' err':' ok'):'');
+    $('#enviar').disabled=!r.ok;
+  };
+  $('#tipos').onclick=e=>{ const b=e.target.closest('button'); if(b){ F.tipo=b.dataset.t; pintar(); } };
+  const bind=(id,k,prop)=>{ const el=$(id); el.addEventListener('input',()=>{ F[k]=prop==='checked'?el.checked:el.value; pintar(); }); el.addEventListener('change',()=>{ F[k]=prop==='checked'?el.checked:el.value; pintar(); }); };
+  bind('#fFecha','fecha'); bind('#fHora','hora'); bind('#fInst','institucion'); bind('#fMat','materia'); bind('#fAnt','diaAnterior','checked'); bind('#fMot','motivo');
+  $('#enviar').onclick=async ()=>{
+    const b=$('#enviar'); b.disabled=true; b.textContent='ENVIANDO…';
+    try{
+      const j=await apiAus('aus_crear', F);
+      if(j&&j.ok){ toast('Pedido enviado. Te avisamos acá cuando lo revise Fernando.'); location.hash='ausencias'; return; }
+      const m=$('#chk'); m.textContent=(j&&j.error)||'No se pudo enviar.'; m.className='msg err';
+    }catch(e){ if(e.message!=='sesion'){ const m=$('#chk'); m.textContent='No se pudo conectar. Probá de nuevo.'; m.className='msg err'; } }
+    b.disabled=false; b.textContent='Enviar pedido';
+  };
+  pintar();
+}
+
+/* --- aviso de falta --- */
+function vAusAvisar(){
+  const hoy=hoyISO();
+  const F={fecha:hoy, motivo:'', detalle:''}; let archivo=null;
+  $('#view').innerHTML = cabecera('Avisar una falta','Para imprevistos. Avisá apenas sepas, antes del turno','ausencias') + `
+    <div class="frm">
+      <label for="aFecha">Qué día no venís</label>
+      <input type="date" id="aFecha" value="${hoy}" min="${sumDias(hoy,-1)}" max="${sumDias(hoy,3)}">
+      <span class="fl">Motivo</span>
+      <div class="seg" id="motivos">${Object.entries(AUS_MOTIVOS).map(([k,t])=>`<button type="button" data-m="${k}"><b>${t}</b></button>`).join('')}</div>
+      <div class="nota" id="nEnf" hidden>Por ley, el aviso por enfermedad se da en la primera jornada. Si fuiste al médico, subí el certificado; si todavía no lo tenés, podés subirlo después desde «Mis pedidos».</div>
+      <label for="aDet">Contanos qué pasó</label>
+      <textarea id="aDet" placeholder="Unas líneas alcanzan"></textarea>
+      <span class="fl">Certificado o comprobante (opcional)</span>
+      <label class="file" id="aFileL">${I.fichas}<span id="aFileT">Sacá una foto o elegí un PDF</span><input type="file" id="aFile" accept="image/*,application/pdf"></label>
+      <div id="aMsg" class="msg"></div>
+      <button class="btnz" id="aEnviar" type="button" disabled>Enviar aviso</button>
+    </div>`;
+  $('#aFileL').querySelector('svg').setAttribute('width','22');
+  const pintar=()=>{
+    document.querySelectorAll('#motivos button').forEach(b=>b.classList.toggle('on', b.dataset.m===F.motivo));
+    $('#nEnf').hidden = F.motivo!=='enfermedad';
+    $('#aEnviar').disabled = !(F.fecha && F.motivo && F.detalle.trim().length>=5);
+  };
+  $('#motivos').onclick=e=>{ const b=e.target.closest('button'); if(b){ F.motivo=b.dataset.m; pintar(); } };
+  $('#aFecha').addEventListener('change',e=>{ F.fecha=e.target.value; pintar(); });
+  $('#aDet').addEventListener('input',e=>{ F.detalle=e.target.value; pintar(); });
+  $('#aFile').addEventListener('change',async e=>{
+    const f=e.target.files[0]; const m=$('#aMsg'); m.textContent=''; m.className='msg';
+    try{ archivo=await leerArchivo(f); $('#aFileT').textContent=f? f.name : 'Sacá una foto o elegí un PDF'; }
+    catch(err){ archivo=null; e.target.value=''; m.textContent=err.message; m.className='msg err'; }
+  });
+  $('#aEnviar').onclick=async ()=>{
+    const b=$('#aEnviar'); b.disabled=true; b.textContent=archivo?'SUBIENDO…':'ENVIANDO…';
+    try{
+      const j=await apiAus('aus_avisar', Object.assign({}, F, {archivo}));
+      if(j&&j.ok){ toast(j.aviso||'Aviso enviado. Le llega a Fernando ahora.'); location.hash='ausencias'; return; }
+      const m=$('#aMsg'); m.textContent=(j&&j.error)||'No se pudo enviar.'; m.className='msg err';
+    }catch(e){ if(e.message!=='sesion'){ const m=$('#aMsg'); m.textContent='No se pudo conectar. Probá de nuevo.'; m.className='msg err'; } }
+    b.disabled=false; b.textContent='Enviar aviso';
+  };
+  pintar();
+}
+
+/* --- panel de Fernando --- */
+function vAusPanel(){
+  if(!esAdmin()){ location.hash='ausencias'; return; }
+  $('#view').innerHTML = cabecera('Panel de ausencias','Solo lo ves vos','ausencias') + `<div id="pan"><span class="mut">Cargando…</span></div>`;
+  pintarPanel();
+}
+async function pintarPanel(){
+  let j; try{ j=await apiAus('aus_panel'); }catch(e){ return; }
+  const box=$('#pan'); if(!box) return;
+  if(!j||!j.ok){ box.innerHTML=`<div class="msg err">${esc((j&&j.error)||'No se pudo cargar el panel.')}</div>`; return; }
+  const g={}; j.proximas.forEach(s=>{ (g[s.fecha]=g[s.fecha]||[]).push(s); });
+  const prox = Object.keys(g).sort().map(f=>{ const n=g[f].filter(s=>s.tipo!=='tarde'&&s.tipo!=='temprano').length; return `<div class="dia"><div class="dh">${esc(fechaLarga(f))}<span class="${n>=j.cupo?'full':''}">${n} de ${j.cupo} ausentes</span></div>${g[f].map(s=>`<div class="dl">${esc(s.nombre)} <span class="mut">${esc(etiquetaTipo(s))}${s.estado==='pendiente'?', sin aprobar':''}</span></div>`).join('')}</div>`; }).join('');
+  box.innerHTML = `
+    <h2>Para revisar</h2>${j.pendientes.length ? j.pendientes.map(s=>solItem(s,true)).join('') : '<div class="pend">No hay pedidos para revisar.</div>'}
+    <h2>Próximas 4 semanas</h2>${prox || '<div class="pend">Nadie pidió días ni avisó faltas.</div>'}
+    <h2>Faltan comprobantes</h2>${j.faltantes.length ? j.faltantes.map(s=>solItem(s,true)).join('') : '<div class="pend">Están todos al día.</div>'}
+    <h2>Avisos de los últimos 30 días</h2>${j.avisos.length ? j.avisos.map(s=>solItem(s,true)).join('') : '<div class="pend">Sin avisos de falta.</div>'}
+    <h2>Fechas bloqueadas</h2>
+    <p class="mut" style="margin:-4px 0 10px">Esas noches no se aceptan días libres ni cambios de horario. Los exámenes y los avisos de falta sí entran.</p>
+    ${j.bloqueos.map(b=>`<div class="dia"><div class="dh">${esc(fechaLarga(b.fecha))}<span>${esc(b.motivo)}</span><button class="xbtn" data-act="bloq-del" data-f="${esc(b.fecha)}" aria-label="Quitar">×</button></div></div>`).join('')}
+    <div class="frm"><div class="row"><input type="date" id="bF" min="${hoyISO()}"><input type="text" id="bM" placeholder="Motivo"><button type="button" data-act="bloq-add">Bloquear</button></div></div>
+    <h2>Días por examen en ${new Date().getFullYear()}</h2>
+    ${j.examenes.length ? `<div class="dia">${j.examenes.map(x=>`<div class="dl">${esc(x.nombre)} <span class="mut">${x.dias} de ${j.tope}</span></div>`).join('')}</div>` : '<div class="pend">Nadie pidió días por examen este año.</div>'}`;
+}
+
+/* --- acciones (delegadas) --- */
+document.addEventListener('click', async e=>{
+  const b=e.target.closest('[data-act]'); if(!b || !SES) return;
+  const act=b.dataset.act, id=b.dataset.id;
+  try{
+    if(act==='cancelar'){
+      if(!confirm('¿Cancelás este pedido?')) return;
+      b.disabled=true; const j=await apiAus('aus_cancelar',{id}); toast(j&&j.ok?'Pedido cancelado.':(j&&j.error)||'No se pudo cancelar.'); vAus(); cargarAusResumen();
+    } else if(act==='aprobar' || act==='rechazar'){
+      let comentario='';
+      if(act==='rechazar'){ comentario=prompt('¿Por qué lo rechazás? (lo ve la persona)'); if(comentario===null) return; }
+      b.disabled=true; const j=await apiAus('aus_resolver',{id, estado: act==='aprobar'?'aprobada':'rechazada', comentario});
+      toast(j&&j.ok?(act==='aprobar'?'Pedido aprobado.':'Pedido rechazado.'):(j&&j.error)||'No se pudo guardar.'); pintarPanel(); cargarAusResumen();
+    } else if(act==='bloq-add'){
+      const fecha=$('#bF').value, motivo=$('#bM').value.trim();
+      if(!fecha||!motivo){ toast('Poné fecha y motivo.'); return; }
+      b.disabled=true; const j=await apiAus('aus_bloqueo_add',{fecha,motivo}); toast(j&&j.ok?'Fecha bloqueada.':(j&&j.error)||'No se pudo bloquear.'); pintarPanel();
+    } else if(act==='bloq-del'){
+      const j=await apiAus('aus_bloqueo_del',{fecha:b.dataset.f}); toast(j&&j.ok?'Fecha desbloqueada.':(j&&j.error)||'No se pudo quitar.'); pintarPanel();
+    }
+  }catch(err){ if(err.message!=='sesion') toast('No se pudo conectar. Probá de nuevo.'); b.disabled=false; }
+});
+document.addEventListener('change', async e=>{
+  const inp=e.target.closest('input[data-subir]'); if(!inp || !SES) return;
+  const lab=inp.parentElement, txt=lab.firstChild.textContent;
+  try{
+    const archivo=await leerArchivo(inp.files[0]); if(!archivo) return;
+    lab.firstChild.textContent='Subiendo…';
+    const j=await apiAus('aus_adjuntar',{id:inp.dataset.id, campo:inp.dataset.subir, archivo});
+    if(j&&j.ok){ toast('Listo, quedó cargado.'); vAus(); } else { toast((j&&j.error)||'No se pudo subir.'); lab.firstChild.textContent=txt; }
+  }catch(err){ if(err.message!=='sesion') toast(err.message||'No se pudo subir.'); lab.firstChild.textContent=txt; inp.value=''; }
+});
+
 /* ===================== ROUTER / SESIÓN ===================== */
 function route(){
   if(!SES) return;
@@ -358,14 +680,15 @@ function route(){
   else if(v==='protocolos') vProtocolos();
   else if(v==='protocolo') vProtocolo(a,b);
   else if(v==='reglamento') vReglamento();
+  else if(v==='ausencias'){ if(a==='pedir') vAusPedir(); else if(a==='avisar') vAusAvisar(); else if(a==='panel') vAusPanel(); else vAus(); }
   else vHome();
 }
 window.addEventListener('hashchange',()=>{ route(); window.scrollTo(0,0); });
 
 function pintarQuien(){ const u=SES.usuario||{}; $('#quien').textContent=((u.nombre||'')+' '+(u.apellido||'')).trim()+(u.rol?' · '+u.rol:''); }
-function entrar(){ $('#login').style.display='none'; $('#app').style.display='block'; pintarQuien(); route(); cargarRegEstado(); }
+function entrar(){ $('#login').style.display='none'; $('#app').style.display='block'; pintarQuien(); route(); cargarRegEstado(); cargarAusResumen(); }
 function mostrarLogin(msg){ $('#app').style.display='none'; $('#login').style.display='flex'; $('#lErr').textContent=msg||''; setTimeout(()=>$('#lDni').focus(),50); }
-function salir(){ SES=null; sesSet(null); REG={estado:'cargando'}; mostrarLogin(''); }
+function salir(){ SES=null; sesSet(null); REG={estado:'cargando'}; AUSR=null; mostrarLogin(''); }
 
 $('#lForm').addEventListener('submit', async ev=>{
   ev.preventDefault();
