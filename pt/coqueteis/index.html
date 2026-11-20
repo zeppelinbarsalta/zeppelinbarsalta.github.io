@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- SEO Primary -->
+  <title>Coquetéis em Salta | Zeppelin Bar — Drinks autorais com ingredientes do norte argentino</title>
+  <meta name="description" content="Coquetéis autorais com ingredientes regionais do noroeste argentino no Zeppelin Bar, o bar mais icônico de Salta. Figo, cayote, marmelo, batata-doce. De quinta a sábado a partir das 20h30.">
+  <meta name="keywords" content="bar de coquetéis Salta, coquetéis Salta Argentina, drinks autorais Salta, melhores drinks Salta, Zeppelin Bar coquetéis">
+  <link rel="canonical" href="https://zeppelin-bar.com/pt/coqueteis/">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Coquetéis autorais no Zeppelin Bar — Salta">
+  <meta property="og:description" content="Drinks autorais com ingredientes do norte argentino. Figo, cayote, marmelo, batata-doce. O bar mais icônico de Salta.">
+  <meta property="og:url" content="https://zeppelin-bar.com/pt/coqueteis/">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_AR">
+
+<!-- Schema.org -->
+<!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@300;400;500;600&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --black: #0a0a0a;
+      --orange: #FF5A00;
+      --white: #f5f5f0;
+      --gray: #888;
+      --gray-dark: #111;
+      --gray-mid: #1a1a1a;
+      --amber: #c8681a;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Oswald', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(to bottom, rgba(10,10,10,0.95), transparent);
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      letter-spacing: 0.08em;
+      text-decoration: none;
+      color: var(--white);
+    }
+    .nav-logo span { color: var(--orange); }
+    .nav-back {
+      font-size: 0.75rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gray);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-back:hover { color: var(--white); }
+    .nav-back::before { content: '← '; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 120px 40px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Atmospheric background */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 80% 20%, rgba(200,104,26,0.12) 0%, transparent 50%),
+        radial-gradient(ellipse at 10% 90%, rgba(255,90,0,0.08) 0%, transparent 40%);
+      pointer-events: none;
+    }
+
+    /* Large decorative letter */
+    .hero-deco {
+      position: absolute;
+      right: -40px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(16rem, 35vw, 32rem);
+      color: rgba(255,90,0,0.04);
+      line-height: 1;
+      pointer-events: none;
+      letter-spacing: -0.05em;
+      user-select: none;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 20px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.2s;
+    }
+
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(4rem, 11vw, 10rem);
+      line-height: 0.88;
+      letter-spacing: 0.02em;
+      margin-bottom: 12px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.4s;
+    }
+    .hero-title span { color: var(--orange); }
+
+    .hero-title-italic {
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-size: clamp(2rem, 5vw, 4.5rem);
+      color: var(--amber);
+      display: block;
+      margin-bottom: 32px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.55s;
+    }
+
+    .hero-sub {
+      font-family: 'EB Garamond', serif;
+      font-size: clamp(1rem, 2vw, 1.3rem);
+      color: var(--gray);
+      line-height: 1.65;
+      max-width: 500px;
+      margin-bottom: 44px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.7s;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.9s;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--orange);
+      color: var(--white);
+      font-family: 'Oswald', sans-serif;
+      font-weight: 500;
+      font-size: 0.85rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 16px 32px;
+      text-decoration: none;
+      transition: all 0.2s;
+      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+    }
+    .btn-primary:hover { background: #ff7a2a; transform: translateY(-2px); }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      background: transparent;
+      color: var(--white);
+      font-family: 'Oswald', sans-serif;
+      font-weight: 400;
+      font-size: 0.85rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 16px 32px;
+      text-decoration: none;
+      border: 1px solid rgba(255,255,255,0.2);
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover { border-color: var(--orange); color: var(--orange); }
+
+    /* ── PROGRAMA ── */
+    .programa {
+      padding: 100px 40px;
+      background: var(--gray-dark);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .programa::before {
+      content: 'NOA';
+      position: absolute;
+      right: -20px;
+      bottom: -40px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20rem;
+      color: rgba(255,255,255,0.02);
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .programa-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      max-width: 60px;
+      height: 1px;
+      background: var(--orange);
+    }
+
+    .programa-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+    .programa-title span { color: var(--orange); }
+
+    .programa-subtitle {
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-size: 1.2rem;
+      color: var(--gray);
+      margin-bottom: 64px;
+      max-width: 600px;
+      line-height: 1.6;
+    }
+
+    /* Ingredients grid */
+    .ingredients {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+      margin-bottom: 80px;
+    }
+
+    .ingredient {
+      background: var(--gray-mid);
+      padding: 40px 28px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s;
+      cursor: default;
+    }
+    .ingredient:hover { background: #222; }
+    .ingredient::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--orange);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+    .ingredient:hover::before { transform: scaleX(1); }
+
+    .ingredient-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      letter-spacing: 0.05em;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+
+    .ingredient-origin {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 12px;
+    }
+
+    .ingredient-desc {
+      font-family: 'EB Garamond', serif;
+      font-size: 0.95rem;
+      color: var(--gray);
+      line-height: 1.5;
+    }
+
+    /* Cocktails list */
+    .cocktails-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      margin-bottom: 32px;
+    }
+
+    .cocktails-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+    }
+
+    .cocktail-card {
+      background: var(--black);
+      padding: 36px 32px;
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+      transition: background 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .cocktail-card:hover { background: #0f0f0f; }
+    .cocktail-card::after {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 0;
+      background: var(--orange);
+      transition: width 0.3s ease;
+    }
+    .cocktail-card:hover::after { width: 3px; }
+
+    .cocktail-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.5rem;
+      color: rgba(255,90,0,0.2);
+      line-height: 1;
+      flex-shrink: 0;
+      width: 48px;
+    }
+
+    .cocktail-info h3 {
+      font-family: 'Oswald', sans-serif;
+      font-weight: 500;
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      color: var(--white);
+    }
+
+    .cocktail-info .ingredient-tag {
+      display: inline-block;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--orange);
+      border: 1px solid rgba(255,90,0,0.3);
+      padding: 2px 8px;
+      margin-bottom: 10px;
+    }
+
+    .cocktail-info p {
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-size: 0.95rem;
+      color: var(--gray);
+      line-height: 1.5;
+    }
+
+    /* ── CLASICOS ── */
+    .clasicos {
+      padding: 100px 40px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .clasicos-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: end;
+      margin-bottom: 60px;
+    }
+
+    .clasicos-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      line-height: 1;
+    }
+    .clasicos-title span { color: var(--orange); }
+
+    .clasicos-desc {
+      font-family: 'EB Garamond', serif;
+      font-size: 1.05rem;
+      color: var(--gray);
+      line-height: 1.65;
+    }
+
+    .clasicos-list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+
+    .clasico-item {
+      background: var(--gray-dark);
+      padding: 24px 28px;
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gray);
+      transition: all 0.2s;
+      border-left: 2px solid transparent;
+    }
+    .clasico-item:hover {
+      color: var(--white);
+      border-left-color: var(--orange);
+      background: var(--gray-mid);
+    }
+
+    /* ── CTA ── */
+    .cta-final {
+      padding: 120px 40px;
+      text-align: center;
+      background: var(--gray-dark);
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-final::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background:
+        radial-gradient(ellipse at center, rgba(255,90,0,0.06) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .cta-eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 20px;
+    }
+    .cta-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 8vw, 7rem);
+      line-height: 0.92;
+      margin-bottom: 24px;
+    }
+    .cta-title span { color: var(--orange); }
+    .cta-sub {
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-size: 1.2rem;
+      color: var(--gray);
+      margin-bottom: 48px;
+    }
+    .cta-info {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      flex-wrap: wrap;
+      margin-top: 48px;
+      padding-top: 48px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .cta-info-item .label {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-bottom: 6px;
+    }
+    .cta-info-item .value {
+      font-family: 'Oswald', sans-serif;
+      font-weight: 500;
+      font-size: 1rem;
+      color: var(--white);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 32px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.2rem;
+      letter-spacing: 0.08em;
+      color: var(--white);
+      text-decoration: none;
+    }
+    .footer-logo span { color: var(--orange); }
+    .footer-links {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .footer-links a {
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gray);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--orange); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      nav { padding: 16px 20px; }
+      .hero { padding: 100px 20px 60px; }
+      .hero-deco { display: none; }
+      .programa { padding: 60px 20px; }
+      .ingredients { grid-template-columns: 1fr 1fr; }
+      .cocktails-grid { grid-template-columns: 1fr; }
+      .clasicos { padding: 60px 20px; }
+      .clasicos-header { grid-template-columns: 1fr; gap: 24px; }
+      .clasicos-list { grid-template-columns: 1fr 1fr; }
+      .cta-final { padding: 80px 20px; }
+      footer { padding: 24px 20px; }
+      .cta-info { gap: 24px; }
+    }
+
+    @media (max-width: 480px) {
+      .ingredients { grid-template-columns: 1fr; }
+      .clasicos-list { grid-template-columns: 1fr; }
+    }
+  </style>
+  <style>
+  .zb-faq{max-width:860px;margin:0 auto;padding:72px 24px}
+  .zb-faq__title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.4rem,6vw,3.6rem);
+    letter-spacing:.02em;color:#fff;margin:0 0 32px;line-height:1}
+  .zb-faq__title span{color:#FF5A00}
+  .zb-faq__item{border-bottom:1px solid rgba(255,255,255,.12)}
+  .zb-faq__item summary{font-family:'Oswald',sans-serif;font-weight:500;
+    font-size:1.12rem;color:#fff;padding:22px 44px 22px 0;cursor:pointer;
+    list-style:none;position:relative;transition:color .2s ease}
+  .zb-faq__item summary::-webkit-details-marker{display:none}
+  .zb-faq__item summary:hover{color:#FF5A00}
+  .zb-faq__item summary::after{content:'+';position:absolute;right:4px;top:18px;
+    font-size:1.7rem;line-height:1;color:#FF5A00;transition:transform .25s ease}
+  .zb-faq__item[open] summary::after{transform:rotate(45deg)}
+  .zb-faq__a{font-family:'Oswald',sans-serif;font-weight:300;color:rgba(255,255,255,.78);
+    font-size:1rem;line-height:1.65;padding:0 44px 24px 0;
+    animation:zbfade .3s ease}
+  .zb-faq__a p{margin:0}
+  @keyframes zbfade{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+</style>
+<style id="nav-fix">
+  nav { background: rgba(10,10,10,0.94); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(255,255,255,0.08); padding-top: 12px; padding-bottom: 12px; gap: 12px; }
+  .nav-logo { white-space: nowrap; }
+  .nav-back { display: inline-block; white-space: nowrap; line-height: 1; padding: 14px 18px; border: 1px solid var(--orange); color: var(--white); font-size: 0.8rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; transition: background 0.2s, color 0.2s; }
+  .nav-back::before { content: '←'; margin-right: 8px; color: var(--orange); transition: color 0.2s; }
+  .nav-back:hover, .nav-back:focus-visible { background: var(--orange); color: var(--white); }
+  .nav-back:hover::before, .nav-back:focus-visible::before { color: var(--white); }
+  @media (max-width: 768px) { nav { padding: 10px 16px; } .nav-logo { font-size: 1.35rem; } .nav-back { padding: 13px 14px; font-size: 0.75rem; } }
+  @media (max-width: 480px) { .nav-back .nb-long { display: none; } }
+</style>
+  <link rel="alternate" hreflang="es" href="https://zeppelin-bar.com/cocteles/">
+  <link rel="alternate" hreflang="en" href="https://zeppelin-bar.com/en/cocktails/">
+  <link rel="alternate" hreflang="pt-BR" href="https://zeppelin-bar.com/pt/coqueteis/">
+  <link rel="alternate" hreflang="x-default" href="https://zeppelin-bar.com/cocteles/">
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="https://zeppelin-bar.com/pt/" class="nav-logo">ZEP<span>PE</span>LIN BAR</a>
+    <a href="https://zeppelin-bar.com/pt/" class="nav-back"><span class="nb-long">Voltar ao </span>início</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-deco" aria-hidden="true">Z</div>
+
+    <p class="hero-eyebrow">Zeppelin Bar · Salta · Desde 2001</p>
+    <h1 class="hero-title">COQUETÉIS<br><span>EM SALTA</span></h1>
+    <em class="hero-title-italic">Sabores da Nossa Terra</em>
+    <p class="hero-sub">Drinks autorais feitos com ingredientes autênticos do noroeste argentino. Figo, cayote, marmelo, batata-doce. O que nenhum outro bar de Salta tem.</p>
+    <div class="hero-cta">
+      <a href="https://wa.me/5493875458204?text=Ol%C3%A1!%20Quero%20reservar%20uma%20mesa%20no%20Zeppelin%20Bar" class="btn-primary">
+        Reservar pelo WhatsApp
+      </a>
+      <a href="https://ruletadetragos.netlify.app/" class="btn-secondary" target="_blank" rel="noopener">
+        Roleta de drinks
+      </a>
+    </div>
+  </section>
+
+  <!-- PROGRAMA SABORES DE NUESTRA TIERRA -->
+  <section class="programa">
+    <div class="programa-inner">
+      <p class="section-label">Carta exclusiva</p>
+      <h2 class="programa-title">SABORES DA<br><span>NOSSA TERRA</span></h2>
+      <p class="programa-subtitle">8 coquetéis criados no noroeste argentino. Cada drink usa um ingrediente regional autêntico que define o sabor do norte argentino.</p>
+
+      <!-- Ingredientes -->
+      <div class="ingredients">
+        <div class="ingredient">
+          <div class="ingredient-name">Figo</div>
+          <div class="ingredient-origin">Vale Calchaquí</div>
+          <p class="ingredient-desc">Doçura concentrada, profunda. A fruta que marca o verão do norte.</p>
+        </div>
+        <div class="ingredient">
+          <div class="ingredient-name">Cayote</div>
+          <div class="ingredient-origin">Noroeste argentino</div>
+          <p class="ingredient-desc">Fruto ancestral, suave e vegetal. Ingrediente dos doces mais tradicionais de Salta.</p>
+        </div>
+        <div class="ingredient">
+          <div class="ingredient-name">Marmelo</div>
+          <div class="ingredient-origin">Vales andinos</div>
+          <p class="ingredient-desc">Áspero, ácido, único. A fruta que quem conhece não esquece.</p>
+        </div>
+        <div class="ingredient">
+          <div class="ingredient-name">Batata-doce</div>
+          <div class="ingredient-origin">Noroeste argentino</div>
+          <p class="ingredient-desc">Doçura terrosa, textura inesperada. A surpresa que fecha cada drink.</p>
+        </div>
+      </div>
+
+      <!-- Cócteles de autor -->
+      <h3 class="cocktails-title">OS DRINKS</h3>
+      <div class="cocktails-grid">
+        <div class="cocktail-card">
+          <div class="cocktail-num">01</div>
+          <div class="cocktail-info">
+            <h3>Sombra de Higuera</h3>
+            <span class="ingredient-tag">Fig Old Fashioned · Figo</span>
+            <p>O refúgio perfeito para o fim do dia. Bourbon e figos num brinde com sabor de terra nortenha.</p>
+          </div>
+        </div>
+        <div class="cocktail-card">
+          <div class="cocktail-num">02</div>
+          <div class="cocktail-info">
+            <h3>Rocío del Valle</h3>
+            <span class="ingredient-tag">Fig & Thyme Gin Tonic · Figo</span>
+            <p>Frescor botânico em cada gole. O equilíbrio exato entre a doçura do figo e os botânicos do gin.</p>
+          </div>
+        </div>
+        <div class="cocktail-card">
+          <div class="cocktail-num">03</div>
+          <div class="cocktail-info">
+            <h3>Cuesta del Obispo</h3>
+            <span class="ingredient-tag">Cayote Sour · Cayote</span>
+            <p>Uma subida de texturas. A cremosidade do sour encontra os fios doces do cayote.</p>
+          </div>
+        </div>
+        <div class="cocktail-card">
+          <div class="cocktail-num">04</div>
+          <div class="cocktail-info">
+            <h3>Cachi Tonic</h3>
+            <span class="ingredient-tag">Cayote & Rosemary Gin Tonic · Cayote</span>
+            <p>A alma dos vales na sua taça. Gin, alecrim silvestre e o toque nobre do doce de cayote.</p>
+          </div>
+        </div>
+        <div class="cocktail-card">
+          <div class="cocktail-num">05</div>
+          <div class="cocktail-info">
+            <h3>Atardecer del Convento</h3>
+            <span class="ingredient-tag">Cayote Old Fashioned · Cayote</span>
+            <p>Mística e elegância. Rum, um sutil doce de cayote e um toque de bitter de laranja.</p>
+          </div>
+        </div>
+        <div class="cocktail-card">
+          <div class="cocktail-num">06</div>
+          <div class="cocktail-info">
+            <h3>Sangre Calchaquí</h3>
+            <span class="ingredient-tag">Negroni de Marmelo · Marmelo</span>
+            <p>Caráter indomável. Gin, Vermouth Rosso e Campari, com a força tânica e a cor do marmelo.</p>
+          </div>
+        </div>
+        <div class="cocktail-card">
+          <div class="cocktail-num">07</div>
+          <div class="cocktail-info">
+            <h3>Camino del Inca</h3>
+            <span class="ingredient-tag">Cream Sour de Batata-doce · Batata-doce</span>
+            <p>Rota de suavidade. Whiskey, limão e a sedosidade do doce de batata-doce.</p>
+          </div>
+        </div>
+        <div class="cocktail-card">
+          <div class="cocktail-num">08</div>
+          <div class="cocktail-info">
+            <h3>Brisa de la Quebrada</h3>
+            <span class="ingredient-tag">Highball de Batata-doce e Amêndoa · Batata-doce</span>
+            <p>Leve como o ar das montanhas. Um highball refrescante com notas sutis de batata-doce e amêndoa.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLÁSICOS -->
+  <section class="clasicos">
+    <div class="clasicos-header">
+      <h2 class="clasicos-title">COQUETELARIA<br><span>CLÁSSICA</span></h2>
+      <p class="clasicos-desc">Os drinks que você já conhece, feitos do jeito certo. Mojito, Negroni, Old Fashioned, Aperol Spritz e muito mais. A carta completa te espera.</p>
+    </div>
+    <div class="clasicos-list">
+      <div class="clasico-item">Mojito</div>
+      <div class="clasico-item">Negroni</div>
+      <div class="clasico-item">Old Fashioned</div>
+      <div class="clasico-item">Aperol Spritz</div>
+      <div class="clasico-item">Caipirinha</div>
+      <div class="clasico-item">Pisco Sour</div>
+      <div class="clasico-item">Margarita</div>
+      <div class="clasico-item">Cosmopolitan</div>
+      <div class="clasico-item">Tequila Sunrise</div>
+      <div class="clasico-item">Cuba Libre</div>
+      <div class="clasico-item">Daiquiri</div>
+      <div class="clasico-item">Fernet Cola</div>
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section class="cta-final">
+    <p class="cta-eyebrow">25 de Mayo 340 · Salta · Desde 2001</p>
+    <h2 class="cta-title">VENHA<br><span>PROVAR</span></h2>
+    <p class="cta-sub">Quinta, sexta e sábado a partir das 20h30. Reserve sua mesa.</p>
+    <a href="https://wa.me/5493875458204?text=Ol%C3%A1!%20Quero%20reservar%20uma%20mesa%20no%20Zeppelin%20Bar" class="btn-primary">
+      Reservar pelo WhatsApp
+    </a>
+    <div class="cta-info">
+      <div class="cta-info-item">
+        <div class="label">Endereço</div>
+        <div class="value">25 de Mayo 340, Salta</div>
+      </div>
+      <div class="cta-info-item">
+        <div class="label">Abertura</div>
+        <div class="value">Qui, Sex e Sáb a partir das 20h30</div>
+      </div>
+      <div class="cta-info-item">
+        <div class="label">Instagram</div>
+        <div class="value">@zeppelinbar.salta</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <a href="https://zeppelin-bar.com/pt/" class="footer-logo">ZEP<span>PE</span>LIN BAR</a>
+    <div class="footer-links">
+    <a href="/pt/">Início</a>
+    <a href="/pt/historia/">História</a>
+    <a href="/pt/vinhos/">Vinhos</a>
+    <a href="/pt/coqueteis/">Coquetéis</a>
+    <a href="https://queresto.com/zeppelin/" target="_blank" rel="noopener">Cardápio</a>
+    <a href="https://www.instagram.com/zeppelinbar.salta" target="_blank" rel="noopener">Instagram</a>
+  </div>
+  </footer>
+<section class="zb-faq" aria-labelledby="faq-cocteles">
+  <h2 id="faq-cocteles" class="zb-faq__title">Perguntas <span>frequentes</span></h2>
+
+  <details class="zb-faq__item">
+    <summary>Onde tomar coquetéis autorais em Salta?</summary>
+    <div class="zb-faq__a"><p>O Zeppelin Bar (25 de Mayo 340, Salta Capital) tem uma carta de coquetelaria autoral chamada "Sabores de Nuestra Tierra" (Sabores da Nossa Terra), com 8 drinks feitos com ingredientes regionais do noroeste argentino. Abre de quinta a sábado a partir das 20h30.</p></div>
+  </details>
+
+  <details class="zb-faq__item">
+    <summary>Quais ingredientes regionais do norte são usados nos coquetéis?</summary>
+    <div class="zb-faq__a"><p>A carta autoral do Zeppelin usa figo, cayote, marmelo e batata-doce: frutas e doces tradicionais do noroeste argentino que dão a cada drink um sabor que não se encontra na coquetelaria clássica.</p></div>
+  </details>
+
+  <details class="zb-faq__item">
+    <summary>Quais coquetéis regionais posso provar em Salta?</summary>
+    <div class="zb-faq__a"><p>Entre os drinks autorais do Zeppelin estão Sombra de Higuera (Fig Old Fashioned), Cuesta del Obispo (Cayote Sour), Sangre Calchaquí (Negroni de Marmelo) e Camino del Inca (Cream Sour de Batata-doce), entre outros.</p></div>
+  </details>
+
+  <details class="zb-faq__item">
+    <summary>Também tem coquetelaria clássica?</summary>
+    <div class="zb-faq__a"><p>Sim. Além dos drinks autorais, há clássicos como Mojito, Negroni, Old Fashioned, Aperol Spritz, Caipirinha, Pisco Sour e Margarita.</p></div>
+  </details>
+</section>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": [
+        "BarOrPub",
+        "LocalBusiness"
+      ],
+      "@id": "https://zeppelin-bar.com/#zeppelinbar",
+      "name": "Zeppelin Bar",
+      "alternateName": [
+        "Zeppelin Bar Salta",
+        "Zeppelin Rockería"
+      ],
+      "description": "Um dos bares mais icônicos de Salta, Argentina, desde 2001. Drinks autorais com ingredientes do norte argentino, vinhos de altitude Terroir Extremo dos Vales Calchaquíes e boa música de todas as épocas, a cinco quadras da Plaza 9 de Julio.",
+      "url": "https://zeppelin-bar.com/",
+      "telephone": "+5493875458204",
+      "foundingDate": "2001",
+      "priceRange": "$",
+      "acceptsReservations": true,
+      "paymentAccepted": "Cash, Credit Card, Debit Card, Mercado Pago, QR",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "25 de Mayo 340",
+        "addressLocality": "Salta",
+        "addressRegion": "Salta",
+        "postalCode": "A4400",
+        "addressCountry": "AR"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": -24.78542534888815,
+        "longitude": -65.41459861877314
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": "Thursday",
+          "opens": "20:30",
+          "closes": "03:00"
+        },
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "Friday",
+            "Saturday"
+          ],
+          "opens": "20:30",
+          "closes": "05:00"
+        }
+      ],
+      "sameAs": [
+        "https://www.instagram.com/zeppelinbar.salta",
+        "https://www.facebook.com/ZeppelinBarSaltaArgentina",
+        "https://www.tiktok.com/@zeppelinbarsalta"
+      ]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://zeppelin-bar.com/pt/coqueteis/#page",
+      "url": "https://zeppelin-bar.com/pt/coqueteis/",
+      "name": "Coquetéis em Salta | Zeppelin Bar — Drinks autorais com ingredientes do norte argentino",
+      "inLanguage": "pt-BR",
+      "about": {
+        "@id": "https://zeppelin-bar.com/#zeppelinbar"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "inLanguage": "pt-BR",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Onde tomar coquetéis autorais em Salta?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "O Zeppelin Bar (25 de Mayo 340, Salta Capital) tem uma carta de coquetelaria autoral chamada \"Sabores de Nuestra Tierra\" (Sabores da Nossa Terra), com 8 drinks feitos com ingredientes regionais do noroeste argentino. Abre de quinta a sábado a partir das 20h30."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Quais ingredientes regionais do norte são usados nos coquetéis?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A carta autoral do Zeppelin usa figo, cayote, marmelo e batata-doce: frutas e doces tradicionais do noroeste argentino que dão a cada drink um sabor que não se encontra na coquetelaria clássica."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Quais coquetéis regionais posso provar em Salta?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Entre os drinks autorais do Zeppelin estão Sombra de Higuera (Fig Old Fashioned), Cuesta del Obispo (Cayote Sour), Sangre Calchaquí (Negroni de Marmelo) e Camino del Inca (Cream Sour de Batata-doce), entre outros."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Também tem coquetelaria clássica?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sim. Além dos drinks autorais, há clássicos como Mojito, Negroni, Old Fashioned, Aperol Spritz, Caipirinha, Pisco Sour e Margarita."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
+<style id="zb-lang-css">.zb-lang{position:fixed;left:16px;bottom:16px;z-index:9999;display:flex;gap:2px;background:rgba(10,10,10,.92);border:1px solid rgba(255,255,255,.18);padding:4px;font-family:'Oswald',sans-serif;box-shadow:0 4px 18px rgba(0,0,0,.5)}.zb-lang a{color:#9a9a9a;text-decoration:none;font-size:.75rem;font-weight:500;letter-spacing:.12em;padding:8px 11px;line-height:1}.zb-lang a:hover{color:#fff}.zb-lang a[aria-current]{background:#FF5A00;color:#fff}</style>
+<div class="zb-lang" role="navigation" aria-label="Idioma / Language"><a href="/cocteles/" hreflang="es" lang="es">ES</a><a href="/en/cocktails/" hreflang="en" lang="en">EN</a><a href="/pt/coqueteis/" hreflang="pt-BR" lang="pt-BR" aria-current="true">PT</a></div>
+</body>
+</html>
