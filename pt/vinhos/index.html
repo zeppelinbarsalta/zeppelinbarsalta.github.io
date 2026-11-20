@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- SEO Primary -->
+  <title>Vinhos de Altitude em Salta | Zeppelin Bar — Terroir Extremo · Vales Calchaquíes</title>
+  <meta name="description" content="Carta de vinhos de altitude Terroir Extremo no Zeppelin Bar, Salta. Mais de 30 rótulos dos Vales Calchaquíes: Cafayate, Cachi, Molinos. Torrontés, Malbec e mais, entre 1.700 e 2.685 m. De quinta a sábado a partir das 20h30.">
+  <meta name="keywords" content="bar de vinhos Salta, vinhos de altitude Salta, vinhos Vales Calchaquíes, Torrontés Cafayate, Malbec Salta, onde tomar vinho em Salta, Terroir Extremo">
+  <link rel="canonical" href="https://zeppelin-bar.com/pt/vinhos/">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Terroir Extremo — Carta de vinhos de altitude no Zeppelin Bar, Salta">
+  <meta property="og:description" content="Mais de 30 rótulos dos Vales Calchaquíes entre 1.700 e 2.685 m. O bar mais icônico de Salta.">
+  <meta property="og:url" content="https://zeppelin-bar.com/pt/vinhos/">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_AR">
+
+  <!-- Schema.org -->
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@300;400;500;600&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --black: #0a0a0a;
+      --orange: #FF5A00;
+      --white: #f5f5f0;
+      --gray: #888;
+      --gray-dark: #0f0f0f;
+      --gray-mid: #1a1a1a;
+      --wine: #7a1f2e;
+      --wine-light: #a83248;
+      --gold: #c8a96e;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Oswald', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(to bottom, rgba(10,10,10,0.97), transparent);
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      letter-spacing: 0.08em;
+      text-decoration: none;
+      color: var(--white);
+    }
+    .nav-logo span { color: var(--orange); }
+    .nav-back {
+      font-size: 0.75rem;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gray);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-back:hover { color: var(--white); }
+    .nav-back::before { content: '← '; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 80px 40px 80px;
+      position: relative;
+      overflow: hidden;
+      background: var(--black);
+    }
+
+    /* Atmospheric dark wine gradient */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 15% 30%, rgba(122,31,46,0.2) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 70%, rgba(255,90,0,0.06) 0%, transparent 45%);
+      pointer-events: none;
+    }
+
+    /* Altitude line decoration */
+    .altitude-lines {
+      position: absolute;
+      right: 60px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0;
+      opacity: 0;
+      animation: fadeIn 1.2s ease forwards 1s;
+    }
+    .alt-line {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .alt-line:last-child { border-bottom: none; }
+    .alt-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      color: var(--gold);
+      letter-spacing: 0.05em;
+    }
+    .alt-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gray);
+      text-align: right;
+    }
+    .alt-bar {
+      width: 40px;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold));
+    }
+
+    .hero-eyebrow {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 16px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.2s;
+    }
+
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(4rem, 12vw, 11rem);
+      line-height: 0.88;
+      letter-spacing: 0.02em;
+      margin-bottom: 8px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.4s;
+    }
+
+    .hero-title-sub {
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-size: clamp(1.8rem, 4vw, 3.5rem);
+      color: var(--gold);
+      display: block;
+      margin-bottom: 32px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.55s;
+      letter-spacing: 0.03em;
+    }
+
+    .hero-sub {
+      font-family: 'EB Garamond', serif;
+      font-size: clamp(1rem, 2vw, 1.3rem);
+      color: var(--gray);
+      line-height: 1.65;
+      max-width: 520px;
+      margin-bottom: 44px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.7s;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.9s;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--orange);
+      color: var(--white);
+      font-family: 'Oswald', sans-serif;
+      font-weight: 500;
+      font-size: 0.85rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 16px 32px;
+      text-decoration: none;
+      transition: all 0.2s;
+      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+    }
+    .btn-primary:hover { background: #ff7a2a; transform: translateY(-2px); }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      background: transparent;
+      color: var(--gold);
+      font-family: 'Oswald', sans-serif;
+      font-weight: 400;
+      font-size: 0.85rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 16px 32px;
+      text-decoration: none;
+      border: 1px solid rgba(200,169,110,0.3);
+      transition: all 0.2s;
+    }
+    .btn-ghost:hover { border-color: var(--gold); background: rgba(200,169,110,0.06); }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      background: var(--gray-dark);
+      border-top: 1px solid rgba(255,255,255,0.04);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .stat {
+      padding: 40px;
+      text-align: center;
+      border-right: 1px solid rgba(255,255,255,0.04);
+      position: relative;
+    }
+    .stat:last-child { border-right: none; }
+
+    .stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .stat-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gray);
+      line-height: 1.5;
+    }
+
+    /* ── VALLES ── */
+    .valles {
+      padding: 100px 40px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      max-width: 60px;
+      height: 1px;
+      background: var(--orange);
+    }
+
+    .valles-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+    .valles-title span { color: var(--gold); }
+
+    .valles-intro {
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-size: 1.15rem;
+      color: var(--gray);
+      max-width: 600px;
+      line-height: 1.65;
+      margin-bottom: 64px;
+    }
+
+    .valles-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2px;
+    }
+
+    .valle-card {
+      background: var(--gray-dark);
+      padding: 48px 40px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s;
+    }
+    .valle-card:hover { background: #161616; }
+
+    .valle-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--gold), transparent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.5s ease;
+    }
+    .valle-card:hover::before { transform: scaleX(1); }
+
+    .valle-altitude {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3rem;
+      color: rgba(200,169,110,0.15);
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+
+    .valle-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      letter-spacing: 0.05em;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+
+    .valle-region {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    .valle-desc {
+      font-family: 'EB Garamond', serif;
+      font-size: 1rem;
+      color: var(--gray);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .valle-varietales {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .varietal-tag {
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gray);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 4px 10px;
+      transition: all 0.2s;
+    }
+    .valle-card:hover .varietal-tag {
+      border-color: rgba(200,169,110,0.3);
+      color: var(--gold);
+    }
+
+    /* ── VARIETALES HIGHLIGHT ── */
+    .varietales {
+      padding: 100px 40px;
+      background: var(--gray-dark);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .varietales::before {
+      content: 'TERROIR';
+      position: absolute;
+      left: -20px;
+      bottom: -60px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18rem;
+      color: rgba(255,255,255,0.015);
+      line-height: 1;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .varietales-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .varietales-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: end;
+      margin-bottom: 64px;
+    }
+
+    .varietales-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      line-height: 1;
+    }
+    .varietales-title span { color: var(--gold); }
+
+    .varietales-desc {
+      font-family: 'EB Garamond', serif;
+      font-size: 1.1rem;
+      color: var(--gray);
+      line-height: 1.65;
+    }
+
+    .varietales-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+
+    .varietal-card {
+      background: var(--black);
+      padding: 40px 32px;
+      position: relative;
+      transition: background 0.3s;
+    }
+    .varietal-card:hover { background: #0d0d0d; }
+
+    .varietal-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, var(--gold), transparent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+    .varietal-card:hover::after { transform: scaleX(1); }
+
+    .varietal-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      letter-spacing: 0.05em;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+
+    .varietal-type {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+
+    .varietal-notes {
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-size: 0.95rem;
+      color: var(--gray);
+      line-height: 1.55;
+    }
+
+    /* ── ETIQUETAS ── */
+    .etiquetas {
+      padding: 100px 40px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .etiquetas-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      margin-bottom: 12px;
+    }
+    .etiquetas-title span { color: var(--gold); }
+
+    .etiquetas-sub {
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-size: 1.05rem;
+      color: var(--gray);
+      margin-bottom: 48px;
+    }
+
+    .etiquetas-list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+
+    .etiqueta-item {
+      background: var(--gray-dark);
+      padding: 20px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s;
+      border-left: 2px solid transparent;
+    }
+    .etiqueta-item:hover {
+      background: var(--gray-mid);
+      border-left-color: var(--gold);
+    }
+
+    .etiqueta-nombre {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: var(--white);
+    }
+
+    .etiqueta-varietal {
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gray);
+    }
+
+    /* ── CTA ── */
+    .cta-final {
+      padding: 120px 40px;
+      text-align: center;
+      background: var(--gray-dark);
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-final::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, rgba(122,31,46,0.1) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .cta-eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+    }
+    .cta-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 8vw, 7rem);
+      line-height: 0.92;
+      margin-bottom: 24px;
+    }
+    .cta-title span { color: var(--orange); }
+    .cta-sub {
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-size: 1.2rem;
+      color: var(--gray);
+      margin-bottom: 48px;
+    }
+    .cta-info {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      flex-wrap: wrap;
+      margin-top: 48px;
+      padding-top: 48px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .cta-info-item .label {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-bottom: 6px;
+    }
+    .cta-info-item .value {
+      font-family: 'Oswald', sans-serif;
+      font-weight: 500;
+      font-size: 1rem;
+      color: var(--white);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 32px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.2rem;
+      letter-spacing: 0.08em;
+      color: var(--white);
+      text-decoration: none;
+    }
+    .footer-logo span { color: var(--orange); }
+    .footer-links {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .footer-links a {
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gray);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--gold); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      nav { padding: 16px 20px; }
+      .hero { padding: 100px 20px 60px; }
+      .altitude-lines { display: none; }
+      .stats-bar { grid-template-columns: 1fr; }
+      .stat { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.04); }
+      .valles { padding: 60px 20px; }
+      .valles-grid { grid-template-columns: 1fr; }
+      .varietales { padding: 60px 20px; }
+      .varietales-header { grid-template-columns: 1fr; gap: 24px; }
+      .varietales-grid { grid-template-columns: 1fr 1fr; }
+      .etiquetas { padding: 60px 20px; }
+      .etiquetas-list { grid-template-columns: 1fr 1fr; }
+      .cta-final { padding: 80px 20px; }
+      footer { padding: 24px 20px; }
+      .cta-info { gap: 24px; }
+    }
+
+    @media (max-width: 480px) {
+      .varietales-grid { grid-template-columns: 1fr; }
+      .etiquetas-list { grid-template-columns: 1fr; }
+    }
+  </style>
+  <style>
+  .zb-faq{max-width:860px;margin:0 auto;padding:72px 24px}
+  .zb-faq__title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.4rem,6vw,3.6rem);
+    letter-spacing:.02em;color:#fff;margin:0 0 32px;line-height:1}
+  .zb-faq__title span{color:#FF5A00}
+  .zb-faq__item{border-bottom:1px solid rgba(255,255,255,.12)}
+  .zb-faq__item summary{font-family:'Oswald',sans-serif;font-weight:500;
+    font-size:1.12rem;color:#fff;padding:22px 44px 22px 0;cursor:pointer;
+    list-style:none;position:relative;transition:color .2s ease}
+  .zb-faq__item summary::-webkit-details-marker{display:none}
+  .zb-faq__item summary:hover{color:#FF5A00}
+  .zb-faq__item summary::after{content:'+';position:absolute;right:4px;top:18px;
+    font-size:1.7rem;line-height:1;color:#FF5A00;transition:transform .25s ease}
+  .zb-faq__item[open] summary::after{transform:rotate(45deg)}
+  .zb-faq__a{font-family:'Oswald',sans-serif;font-weight:300;color:rgba(255,255,255,.78);
+    font-size:1rem;line-height:1.65;padding:0 44px 24px 0;
+    animation:zbfade .3s ease}
+  .zb-faq__a p{margin:0}
+  @keyframes zbfade{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+</style>
+<style id="nav-fix">
+  nav { background: rgba(10,10,10,0.94); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(255,255,255,0.08); padding-top: 12px; padding-bottom: 12px; gap: 12px; }
+  .nav-logo { white-space: nowrap; }
+  .nav-back { display: inline-block; white-space: nowrap; line-height: 1; padding: 14px 18px; border: 1px solid var(--orange); color: var(--white); font-size: 0.8rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; transition: background 0.2s, color 0.2s; }
+  .nav-back::before { content: '←'; margin-right: 8px; color: var(--orange); transition: color 0.2s; }
+  .nav-back:hover, .nav-back:focus-visible { background: var(--orange); color: var(--white); }
+  .nav-back:hover::before, .nav-back:focus-visible::before { color: var(--white); }
+  @media (max-width: 768px) { nav { padding: 10px 16px; } .nav-logo { font-size: 1.35rem; } .nav-back { padding: 13px 14px; font-size: 0.75rem; } }
+  @media (max-width: 480px) { .nav-back .nb-long { display: none; } }
+</style>
+  <link rel="alternate" hreflang="es" href="https://zeppelin-bar.com/vinos/">
+  <link rel="alternate" hreflang="en" href="https://zeppelin-bar.com/en/wines/">
+  <link rel="alternate" hreflang="pt-BR" href="https://zeppelin-bar.com/pt/vinhos/">
+  <link rel="alternate" hreflang="x-default" href="https://zeppelin-bar.com/vinos/">
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="https://zeppelin-bar.com/pt/" class="nav-logo">ZEP<span>PE</span>LIN BAR</a>
+    <a href="https://zeppelin-bar.com/pt/" class="nav-back"><span class="nb-long">Voltar ao </span>início</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+
+    <div class="altitude-lines" aria-hidden="true">
+      <div class="alt-line">
+        <div class="alt-label">máx.<br>m de altitude</div>
+        <div class="alt-num">2.685</div>
+        <div class="alt-bar"></div>
+      </div>
+      <div class="alt-line">
+        <div class="alt-label">mín.<br>m de altitude</div>
+        <div class="alt-num">1.700</div>
+        <div class="alt-bar"></div>
+      </div>
+    </div>
+
+    <p class="hero-eyebrow">Zeppelin Bar · Salta · Desde 2001</p>
+    <h1 class="hero-title">VINHOS DE<br>ALTITUDE</h1>
+    <em class="hero-title-sub">Terroir Extremo</em>
+    <p class="hero-sub">Mais de 30 rótulos dos Vales Calchaquíes, entre 1.700 e 2.685 metros acima do nível do mar. Cafayate, Cachi, Molinos. O vinho do norte argentino no bar mais icônico de Salta.</p>
+
+    <div class="hero-cta">
+      <a href="https://wa.me/5493875458204?text=Ol%C3%A1!%20Quero%20reservar%20uma%20mesa%20no%20Zeppelin%20Bar" class="btn-primary">
+        Reservar pelo WhatsApp
+      </a>
+      <a href="https://www.instagram.com/zeppelinbar.salta" class="btn-ghost" target="_blank" rel="noopener">
+        @zeppelinbar.salta
+      </a>
+    </div>
+  </section>
+
+  <!-- STATS BAR -->
+  <div class="stats-bar">
+    <div class="stat">
+      <div class="stat-num">30+</div>
+      <div class="stat-label">Rótulos<br>selecionados</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">1.700</div>
+      <div class="stat-label">m mínimo<br>altitude dos vinhedos</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2.685</div>
+      <div class="stat-label">m máximo<br>altitude dos vinhedos</div>
+    </div>
+  </div>
+
+  <!-- VALLES -->
+  <section class="valles">
+    <p class="section-label">Origem</p>
+    <h2 class="valles-title">OS VALES<br><span>CALCHAQUÍES</span></h2>
+    <p class="valles-intro">Quatro regiões vinícolas de altitude extrema. Solos únicos, amplitudes térmicas impossíveis e uvas que concentram todo o caráter do norte argentino.</p>
+
+    <div class="valles-grid">
+      <div class="valle-card">
+        <div class="valle-altitude">1.700</div>
+        <div class="valle-name">Cafayate</div>
+        <div class="valle-region">Vale Calchaquí · Salta</div>
+        <p class="valle-desc">A capital do Torrontés. Vinhedos a 1.700 m, sol intenso e noites frias que concentram aromas únicos em cada uva. O lugar que colocou Salta no mapa mundial do vinho.</p>
+        <div class="valle-varietales">
+          <span class="varietal-tag">Torrontés</span>
+          <span class="varietal-tag">Malbec</span>
+          <span class="varietal-tag">Cabernet</span>
+          <span class="varietal-tag">Tannat</span>
+        </div>
+      </div>
+
+      <div class="valle-card">
+        <div class="valle-altitude">2.300</div>
+        <div class="valle-name">Cachi</div>
+        <div class="valle-region">Alto Vale Calchaquí · Salta</div>
+        <p class="valle-desc">A mais de 2.300 metros, os vinhedos de Cachi produzem vinhos de intensidade rara. A altitude extrema obriga a videira a concentrar todo o seu potencial em cada cacho.</p>
+        <div class="valle-varietales">
+          <span class="varietal-tag">Malbec</span>
+          <span class="varietal-tag">Torrontés</span>
+          <span class="varietal-tag">Syrah</span>
+        </div>
+      </div>
+
+      <div class="valle-card">
+        <div class="valle-altitude">2.685</div>
+        <div class="valle-name">Molinos</div>
+        <div class="valle-region">Vale Calchaquí · Salta</div>
+        <p class="valle-desc">O teto dos vinhedos argentinos. A 2.685 m, as uvas de Molinos produzem vinhos de perfil único: minerais, tensos, com uma acidez natural que nenhum outro terroir consegue reproduzir.</p>
+        <div class="valle-varietales">
+          <span class="varietal-tag">Malbec de altitude</span>
+          <span class="varietal-tag">Torrontés</span>
+        </div>
+      </div>
+
+      <div class="valle-card">
+        <div class="valle-altitude">1.800</div>
+        <div class="valle-name">Calchaquíes</div>
+        <div class="valle-region">Vale Central · Salta</div>
+        <p class="valle-desc">O coração do vale. Onde a tradição vinícola do noroeste argentino se consolidou e onde vinícolas boutique seguem produzindo rótulos com caráter genuinamente salteño.</p>
+        <div class="valle-varietales">
+          <span class="varietal-tag">Malbec</span>
+          <span class="varietal-tag">Torrontés</span>
+          <span class="varietal-tag">Blend</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VARIETALES -->
+  <section class="varietales">
+    <div class="varietales-inner">
+      <div class="varietales-header">
+        <h2 class="varietales-title">AS<br><span>VARIEDADES</span></h2>
+        <p class="varietales-desc">Brancos, tintos e doces naturais. Cada cepa expressa o solo e a altitude onde cresceu. A carta Terroir Extremo reúne todos eles.</p>
+      </div>
+
+      <div class="varietales-grid">
+        <div class="varietal-card">
+          <div class="varietal-name">Torrontés</div>
+          <div class="varietal-type">Branco seco · Símbolo do noroeste argentino</div>
+          <p class="varietal-notes">A uva de Salta. Aromático, floral, fresco. Notas de pêssego branco e flor de laranjeira. A variedade que define o vinho de Salta no mundo.</p>
+        </div>
+        <div class="varietal-card">
+          <div class="varietal-name">Malbec</div>
+          <div class="varietal-type">Tinto · De altitude</div>
+          <p class="varietal-notes">O Malbec de altitude é outro vinho. Mais tenso, mais mineral, com taninos mais marcados. O frio extremo da noite concentra as frutas vermelhas e negras.</p>
+        </div>
+        <div class="varietal-card">
+          <div class="varietal-name">Doce Natural</div>
+          <div class="varietal-type">Branco doce · Noroeste argentino</div>
+          <p class="varietal-notes">Colheita tardia com concentração natural de açúcares. Untuoso, com equilíbrio justo entre doçura e acidez. A harmonização perfeita para fechar a noite.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ETIQUETAS DESTACADAS -->
+  <section class="etiquetas">
+    <p class="section-label">Seleção</p>
+    <h2 class="etiquetas-title">RÓTULOS<br><span>EM DESTAQUE</span></h2>
+    <p class="etiquetas-sub">A carta Terroir Extremo completa. Brancos, rosés e tintos dos Vales Calchaquíes.</p>
+
+    <div class="etiquetas-list">
+      <!-- Blancos y Rosados -->
+      <div class="etiqueta-item">
+        <span class="etiqueta-nombre">San Pedro de Yacochuya</span>
+        <span class="etiqueta-varietal">Torrontés · 2.035 m</span>
+      </div>
+      <div class="etiqueta-item">
+        <span class="etiqueta-nombre">El Tapao</span>
+        <span class="etiqueta-varietal">Torrontés · 1.700 m</span>
+      </div>
+      <div class="etiqueta-item">
+        <span class="etiqueta-nombre">Finca Humanao</span>
+        <span class="etiqueta-varietal">Torrontés · 2.260 m</span>
+      </div>
+      <div class="etiqueta-item">
+        <span class="etiqueta-nombre">Finca Las Nubes</span>
+        <span class="etiqueta-varietal">Torrontés · Cafayate</span>
+      </div>
+      <div class="etiqueta-item">
+        <span class="etiqueta-nombre">Amalaya</span>
+        <span class="etiqueta-varietal">Torrontés / Riesling · 1.800 m</span>
+      </div>
+      <div class="etiqueta-item">
+        <span class="etiqueta-nombre">Elementos</span>
+        <span class="etiqueta-varietal">Torrontés · Doce Natural</span>
+      </div>
+      <div class="etiqueta-item">
+        <span class="etiqueta-nombre">El Tapao</span>
+        <span class="etiqueta-varietal">Rosé · 1.700 m</span>
+      </div>
+      <div class="etiqueta-item">
+        <span class="etiqueta-nombre">Nueve Cumbres</span>
+        <span class="etiqueta-varietal">Rosé · 1.700 m</span>
+      </div>
+      <div class="etiqueta-item">
+        <span class="etiqueta-nombre">Puna</span>
+        <span class="etiqueta-varietal">Rosé Doce Malbec · 2.600 m</span>
+      </div>
+      <!-- Tintos -->
+      <div class="etiqueta-item">
+        <span class="etiqueta-nombre">Cafayate Malbec</span>
+        <span class="etiqueta-varietal">Malbec · 1.700 m</span>
+      </div>
+      <div class="etiqueta-item">
+        <span class="etiqueta-nombre">Finca Las Nubes Malbec</span>
+        <span class="etiqueta-varietal">Malbec · Cafayate</span>
+      </div>
+      <div class="etiqueta-item">
+        <span class="etiqueta-nombre">Finca Humanao Malbec</span>
+        <span class="etiqueta-varietal">Malbec · 2.260 m</span>
+      </div>
+      <div class="etiqueta-item">
+        <span class="etiqueta-nombre">Amalaya Malbec</span>
+        <span class="etiqueta-varietal">Malbec · 1.800 m</span>
+      </div>
+      <div class="etiqueta-item">
+        <span class="etiqueta-nombre">Amauta Absoluto</span>
+        <span class="etiqueta-varietal">Malbec · 1.750 m</span>
+      </div>
+      <div class="etiqueta-item">
+        <span class="etiqueta-nombre">Don David Malbec</span>
+        <span class="etiqueta-varietal">Malbec · Cafayate</span>
+      </div>
+      <div class="etiqueta-item">
+        <span class="etiqueta-nombre">El Esteco</span>
+        <span class="etiqueta-varietal">Malbec · 1.700 m</span>
+      </div>
+      <div class="etiqueta-item">
+        <span class="etiqueta-nombre">El Tapao</span>
+        <span class="etiqueta-varietal">Cabernet Malbec · 1.700 m</span>
+      </div>
+      <div class="etiqueta-item">
+        <span class="etiqueta-nombre">Piattelli Reserva</span>
+        <span class="etiqueta-varietal">Malbec Tannat · 1.700–1.800 m</span>
+      </div>
+      <div class="etiqueta-item">
+        <span class="etiqueta-nombre">Puna Reserva</span>
+        <span class="etiqueta-varietal">Malbec · 2.600 m</span>
+      </div>
+      <div class="etiqueta-item">
+        <span class="etiqueta-nombre">Humanao Reserva</span>
+        <span class="etiqueta-varietal">Malbec · 2.260 m</span>
+      </div>
+      <div class="etiqueta-item">
+        <span class="etiqueta-nombre">Humanao Gran Reserva</span>
+        <span class="etiqueta-varietal">Malbec · 2.260 m</span>
+      </div>
+      <div class="etiqueta-item">
+        <span class="etiqueta-nombre">Toqui Reserva — Bodega Hemsy</span>
+        <span class="etiqueta-varietal">Malbec · 1.700 m</span>
+      </div>
+      <div class="etiqueta-item">
+        <span class="etiqueta-nombre">Nueve Cumbres Abundia</span>
+        <span class="etiqueta-varietal">Malbec · 2.700 m</span>
+      </div>
+      <div class="etiqueta-item">
+        <span class="etiqueta-nombre">Quebrada de las Flechas</span>
+        <span class="etiqueta-varietal">Reserva · 1.800–2.000 m</span>
+      </div>
+      <div class="etiqueta-item">
+        <span class="etiqueta-nombre">Adentro</span>
+        <span class="etiqueta-varietal">Merlot · 2.685 m</span>
+      </div>
+      <div class="etiqueta-item">
+        <span class="etiqueta-nombre">San Pedro de Yacochuya</span>
+        <span class="etiqueta-varietal">Tinto · 2.035 m</span>
+      </div>
+      <div class="etiqueta-item">
+        <span class="etiqueta-nombre">Tacuil RD (Ramiro Diez)</span>
+        <span class="etiqueta-varietal">Tinto · 2.530–2.630 m</span>
+      </div>
+      <div class="etiqueta-item">
+        <span class="etiqueta-nombre">Tacuil — Doña Ascensión</span>
+        <span class="etiqueta-varietal">Tinto · 2.530 m</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section class="cta-final">
+    <p class="cta-eyebrow">Terroir Extremo · 30+ rótulos · Calchaquíes</p>
+    <h2 class="cta-title">A CARTA<br>TE <span>ESPERA</span></h2>
+    <p class="cta-sub">Quinta, sexta e sábado a partir das 20h30. 25 de Mayo 340, Salta.</p>
+    <a href="https://wa.me/5493875458204?text=Ol%C3%A1!%20Quero%20reservar%20uma%20mesa%20no%20Zeppelin%20Bar" class="btn-primary">
+      Reservar pelo WhatsApp
+    </a>
+    <div class="cta-info">
+      <div class="cta-info-item">
+        <div class="label">Endereço</div>
+        <div class="value">25 de Mayo 340, Salta</div>
+      </div>
+      <div class="cta-info-item">
+        <div class="label">Abertura</div>
+        <div class="value">Qui, Sex e Sáb a partir das 20h30</div>
+      </div>
+      <div class="cta-info-item">
+        <div class="label">Rótulos</div>
+        <div class="value">30+ de altitude</div>
+      </div>
+    </div>
+  </section>
+<section class="zb-faq" aria-labelledby="faq-vinos">
+  <h2 id="faq-vinos" class="zb-faq__title">Perguntas <span>frequentes</span></h2>
+
+  <details class="zb-faq__item">
+    <summary>Onde tomar vinhos de altitude em Salta Capital?</summary>
+    <div class="zb-faq__a"><p>No centro de Salta, o Zeppelin Bar (25 de Mayo 340) tem uma carta dedicada a vinhos de altitude, a "Terroir Extremo", com mais de 30 rótulos dos Vales Calchaquíes. Uma forma de provar os vinhos dos vales sem sair da cidade. Abre de quinta a sábado a partir das 20h30.</p></div>
+  </details>
+
+  <details class="zb-faq__item">
+    <summary>O que são os vinhos de altitude dos Vales Calchaquíes?</summary>
+    <div class="zb-faq__a"><p>São vinhos de vinhedos localizados entre 1.700 e 2.685 m de altitude em Salta. A altitude extrema, a grande amplitude térmica e a forte exposição ao sol concentram aromas e cor, gerando vinhos mais intensos, minerais e com acidez natural marcante.</p></div>
+  </details>
+
+  <details class="zb-faq__item">
+    <summary>A que altitude ficam os vinhedos de Salta?</summary>
+    <div class="zb-faq__a"><p>Vão de cerca de 1.700 m em Cafayate até quase 2.685 m em Molinos, considerados dos mais altos do mundo. Os vinhedos de Cachi ficam acima de 2.300 m.</p></div>
+  </details>
+
+  <details class="zb-faq__item">
+    <summary>Qual é o vinho típico de Salta?</summary>
+    <div class="zb-faq__a"><p>O Torrontés é a uva símbolo de Salta: um branco seco, aromático e floral, com notas de pêssego branco e flor de laranjeira. O Malbec de altitude é o tinto mais representativo da província.</p></div>
+  </details>
+
+  <details class="zb-faq__item">
+    <summary>Quais variedades de altitude são produzidas nos Vales Calchaquíes?</summary>
+    <div class="zb-faq__a"><p>Principalmente Torrontés e Malbec, além de Cabernet, Tannat, Syrah, Merlot e doces naturais de colheita tardia.</p></div>
+  </details>
+</section>
+  <!-- FOOTER -->
+  <footer>
+    <a href="https://zeppelin-bar.com/pt/" class="footer-logo">ZEP<span>PE</span>LIN BAR</a>
+    <div class="footer-links">
+    <a href="/pt/">Início</a>
+    <a href="/pt/historia/">História</a>
+    <a href="/pt/vinhos/">Vinhos</a>
+    <a href="/pt/coqueteis/">Coquetéis</a>
+    <a href="https://queresto.com/zeppelin/" target="_blank" rel="noopener">Cardápio</a>
+    <a href="https://www.instagram.com/zeppelinbar.salta" target="_blank" rel="noopener">Instagram</a>
+  </div>
+  </footer>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": [
+        "BarOrPub",
+        "LocalBusiness"
+      ],
+      "@id": "https://zeppelin-bar.com/#zeppelinbar",
+      "name": "Zeppelin Bar",
+      "alternateName": [
+        "Zeppelin Bar Salta",
+        "Zeppelin Rockería"
+      ],
+      "description": "Um dos bares mais icônicos de Salta, Argentina, desde 2001. Drinks autorais com ingredientes do norte argentino, vinhos de altitude Terroir Extremo dos Vales Calchaquíes e boa música de todas as épocas, a cinco quadras da Plaza 9 de Julio.",
+      "url": "https://zeppelin-bar.com/",
+      "telephone": "+5493875458204",
+      "foundingDate": "2001",
+      "priceRange": "$",
+      "acceptsReservations": true,
+      "paymentAccepted": "Cash, Credit Card, Debit Card, Mercado Pago, QR",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "25 de Mayo 340",
+        "addressLocality": "Salta",
+        "addressRegion": "Salta",
+        "postalCode": "A4400",
+        "addressCountry": "AR"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": -24.78542534888815,
+        "longitude": -65.41459861877314
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": "Thursday",
+          "opens": "20:30",
+          "closes": "03:00"
+        },
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "Friday",
+            "Saturday"
+          ],
+          "opens": "20:30",
+          "closes": "05:00"
+        }
+      ],
+      "sameAs": [
+        "https://www.instagram.com/zeppelinbar.salta",
+        "https://www.facebook.com/ZeppelinBarSaltaArgentina",
+        "https://www.tiktok.com/@zeppelinbarsalta"
+      ]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://zeppelin-bar.com/pt/vinhos/#page",
+      "url": "https://zeppelin-bar.com/pt/vinhos/",
+      "name": "Vinhos de Altitude em Salta | Zeppelin Bar — Terroir Extremo · Vales Calchaquíes",
+      "inLanguage": "pt-BR",
+      "about": {
+        "@id": "https://zeppelin-bar.com/#zeppelinbar"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "inLanguage": "pt-BR",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Onde tomar vinhos de altitude em Salta Capital?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No centro de Salta, o Zeppelin Bar (25 de Mayo 340) tem uma carta dedicada a vinhos de altitude, a \"Terroir Extremo\", com mais de 30 rótulos dos Vales Calchaquíes. Uma forma de provar os vinhos dos vales sem sair da cidade. Abre de quinta a sábado a partir das 20h30."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "O que são os vinhos de altitude dos Vales Calchaquíes?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "São vinhos de vinhedos localizados entre 1.700 e 2.685 m de altitude em Salta. A altitude extrema, a grande amplitude térmica e a forte exposição ao sol concentram aromas e cor, gerando vinhos mais intensos, minerais e com acidez natural marcante."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "A que altitude ficam os vinhedos de Salta?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Vão de cerca de 1.700 m em Cafayate até quase 2.685 m em Molinos, considerados dos mais altos do mundo. Os vinhedos de Cachi ficam acima de 2.300 m."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Qual é o vinho típico de Salta?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "O Torrontés é a uva símbolo de Salta: um branco seco, aromático e floral, com notas de pêssego branco e flor de laranjeira. O Malbec de altitude é o tinto mais representativo da província."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Quais variedades de altitude são produzidas nos Vales Calchaquíes?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Principalmente Torrontés e Malbec, além de Cabernet, Tannat, Syrah, Merlot e doces naturais de colheita tardia."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
+<style id="zb-lang-css">.zb-lang{position:fixed;left:16px;bottom:16px;z-index:9999;display:flex;gap:2px;background:rgba(10,10,10,.92);border:1px solid rgba(255,255,255,.18);padding:4px;font-family:'Oswald',sans-serif;box-shadow:0 4px 18px rgba(0,0,0,.5)}.zb-lang a{color:#9a9a9a;text-decoration:none;font-size:.75rem;font-weight:500;letter-spacing:.12em;padding:8px 11px;line-height:1}.zb-lang a:hover{color:#fff}.zb-lang a[aria-current]{background:#FF5A00;color:#fff}</style>
+<div class="zb-lang" role="navigation" aria-label="Idioma / Language"><a href="/vinos/" hreflang="es" lang="es">ES</a><a href="/en/wines/" hreflang="en" lang="en">EN</a><a href="/pt/vinhos/" hreflang="pt-BR" lang="pt-BR" aria-current="true">PT</a></div>
+</body>
+</html>
