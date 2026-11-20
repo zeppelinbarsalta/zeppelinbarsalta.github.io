@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zeppelin Bar Salta | Bar icônico em Salta, Argentina, desde 2001 — Drinks, Vinhos e Música</title>
+  <meta name="description" content="O Zeppelin Bar é um dos bares mais icônicos de Salta, Argentina, desde 2001. Drinks autorais com ingredientes do norte argentino, vinhos de altitude dos Vales Calchaquíes e boa música. 25 de Mayo 340, a 5 quadras da Plaza 9 de Julio. De quinta a sábado a partir das 20h30.">
+  <meta name="keywords" content="melhores bares em Salta, bares em Salta Argentina, vida noturna Salta, o que fazer à noite em Salta, bar de drinks Salta, bar de vinhos Salta, Salta à noite, bar histórico Salta">
+  <link rel="canonical" href="https://zeppelin-bar.com/pt/">
+  <meta property="og:title" content="Zeppelin Bar Salta — Um bar icônico em Salta desde 2001">
+  <meta property="og:description" content="Drinks autorais com ingredientes do norte, vinhos de altitude e boa música. 25 de Mayo 340, Salta.">
+  <meta property="og:url" content="https://zeppelin-bar.com/pt/">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:image" content="https://zeppelin-bar.com/og_imagen.webp">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@300;400;500;600&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root{--black:#0a0a0a;--orange:#FF5A00;--white:#f5f5f0;--gray:#888;--gray-dark:#111;--gray-mid:#1a1a1a}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{background:var(--black);color:var(--white);font-family:'Oswald',sans-serif;font-weight:300;overflow-x:hidden}
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;gap:12px;background:rgba(10,10,10,.94);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.08);padding:12px 40px}
+    .nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:.08em;text-decoration:none;color:var(--white);white-space:nowrap}
+    .nav-logo span{color:var(--orange)}
+    .nav-back{display:inline-block;white-space:nowrap;line-height:1;padding:14px 18px;border:1px solid var(--orange);color:var(--white);font-size:.8rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;transition:background .2s}
+    .nav-back::before{content:'←';margin-right:8px;color:var(--orange)}
+    .nav-back:hover{background:var(--orange)}
+    .nav-back:hover::before{color:var(--white)}
+    .hero{min-height:92vh;display:flex;flex-direction:column;justify-content:flex-end;padding:120px 40px 80px;position:relative;overflow:hidden}
+    .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 80% 20%,rgba(255,90,0,.1) 0%,transparent 50%),radial-gradient(ellipse at 10% 80%,rgba(255,90,0,.06) 0%,transparent 40%);pointer-events:none}
+    .hero-badge{position:absolute;top:50%;right:80px;transform:translateY(-50%);text-align:center;opacity:0;animation:fadeIn 1s ease forwards 1s}
+    .hero-badge-num{font-family:'Bebas Neue',sans-serif;font-size:6rem;color:rgba(255,90,0,.12);line-height:1}
+    .hero-badge-label{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--orange)}
+    .hero-eyebrow{font-size:.7rem;font-weight:500;letter-spacing:.3em;text-transform:uppercase;color:var(--orange);margin-bottom:16px;opacity:0;animation:fadeUp .8s ease forwards .2s}
+    .hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(3.5rem,10vw,9rem);line-height:.88;margin-bottom:28px;opacity:0;animation:fadeUp .8s ease forwards .4s}
+    .accent{color:var(--orange)}
+    .hero-sub{font-family:'EB Garamond',serif;font-style:italic;font-size:clamp(1rem,2vw,1.3rem);color:var(--gray);line-height:1.65;max-width:600px;margin-bottom:44px;opacity:0;animation:fadeUp .8s ease forwards .6s}
+    .hero-cta{display:flex;gap:16px;flex-wrap:wrap;opacity:0;animation:fadeUp .8s ease forwards .8s}
+    .btn-primary{display:inline-flex;align-items:center;gap:10px;background:var(--orange);color:var(--white);font-family:'Oswald',sans-serif;font-weight:500;font-size:.85rem;letter-spacing:.2em;text-transform:uppercase;padding:16px 32px;text-decoration:none;transition:all .2s;clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px))}
+    .btn-primary:hover{background:#ff7a2a;transform:translateY(-2px)}
+    .btn-secondary{display:inline-flex;align-items:center;background:transparent;color:var(--white);font-family:'Oswald',sans-serif;font-weight:400;font-size:.85rem;letter-spacing:.2em;text-transform:uppercase;padding:16px 32px;text-decoration:none;border:1px solid rgba(255,255,255,.2);transition:all .2s}
+    .btn-secondary:hover{border-color:var(--orange);color:var(--orange)}
+    .quick-info{background:var(--orange);display:grid;grid-template-columns:repeat(4,1fr)}
+    .qi-item{padding:28px 32px;border-right:1px solid rgba(0,0,0,.1)}
+    .qi-item:last-child{border-right:none}
+    .qi-label{display:block;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(0,0,0,.5);margin-bottom:4px}
+    .qi-value{font-weight:600;font-size:.95rem;color:var(--black)}
+    .intro{padding:100px 40px 40px;max-width:820px;margin:0 auto}
+    .section-label{font-size:.65rem;font-weight:500;letter-spacing:.3em;text-transform:uppercase;color:var(--orange);margin-bottom:40px;display:flex;align-items:center;gap:16px}
+    .section-label::after{content:'';flex:1;max-width:60px;height:1px;background:var(--orange)}
+    .prose p{font-family:'EB Garamond',serif;font-size:1.25rem;line-height:1.75;color:rgba(245,245,240,.85);margin-bottom:22px}
+    .prose strong{color:var(--white);font-weight:400}
+    .timeline{padding:60px 40px 100px;max-width:1100px;margin:0 auto}
+    .tl-item{display:grid;grid-template-columns:180px 1fr;gap:48px;padding:48px 0;border-top:1px solid rgba(255,255,255,.08)}
+    .tl-year{font-family:'Bebas Neue',sans-serif;font-size:4.5rem;line-height:.9;color:var(--orange)}
+    .tl-place{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gray);margin-top:10px}
+    .tl-title{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;letter-spacing:.02em;line-height:1;margin-bottom:16px}
+    .tl-text{font-family:'EB Garamond',serif;font-size:1.15rem;line-height:1.7;color:rgba(245,245,240,.8)}
+    .people{padding:100px 40px;background:var(--gray-dark)}
+    .people-inner{max-width:1100px;margin:0 auto}
+    .people-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,5vw,4.5rem);line-height:1;margin-bottom:60px}
+    .people-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+    .p-card{background:var(--black);padding:44px 36px;position:relative}
+    .p-card::before{content:'';position:absolute;top:0;left:0;width:0;height:3px;background:var(--orange);transition:width .4s ease}
+    .p-card:hover::before{width:100%}
+    .p-tag{display:inline-block;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--orange);border:1px solid rgba(255,90,0,.3);padding:3px 10px;margin-bottom:20px}
+    .p-name{font-weight:500;font-size:1.15rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px}
+    .p-desc{font-family:'EB Garamond',serif;font-size:1.05rem;color:var(--gray);line-height:1.6}
+    .statement{padding:110px 40px;text-align:center;position:relative;overflow:hidden}
+    .statement::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(255,90,0,.06) 0%,transparent 65%);pointer-events:none}
+    .statement-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.6rem,7vw,6rem);line-height:.95;margin-bottom:24px}
+    .statement-sub{font-family:'EB Garamond',serif;font-style:italic;font-size:clamp(1.05rem,2.2vw,1.4rem);color:var(--gray);max-width:640px;margin:0 auto;line-height:1.6}
+    .today{padding:100px 40px;max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+    .t-card{background:var(--gray-dark);padding:40px 32px}
+    .t-num{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;margin-bottom:14px}
+    .t-title{font-weight:500;font-size:1rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
+    .t-desc{font-family:'EB Garamond',serif;font-size:1rem;color:var(--gray);line-height:1.6}
+    .en{padding:80px 40px;background:var(--gray-dark)}
+    .en-inner{max-width:820px;margin:0 auto}
+    .en h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.2rem,4.5vw,3.6rem);line-height:1;margin-bottom:28px}
+    .zb-faq{max-width:860px;margin:0 auto;padding:90px 24px}
+    .zb-faq__title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.4rem,6vw,3.6rem);color:#fff;margin:0 0 32px;line-height:1}
+    .zb-faq__title span{color:#FF5A00}
+    .zb-faq__item{border-bottom:1px solid rgba(255,255,255,.12)}
+    .zb-faq__item summary{font-weight:500;font-size:1.12rem;color:#fff;padding:22px 44px 22px 0;cursor:pointer;list-style:none;position:relative;transition:color .2s}
+    .zb-faq__item summary::-webkit-details-marker{display:none}
+    .zb-faq__item summary:hover{color:#FF5A00}
+    .zb-faq__item summary::after{content:'+';position:absolute;right:4px;top:18px;font-size:1.7rem;line-height:1;color:#FF5A00;transition:transform .25s}
+    .zb-faq__item[open] summary::after{transform:rotate(45deg)}
+    .zb-faq__a{color:rgba(255,255,255,.78);font-size:1rem;line-height:1.65;padding:0 44px 24px 0}
+    .cta-final{padding:120px 40px;text-align:center;position:relative;overflow:hidden}
+    .cta-eyebrow{font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;color:var(--orange);margin-bottom:20px}
+    .cta-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,9vw,8rem);line-height:.92;margin-bottom:24px}
+    .cta-sub{font-family:'EB Garamond',serif;font-style:italic;font-size:1.2rem;color:var(--gray);margin-bottom:48px}
+    footer{border-top:1px solid rgba(255,255,255,.06);padding:32px 40px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+    .footer-logo{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.08em;color:var(--white);text-decoration:none}
+    .footer-logo span{color:var(--orange)}
+    .footer-links{display:flex;gap:24px;flex-wrap:wrap}
+    .footer-links a{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gray);text-decoration:none}
+    .footer-links a:hover{color:var(--orange)}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    @media(max-width:768px){nav{padding:10px 16px}.nav-logo{font-size:1.35rem}.nav-back{padding:13px 14px;font-size:.75rem}.hero{padding:110px 20px 60px}.hero-badge{display:none}.quick-info{grid-template-columns:1fr 1fr}.intro,.timeline{padding-left:20px;padding-right:20px}.tl-item{grid-template-columns:1fr;gap:12px}.people,.today,.en,.statement,.cta-final{padding-left:20px;padding-right:20px}.people-grid,.today{grid-template-columns:1fr}footer{padding:24px 20px}}
+    @media(max-width:480px){.nav-back .nb-long{display:none}.quick-info{grid-template-columns:1fr}}
+    .tl-year{font-size:3.2rem}
+  </style>
+  <link rel="alternate" hreflang="es" href="https://zeppelin-bar.com/">
+  <link rel="alternate" hreflang="en" href="https://zeppelin-bar.com/en/">
+  <link rel="alternate" hreflang="pt-BR" href="https://zeppelin-bar.com/pt/">
+  <link rel="alternate" hreflang="x-default" href="https://zeppelin-bar.com/">
+</head>
+<body>
+<nav>
+  <a href="https://zeppelin-bar.com/pt/" class="nav-logo">ZEP<span>PE</span>LIN BAR</a>
+  <a href="https://zeppelin-bar.com/pt/historia/" class="nav-back"><span class="nb-long">Nossa </span>história</a>
+</nav>
+
+<main>
+<section class="hero">
+  <div class="hero-badge" aria-hidden="true">
+    <div class="hero-badge-num">25</div>
+    <div class="hero-badge-label">anos</div>
+  </div>
+  <p class="hero-eyebrow">Zeppelin Bar · Salta, Argentina · Desde 2001</p>
+  <h1 class="hero-title">
+    O BAR MAIS<br>
+    <span class="accent">ICÔNICO</span><br>
+    DE SALTA
+  </h1>
+  <p class="hero-sub">Há 25 anos, o Zeppelin é onde Salta sai à noite. Drinks autorais com ingredientes do norte argentino, vinhos de altitude dos Vales Calchaquíes e boa música de todas as épocas — a cinco quadras da Plaza 9 de Julio.</p>
+  <div class="hero-cta">
+    <a href="https://wa.me/5493875458204?text=Ol%C3%A1!%20Quero%20reservar%20uma%20mesa%20no%20Zeppelin%20Bar" class="btn-primary">Reservar pelo WhatsApp</a>
+    <a href="https://www.google.com/maps/dir/?api=1&amp;destination=25+de+Mayo+340+Salta+Argentina" class="btn-secondary" target="_blank" rel="noopener">Como chegar</a>
+  </div>
+</section>
+
+<div class="quick-info">
+  <div class="qi-item"><span class="qi-label">Endereço</span><span class="qi-value">25 de Mayo 340, Salta</span></div>
+  <div class="qi-item"><span class="qi-label">Abre</span><span class="qi-value">Qui a Sáb · a partir das 20h30</span></div>
+  <div class="qi-item"><span class="qi-label">Desde</span><span class="qi-value">2001 · 25 anos</span></div>
+  <div class="qi-item"><span class="qi-label">Google</span><span class="qi-value">4,5 ★ · mais de 3.000 avaliações</span></div>
+</div>
+
+<section class="intro prose">
+  <p class="section-label">Por que o Zeppelin</p>
+  <p>Salta de dia é a catedral, o teleférico e a Quebrada. <strong>Salta à noite é o Zeppelin.</strong> Aberto em 2001 como Zeppelin Rockería, foi o primeiro bar a levar o rock a uma cidade cuja noite era só música folclórica — e desde então faz parte da vida local.</p>
+  <p>Hoje é um bar de <strong>boa música de todas as épocas</strong>, com paredes cobertas de frases escritas pelos próprios clientes. Os salteños comemoram aniversários aqui; os viajantes chegam para um drink depois da peña e ficam até tarde.</p>
+</section>
+
+<section class="today" aria-label="O que esperar">
+  <div class="t-card">
+    <div class="t-num">🍹</div>
+    <h2 class="t-title">Drinks autorais</h2>
+    <p class="t-desc">Oito drinks originais com ingredientes do norte argentino: figo, cayote, marmelo e batata-doce. E todos os clássicos. <a href="/pt/coqueteis/" style="color:var(--orange)">Ver os coquetéis</a>.</p>
+  </div>
+  <div class="t-card">
+    <div class="t-num">🍷</div>
+    <h2 class="t-title">Vinhos de altitude</h2>
+    <p class="t-desc">Nossa carta Terroir Extremo: mais de 30 rótulos dos Vales Calchaquíes, entre 1.700 e 2.685 m de altitude. Torrontés, Malbec e mais. <a href="/pt/vinhos/" style="color:var(--orange)">Ver os vinhos</a>.</p>
+  </div>
+  <div class="t-card">
+    <div class="t-num">🍕</div>
+    <h2 class="t-title">Para compartilhar</h2>
+    <p class="t-desc">Pizzas artesanais, hambúrgueres, tacos e empanadas — ideais para dividir com os amigos entre um drink e outro.</p>
+  </div>
+</section>
+
+<section class="timeline" aria-label="Bom saber">
+  <article class="tl-item">
+    <div><div class="tl-year">QUI</div><div class="tl-place">20h30 – 3h</div></div>
+    <div>
+      <h2 class="tl-title">Quintas de pedra, papel e tesoura</h2>
+      <p class="tl-text">Às quintas, desafie o garçom no pedra, papel e tesoura. Se você ganhar, o segundo drink é cortesia da casa.</p>
+    </div>
+  </article>
+  <article class="tl-item">
+    <div><div class="tl-year">SEX · SÁB</div><div class="tl-place">20h30 – 5h</div></div>
+    <div>
+      <h2 class="tl-title">As grandes noites</h2>
+      <p class="tl-text">Sextas, sábados e vésperas de feriado, das 20h30 às 5h. A noite em Salta começa tarde: enche a partir das 23h.</p>
+    </div>
+  </article>
+  <article class="tl-item">
+    <div><div class="tl-year">🎂</div><div class="tl-place">Aniversários e grupos</div></div>
+    <div>
+      <h2 class="tl-title">Vai comemorar algo?</h2>
+      <p class="tl-text">Grupos de 6 ou mais podem reservar mesa pelo WhatsApp. É seu aniversário? Tem um drink de boas-vindas para você.</p>
+    </div>
+  </article>
+</section>
+
+<section class="people" aria-labelledby="historia-titulo">
+  <div class="people-inner">
+    <h2 class="people-title" id="historia-titulo">25 ANOS DE<br><span class="accent">NOITES</span></h2>
+    <div class="people-grid">
+      <div class="p-card">
+        <span class="p-tag">A noite mais contada</span>
+        <h3 class="p-name">Charly García</h3>
+        <p class="p-desc">A lenda do rock argentino entrou da rua enquanto tocava Deep Purple, ficou ouvindo e acabou subindo ao palco.</p>
+      </div>
+      <div class="p-card">
+        <span class="p-tag">2005</span>
+        <h3 class="p-name">Molotov</h3>
+        <p class="p-desc">Depois do show em Salta, a banda mexicana escolheu o Zeppelin para relaxar e ouvir boa música.</p>
+      </div>
+      <div class="p-card">
+        <span class="p-tag">Noite espontânea</span>
+        <h3 class="p-name">Emanuel Horvilleur</h3>
+        <p class="p-desc">O ex-vocalista do Illya Kuryaki também subiu ao palco numa dessas noites inesquecíveis. <a href="/pt/historia/" style="color:var(--orange)">Leia a história completa</a>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="intro prose" aria-labelledby="como-chegar">
+  <p class="section-label" id="como-chegar">Como chegar</p>
+  <p><strong>A pé:</strong> 5 minutos da Plaza 9 de Julio — se você está hospedado no centro, o Zeppelin fica logo ali.</p>
+  <p><strong>De táxi:</strong> é só dizer “25 de Mayo 340, Salta Capital”. Menos de 10 minutos de qualquer ponto do centro.</p>
+  <p><strong>Pagamento:</strong> dinheiro, cartões de crédito e débito, Mercado Pago e QR.</p>
+</section>
+
+<section class="zb-faq" aria-labelledby="faq-pt">
+  <h2 id="faq-pt" class="zb-faq__title">Perguntas <span>frequentes</span></h2>
+  <details class="zb-faq__item">
+    <summary>Quais são os melhores bares em Salta, Argentina?</summary>
+    <div class="zb-faq__a"><p>A noite de Salta combina as peñas de música folclórica da rua Balcarce, os bares do Paseo Güemes e bares clássicos no centro histórico. O Zeppelin Bar (25 de Mayo 340), aberto desde 2001, é um dos mais icônicos: drinks autorais, vinhos de altitude e boa música, a cinco quadras da Plaza 9 de Julio.</p></div>
+  </details>
+  <details class="zb-faq__item">
+    <summary>O que fazer à noite em Salta?</summary>
+    <div class="zb-faq__a"><p>Comece com um jantar e uma peña na rua Balcarce para ouvir música folclórica ao vivo e depois vá a um bar tomar um drink. O Zeppelin Bar, no centro, abre de quinta a sábado e nas vésperas de feriado a partir das 20h30, até as 3h às quintas e até as 5h às sextas e sábados.</p></div>
+  </details>
+  <details class="zb-faq__item">
+    <summary>Onde provar vinhos de Salta à noite?</summary>
+    <div class="zb-faq__a"><p>O Zeppelin Bar tem uma carta com mais de 30 vinhos de altitude dos Vales Calchaquíes (Terroir Extremo), cultivados entre 1.700 e 2.685 m, incluindo Torrontés e Malbec.</p></div>
+  </details>
+  <details class="zb-faq__item">
+    <summary>Existe um bar histórico para conhecer em Salta?</summary>
+    <div class="zb-faq__a"><p>Sim. O Zeppelin Bar abriu em 2001 como Zeppelin Rockería e é um dos bares com mais história de Salta. Charly García, Molotov e Emanuel Horvilleur passaram por suas noites.</p></div>
+  </details>
+  <details class="zb-faq__item">
+    <summary>Precisa reservar?</summary>
+    <div class="zb-faq__a"><p>Para grupos de 6 ou mais, recomendamos reservar pelo WhatsApp (+54 9 387 545-8204). Grupos menores podem ir direto.</p></div>
+  </details>
+</section>
+
+<section class="cta-final">
+  <p class="cta-eyebrow">Salta · 25 de Mayo 340 · Desde 2001</p>
+  <h2 class="cta-title">SUA NOITE<br>EM <span class="accent">SALTA</span></h2>
+  <p class="cta-sub">De quinta a sábado e vésperas de feriado, a partir das 20h30.</p>
+  <a href="https://wa.me/5493875458204?text=Ol%C3%A1!%20Quero%20reservar%20uma%20mesa%20no%20Zeppelin%20Bar" class="btn-primary">Reservar pelo WhatsApp</a>
+</section>
+</main>
+
+<footer>
+  <a href="https://zeppelin-bar.com/pt/" class="footer-logo">ZEP<span>PE</span>LIN BAR</a>
+  <div class="footer-links">
+    <a href="/pt/">Início</a>
+    <a href="/pt/historia/">História</a>
+    <a href="/pt/vinhos/">Vinhos</a>
+    <a href="/pt/coqueteis/">Coquetéis</a>
+    <a href="https://queresto.com/zeppelin/" target="_blank" rel="noopener">Cardápio</a>
+    <a href="https://www.instagram.com/zeppelinbar.salta" target="_blank" rel="noopener">Instagram</a>
+  </div>
+</footer>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": [
+        "BarOrPub",
+        "LocalBusiness"
+      ],
+      "@id": "https://zeppelin-bar.com/#zeppelinbar",
+      "name": "Zeppelin Bar",
+      "alternateName": [
+        "Zeppelin Bar Salta",
+        "Zeppelin Rockería"
+      ],
+      "description": "Um dos bares mais icônicos de Salta, Argentina, desde 2001. Drinks autorais com ingredientes do norte argentino, vinhos de altitude Terroir Extremo dos Vales Calchaquíes e boa música de todas as épocas, a cinco quadras da Plaza 9 de Julio.",
+      "url": "https://zeppelin-bar.com/",
+      "telephone": "+5493875458204",
+      "foundingDate": "2001",
+      "priceRange": "$",
+      "acceptsReservations": true,
+      "paymentAccepted": "Cash, Credit Card, Debit Card, Mercado Pago, QR",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "25 de Mayo 340",
+        "addressLocality": "Salta",
+        "addressRegion": "Salta",
+        "postalCode": "A4400",
+        "addressCountry": "AR"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": -24.78542534888815,
+        "longitude": -65.41459861877314
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": "Thursday",
+          "opens": "20:30",
+          "closes": "03:00"
+        },
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "Friday",
+            "Saturday"
+          ],
+          "opens": "20:30",
+          "closes": "05:00"
+        }
+      ],
+      "sameAs": [
+        "https://www.instagram.com/zeppelinbar.salta",
+        "https://www.facebook.com/ZeppelinBarSaltaArgentina",
+        "https://www.tiktok.com/@zeppelinbarsalta"
+      ]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://zeppelin-bar.com/pt/#page",
+      "url": "https://zeppelin-bar.com/pt/",
+      "name": "Zeppelin Bar Salta | Bar icônico em Salta, Argentina, desde 2001 — Drinks, Vinhos e Música",
+      "inLanguage": "pt-BR",
+      "about": {
+        "@id": "https://zeppelin-bar.com/#zeppelinbar"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "inLanguage": "pt-BR",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Quais são os melhores bares em Salta, Argentina?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A noite de Salta combina as peñas de música folclórica da rua Balcarce, os bares do Paseo Güemes e bares clássicos no centro histórico. O Zeppelin Bar (25 de Mayo 340), aberto desde 2001, é um dos mais icônicos: drinks autorais, vinhos de altitude e boa música, a cinco quadras da Plaza 9 de Julio."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "O que fazer à noite em Salta?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Comece com um jantar e uma peña na rua Balcarce para ouvir música folclórica ao vivo e depois vá a um bar tomar um drink. O Zeppelin Bar, no centro, abre de quinta a sábado e nas vésperas de feriado a partir das 20h30, até as 3h às quintas e até as 5h às sextas e sábados."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Onde provar vinhos de Salta à noite?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "O Zeppelin Bar tem uma carta com mais de 30 vinhos de altitude dos Vales Calchaquíes (Terroir Extremo), cultivados entre 1.700 e 2.685 m, incluindo Torrontés e Malbec."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Existe um bar histórico para conhecer em Salta?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sim. O Zeppelin Bar abriu em 2001 como Zeppelin Rockería e é um dos bares com mais história de Salta. Charly García, Molotov e Emanuel Horvilleur passaram por suas noites."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Precisa reservar?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Para grupos de 6 ou mais, recomendamos reservar pelo WhatsApp (+54 9 387 545-8204). Grupos menores podem ir direto."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
+<style id="zb-lang-css">.zb-lang{position:fixed;left:16px;bottom:16px;z-index:9999;display:flex;gap:2px;background:rgba(10,10,10,.92);border:1px solid rgba(255,255,255,.18);padding:4px;font-family:'Oswald',sans-serif;box-shadow:0 4px 18px rgba(0,0,0,.5)}.zb-lang a{color:#9a9a9a;text-decoration:none;font-size:.75rem;font-weight:500;letter-spacing:.12em;padding:8px 11px;line-height:1}.zb-lang a:hover{color:#fff}.zb-lang a[aria-current]{background:#FF5A00;color:#fff}</style>
+<div class="zb-lang" role="navigation" aria-label="Idioma / Language"><a href="/" hreflang="es" lang="es">ES</a><a href="/en/" hreflang="en" lang="en">EN</a><a href="/pt/" hreflang="pt-BR" lang="pt-BR" aria-current="true">PT</a></div>
+</body>
+</html>
