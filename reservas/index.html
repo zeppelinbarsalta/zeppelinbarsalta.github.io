@@ -277,7 +277,7 @@
   .userbar button{padding:7px 14px;font-size:11px}
   .userbar .ro{color:var(--orange);border:1px solid var(--orange-line);padding:2px 8px;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
   /* ---- Solo visualización (mozos): nada editable ---- */
-  body.solover .asignador, body.solover #cfgBtn, body.solover #resetBtn, body.solover #editor,
+  body.solover .asignador, body.solover #cfgBtn, body.solover #editor,
   body.solover .rv-actions button, body.solover .actions, body.solover .reubic, body.solover .notes{display:none!important}
   body.solover .rv-info span:nth-child(3), body.solover .rv-info span:nth-child(4){display:none}
   body.solover .pax-edit{pointer-events:none;border-color:transparent;background:transparent}
@@ -316,7 +316,6 @@
     <div class="nb-right">
       <button class="ghost" id="calBtn">Calendario</button>
       <button class="ghost" id="cfgBtn">⚙ Configurar mesas</button>
-      <button class="ghost" id="resetBtn">Vaciar noche</button>
     </div>
   </div>
 
@@ -405,7 +404,7 @@
 /* ============================================================
    Reservas Zeppelin — v4.0 (mesas editables por sector)
    ============================================================ */
-const VERSION="5.21";
+const VERSION="5.22";
 
 /* Metadatos fijos de sector (nombre, zona, reglas de combinación). */
 const SECTORES_META=[
@@ -493,7 +492,9 @@ const STORE_KEY="zeppelin_reservas_v3";
 function loadReservas(){try{return JSON.parse(localStorage.getItem(STORE_KEY))||[];}catch(_){return [];}}
 function saveReservas(){try{localStorage.setItem(STORE_KEY,JSON.stringify(RESERVAS));}catch(_){}}
 let RESERVAS=[]; // se cargan del equipo solo después de iniciar sesión
-let fechaSel=new Date().toISOString().slice(0,10);
+/* Noche operativa en hora local: antes de las 08:00 sigue siendo la noche anterior. */
+function nocheHoy(){const d=new Date();if(d.getHours()<8)d.setDate(d.getDate()-1);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+let fechaSel=nocheHoy();
 let OCUP=new Set(), LAST=[], OCUPINFO={};
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 
@@ -768,7 +769,6 @@ function pedirCambioFecha(id){
 }
 window.moverReserva=moverReserva; window.cancelReubic=cancelReubic;
 window.editarReserva=editarReserva; window.cancelEdit=cancelEdit; window.guardarEdicion=guardarEdicion; window.pedirCambioSector=pedirCambioSector; window.pedirCambioFecha=pedirCambioFecha;
-function resetNoche(){if(confirm('¿Liberar todas las reservas de esta noche?')){PENDING=null;reservasNoche().forEach(r=>marcarBorrado(r.id));RESERVAS=RESERVAS.filter(r=>r.fecha!==fechaSel);saveReservas();renderAll();api('clearNight',{fecha:fechaSel}).then(applyServer);}}
 window.reservar=reservar;window.liberar=liberar;window.editPax=editPax;
 
 /* Edición de mesas. */
@@ -1040,7 +1040,6 @@ const fechaInput=document.getElementById('fecha');
 document.getElementById('syncLbl').addEventListener('click',()=>{ if(!BACKEND_URL) return; api('load').then(d=>{ if(d){applyServer(d);} else if(SYNCERR){alert('No se pudo sincronizar:\n\n'+SYNCERR);} }); });
 fechaInput.value=fechaSel;
 fechaInput.addEventListener('change',()=>{PENDING=null;fechaSel=fechaInput.value||fechaSel;renderAll();});
-document.getElementById('resetBtn').addEventListener('click',resetNoche);
 document.getElementById('calBtn').addEventListener('click',abrirCalendario);
 document.getElementById('calClose').addEventListener('click',()=>{document.getElementById('calendario').hidden=true;});
 document.getElementById('calPrev').addEventListener('click',()=>calMover(-1));
@@ -1053,7 +1052,7 @@ document.getElementById('pax').addEventListener('keydown',e=>{if(e.key==='Enter'
 document.getElementById('exportBtn').addEventListener('click',()=>{const blob=new Blob([JSON.stringify({version:VERSION,reglas:REGLAS,config:CFG,sectores:SECTORES},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='mapa_mesas_zeppelin_v'+VERSION+'.json';a.click();});
 document.getElementById('expResBtn').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(RESERVAS,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='reservas_zeppelin.json';a.click();});
 /* Solo ver: cualquier acción de edición queda anulada (además el backend la rechaza). */
-['reservar','editPax','setEstado','liberar','editarReserva','guardarEdicion','pedirCambioSector','pedirCambioFecha','moverReserva','menuWhatsapp','enviarWhatsapp','resetNoche','setCount','toggleSillon','restablecer'].forEach(fn=>{
+['reservar','editPax','setEstado','liberar','editarReserva','guardarEdicion','pedirCambioSector','pedirCambioFecha','moverReserva','menuWhatsapp','enviarWhatsapp','setCount','toggleSillon','restablecer'].forEach(fn=>{
   const orig=window[fn]; if(typeof orig!=='function') return;
   window[fn]=function(){ if(esSoloVer()) return; return orig.apply(this,arguments); };
 });
