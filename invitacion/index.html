@@ -1,0 +1,209 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0c0c0c">
+<meta name="robots" content="noindex">
+<title>Invitación de cumple · Zeppelin</title>
+<link rel="icon" href="/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=EB+Garamond:ital@1&family=Oswald:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;min-width:0;-webkit-tap-highlight-color:transparent}
+body{background:#0c0c0c;color:#fff;font-family:'Oswald',sans-serif;padding:16px;overflow-x:clip}
+.layout{max-width:1100px;margin:0 auto;display:grid;gap:16px;grid-template-columns:minmax(0,1fr);justify-items:center}
+@media(min-width:900px){.layout{grid-template-columns:minmax(0,440px) minmax(0,460px);align-items:start;justify-content:center}.side{position:sticky;top:16px}}
+.side{width:100%;display:flex;justify-content:center}
+.panel{width:100%;max-width:520px;background:#161616;border:1px solid #2a2a2a;border-radius:16px;padding:18px}
+.panel h1{font-family:'Bebas Neue';font-size:32px;letter-spacing:3px;color:#FF5A00;font-weight:400;line-height:1.05}
+.sub{font-size:14px;color:#9a9a9a;margin:2px 0 14px}
+.field{margin-bottom:12px}
+.lbl{display:block;font-size:13px;letter-spacing:1.2px;text-transform:uppercase;color:#bdbdbd;margin-bottom:6px}
+.txt{width:100%;background:#0c0c0c;border:1px solid #333;border-radius:10px;padding:13px 14px;color:#fff;font-size:16px;font-family:'Oswald';letter-spacing:.5px}
+.txt:focus-visible,.bg:focus-visible,.btn:focus-visible,.up:focus-within{outline:2px solid #FF5A00;outline-offset:2px}
+.row{display:flex;gap:10px}.row .field{flex:1}
+.bgs{display:grid;grid-template-columns:repeat(auto-fill,minmax(60px,1fr));gap:8px;padding:2px}
+.bg{width:100%;aspect-ratio:9/16;border-radius:10px;border:2px solid #333;background:#000 center/cover no-repeat;cursor:pointer;position:relative;overflow:hidden}
+.bg[aria-pressed=true]{border-color:#FF5A00;box-shadow:0 0 0 2px rgba(255,90,0,.35)}
+.bg span{position:absolute;left:0;right:0;bottom:0;font:11px 'Oswald';text-align:center;background:rgba(0,0,0,.65);padding:3px 0;color:#ddd}
+.up{position:relative;width:100%;aspect-ratio:9/16;border-radius:10px;border:2px dashed #555;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#bbb;font-size:11px;text-transform:uppercase;cursor:pointer}
+.up b{font-family:'Bebas Neue';font-weight:400;font-size:30px;color:#FF5A00;line-height:1}
+.up input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.range{display:flex;align-items:center;gap:12px}
+.range input{flex:1;accent-color:#FF5A00;height:44px}
+.range output{width:44px;text-align:right;color:#bdbdbd;font-size:14px}
+.btn{width:100%;min-height:52px;background:#FF5A00;color:#fff;border:none;border-radius:12px;padding:14px;font-family:'Bebas Neue';font-size:24px;letter-spacing:3px;cursor:pointer;margin-top:6px}
+.btn:active{transform:translateY(1px)}.btn:disabled{opacity:.6}
+.btn.ghost{background:transparent;border:1px solid #444;color:#ddd;font-size:20px}
+.hint{font-size:13px;color:#8a8a8a;text-align:center;margin-top:8px;line-height:1.5}
+.stageWrap{width:100%;max-width:460px;overflow:hidden;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+#stage{transform-origin:top left}
+.canvas{position:relative;width:1080px;height:1920px;overflow:hidden;background:#050505;color:#fff;font-family:'Bebas Neue'}
+.photo{position:absolute;inset:0;background:#050505 center/cover no-repeat}
+.shade{position:absolute;inset:0;background:#000;opacity:0}
+.wrap{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:78px 70px 70px}
+.badge{width:300px;height:300px;border-radius:50%;object-fit:cover;box-shadow:0 10px 40px rgba(0,0,0,.6)}
+.name{font-size:188px;line-height:.92;letter-spacing:6px;margin-top:58px;text-shadow:0 6px 40px rgba(0,0,0,.7);text-align:center;white-space:nowrap}
+.name b,.headline b{color:#FF5A00;font-weight:400}
+.divider{width:96px;height:5px;background:#FF5A00;margin:40px 0 34px;border-radius:3px}
+.headline{font-size:118px;line-height:.94;letter-spacing:3px;text-align:center;text-shadow:0 6px 40px rgba(0,0,0,.7)}
+.accent{font-family:'EB Garamond';font-style:italic;font-size:46px;line-height:1.2;color:rgba(255,255,255,.92);margin-top:46px;text-align:center;min-height:10px;text-shadow:0 3px 20px rgba(0,0,0,.8)}
+.dateblock{margin-top:108px;display:flex;flex-direction:column;align-items:center;border-top:2px solid rgba(255,90,0,.55);border-bottom:2px solid rgba(255,90,0,.55);padding:30px 70px;gap:6px}
+.date,.hour{font-size:96px;letter-spacing:5px;line-height:.95;text-transform:uppercase;text-shadow:0 4px 30px rgba(0,0,0,.7)}
+.hour{color:#FF5A00}
+.addr{font-family:'Oswald';font-weight:600;font-size:34px;letter-spacing:7px;color:#FF5A00;margin-top:46px;text-transform:uppercase;text-align:center;text-shadow:0 2px 14px rgba(0,0,0,.9)}
+.sheet{position:fixed;inset:0;background:rgba(0,0,0,.9);display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;z-index:9}
+.sheet.on{display:flex}
+.sheet img{max-height:70vh;max-width:100%;border-radius:12px;-webkit-touch-callout:default}
+.sheet p{color:#ddd;font-size:15px;text-align:center;max-width:420px;line-height:1.4}
+.sheet .btn{max-width:320px}
+</style></head>
+<body>
+<div class="layout">
+<div class="panel">
+  <h1>Invitación de cumple</h1>
+  <p class="sub">Completá los datos, elegí el fondo y bajá la imagen para mandar por WhatsApp.</p>
+  <div class="field"><label class="lbl" for="iNombre">Nombre</label><input class="txt" id="iNombre" value="MELISA" autocomplete="off"></div>
+  <div class="row">
+    <div class="field"><label class="lbl" for="iDia">Día</label><input class="txt" id="iDia" value="SÁBADO 6" autocomplete="off"></div>
+    <div class="field"><label class="lbl" for="iHora">Hora</label><input class="txt" id="iHora" value="22:00 HS" autocomplete="off"></div>
+  </div>
+  <div class="field"><label class="lbl" for="iFrase">Frase (opcional)</label><input class="txt" id="iFrase" value="Quiero celebrarlo con vos" autocomplete="off"></div>
+  <div class="field">
+    <span class="lbl">Fondo</span>
+    <div class="bgs" id="bgs"><label class="up" id="upBtn"><b>+</b>Tu foto<input type="file" id="iFile" accept="image/*"></label></div>
+  </div>
+  <div class="field">
+    <label class="lbl" for="iShade">Oscurecer fondo</label>
+    <div class="range"><input type="range" id="iShade" min="0" max="80" step="5" value="0"><output id="oShade">0%</output></div>
+  </div>
+  <button class="btn" id="btnDl">DESCARGAR IMAGEN</button>
+  <p class="hint">Se genera en 1080×1920 (formato historia).</p>
+</div>
+<div class="side"><div class="stageWrap"><div id="stage">
+  <div class="canvas" id="poster">
+    <div class="photo" id="photo"></div>
+    <div class="shade" id="shade"></div>
+    <div class="wrap">
+      <img class="badge" alt="" src="/img/zeppelin-bar-logo.webp">
+      <div class="name" id="pName"><b>M</b>ELISA</div>
+      <div class="divider"></div>
+      <div class="headline">FESTEJO<br>MI CUMPLE EN<br>ZE<b>PP</b>ELIN</div>
+      <div class="accent" id="pAccent">Quiero celebrarlo con vos</div>
+      <div class="dateblock"><div class="date" id="pDate">SÁBADO 6</div><div class="hour" id="pHour">22:00 HS</div></div>
+      <div class="addr">25 DE MAYO 340 · SALTA</div>
+    </div>
+  </div>
+</div></div></div>
+</div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Imagen lista">
+  <img id="sheetImg" alt="Invitación generada">
+  <p id="sheetMsg"></p>
+  <button class="btn" id="btnShare" hidden>COMPARTIR</button>
+  <button class="btn ghost" id="btnClose">CERRAR</button>
+</div>
+<script>
+{
+const $=id=>document.getElementById(id);
+const stage=$('stage'),wrap=stage.parentElement,poster=$('poster');
+const W=1080,H=1920,OR='255,90,0';
+const store={get(k){try{return JSON.parse(localStorage.getItem('zinv_'+k))}catch(e){return null}},set(k,v){try{localStorage.setItem('zinv_'+k,JSON.stringify(v))}catch(e){}}};
+function rnd(seed){return()=>{seed=(seed*16807)%2147483647;return(seed-1)/2147483646}}
+function cv(){const c=document.createElement('canvas');c.width=W;c.height=H;return[c,c.getContext('2d')]}
+function glow(x,cx,cy,r,col,a){const g=x.createRadialGradient(cx,cy,0,cx,cy,r);g.addColorStop(0,'rgba('+col+','+a+')');g.addColorStop(1,'rgba('+col+',0)');x.fillStyle=g;x.fillRect(0,0,W,H)}
+function grain(x,amt){const d=x.getImageData(0,0,W,H),p=d.data,r=rnd(99);for(let i=0;i<p.length;i+=4){const n=(r()-.5)*amt;p[i]+=n;p[i+1]+=n;p[i+2]+=n}x.putImageData(d,0,0)}
+const GEN={
+brasa(x){x.fillStyle='#060606';x.fillRect(0,0,W,H);glow(x,540,2250,1500,OR,.8);glow(x,-100,-150,1100,'160,40,0',.6);glow(x,1200,700,800,'90,25,0',.5);grain(x,16)},
+luces(x){const r=rnd(7);x.fillStyle='#080606';x.fillRect(0,0,W,H);glow(x,540,960,1400,'60,18,0',1);
+ const cols=[OR,OR,'255,150,40','255,200,140','200,40,0'];
+ [[40,60,160,.18],[55,25,70,.3],[40,8,22,.45]].forEach(([n,a,b,al])=>{for(let i=0;i<n;i++){const px=r()*W*1.1-50,py=H*.5+(r()+r()+r()-1.5)*H*.45,rad=a+r()*(b-a),c=cols[Math.floor(r()*cols.length)];
+ const dx=(px-540)/380,dy=(py-1000)/700,v=1-Math.exp(-(dx*dx+dy*dy)/2)*.6;
+ const g=x.createRadialGradient(px,py,0,px,py,rad);g.addColorStop(0,'rgba('+c+','+(al*v*1.6)+')');g.addColorStop(.7,'rgba('+c+','+(al*v)+')');g.addColorStop(1,'rgba('+c+',0)');x.fillStyle=g;x.beginPath();x.arc(px,py,rad,0,7);x.fill()}});grain(x,12)},
+confeti(x){const r=rnd(11);x.fillStyle='#0a0a0a';x.fillRect(0,0,W,H);glow(x,540,900,1300,'70,22,0',1);
+ const cols=['rgb('+OR+')','rgb('+OR+')','#fff','rgb(255,170,60)','#787878'];
+ for(let i=0;i<260;i++){const px=r()*W,py=r()*H;if(Math.abs(px-540)<330&&py>380&&py<1650&&r()<.75)continue;
+ const s=10+r()*26,h=s*(.35+r()*.25);x.save();x.translate(px,py);x.rotate(r()*Math.PI);x.globalAlpha=.6+r()*.4;x.fillStyle=cols[Math.floor(r()*cols.length)];
+ if(r()<.3){x.beginPath();x.arc(0,0,h,0,7);x.fill()}else x.fillRect(-s/2,-h/2,s,h);x.restore()}grain(x,10)},
+rayas(x){x.fillStyle='#090909';x.fillRect(0,0,W,H);glow(x,540,960,1000,'40,12,0',1);
+ x.save();x.rotate(-Math.atan(1/.62));for(let k=-30;k<30;k++){x.fillStyle='rgba('+OR+',.55)';x.fillRect(k*223-400,-3000,14,7000)}x.restore();
+ x.globalCompositeOperation='destination-in';const g=x.createRadialGradient(540,960,200,540,960,1200);g.addColorStop(0,'rgba(0,0,0,.25)');g.addColorStop(1,'rgba(0,0,0,1)');x.fillStyle=g;x.fillRect(0,0,W,H);
+ x.globalCompositeOperation='destination-over';x.fillStyle='#090909';x.fillRect(0,0,W,H);x.globalCompositeOperation='source-over';grain(x,10)},
+neon(x){x.fillStyle='#070707';x.fillRect(0,0,W,H);x.strokeStyle='rgba(0,0,0,.25)';x.lineWidth=3;
+ for(let y=0;y<H;y+=64){x.beginPath();x.moveTo(0,y);x.lineTo(W,y);x.stroke();for(let xx=((y/64)%2)*90;xx<W;xx+=180){x.beginPath();x.moveTo(xx,y);x.lineTo(xx,y+64);x.stroke()}}
+ glow(x,540,960,900,'40,12,0',1);const rr=(w)=>{x.beginPath();x.roundRect?x.roundRect(48,48,W-96,H-96,60):x.rect(48,48,W-96,H-96);x.lineWidth=w;x.stroke()};
+ x.strokeStyle='rgba(255,105,15,.9)';x.shadowColor='rgba(255,105,15,1)';[80,40,20].forEach(b=>{x.shadowBlur=b;rr(10)});x.shadowBlur=0;x.strokeStyle='rgba(255,200,150,.9)';rr(3);grain(x,12)}
+};
+const BGS=[
+ {id:'paraguas',name:'Paraguas',img:'/img/cumpleanos-zeppelin-bar.webp',shade:30},
+ {id:'gente',name:'Gente',img:'/img/platos-zeppelin-bar.webp',shade:45},
+ {id:'salon',name:'Salón',img:'/img/detalles-zeppelin-bar.webp',shade:35},
+ {id:'patio',name:'Patio',img:'/img/interior-zeppelin-bar.webp',shade:35},
+ {id:'trago',name:'Trago',img:'/img/tragos-zeppelin-bar.webp',shade:45},
+ {id:'brasa',name:'Brasa',gen:'brasa',shade:0},
+ {id:'luces',name:'Luces',gen:'luces',shade:0},
+ {id:'confeti',name:'Confeti',gen:'confeti',shade:0},
+ {id:'rayas',name:'Rayas',gen:'rayas',shade:0},
+ {id:'neon',name:'Neón',gen:'neon',shade:0}
+];
+const cache={};
+function srcOf(b){if(b.img)return b.img;if(!cache[b.id]){const[c,x]=cv();GEN[b.gen](x);cache[b.id]=c.toDataURL('image/jpeg',.85)}return cache[b.id]}
+let userPhoto=null,lastBlob=null;
+function nameSize(n){return n<=6?188:n<=8?158:n<=10?130:n<=12?108:92}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function render(){
+ const nm=($('iNombre').value.trim()||'NOMBRE').toUpperCase();
+ $('pName').style.fontSize=nameSize(nm.length)+'px';
+ $('pName').innerHTML='<b>'+esc(nm[0])+'</b>'+esc(nm.slice(1));
+ $('pDate').textContent=($('iDia').value||'').toUpperCase();
+ $('pHour').textContent=($('iHora').value||'').toUpperCase();
+ $('pAccent').textContent=$('iFrase').value||'';
+ ['iNombre','iDia','iHora','iFrase'].forEach(id=>store.set(id,$(id).value));
+}
+function fit(){const s=Math.min(wrap.clientWidth/W,1);stage.style.transform='scale('+s+')';wrap.style.height=(H*s)+'px'}
+function setShade(v){$('iShade').value=v;$('shade').style.opacity=v/100;$('oShade').textContent=v+'%'}
+function addTile(id,name,thumb,onClick){const el=document.createElement('button');el.type='button';el.className='bg';el.dataset.id=id;el.setAttribute('aria-label','Fondo '+name);if(thumb)el.style.backgroundImage='url('+thumb+')';const sp=document.createElement('span');sp.textContent=name;el.appendChild(sp);el.addEventListener('click',onClick);$('bgs').insertBefore(el,$('upBtn'));return el}
+function mark(id){document.querySelectorAll('.bg').forEach(e=>e.setAttribute('aria-pressed',String(e.dataset.id===id)))}
+function setBg(b,keepShade){$('photo').style.backgroundImage='url('+srcOf(b)+')';mark(b.id);if(!keepShade)setShade(b.shade);store.set('bg',b.id)}
+BGS.forEach(b=>{const el=addTile(b.id,b.name,b.img||null,()=>setBg(b));if(b.gen)setTimeout(()=>{el.style.backgroundImage='url('+srcOf(b)+')'},50)});
+$('iFile').addEventListener('change',e=>{
+ const f=e.target.files&&e.target.files[0];if(!f)return;
+ const img=new Image(),url=URL.createObjectURL(f);
+ img.onload=()=>{const[c,x]=cv(),r=Math.max(W/img.width,H/img.height),w=img.width*r,h=img.height*r;x.drawImage(img,(W-w)/2,(H-h)/2,w,h);
+  userPhoto=c.toDataURL('image/jpeg',.88);URL.revokeObjectURL(url);
+  let el=document.querySelector('.bg[data-id=user]');
+  if(!el)el=addTile('user','Tu foto',null,()=>{$('photo').style.backgroundImage='url('+userPhoto+')';mark('user')});
+  el.style.backgroundImage='url('+userPhoto+')';$('photo').style.backgroundImage='url('+userPhoto+')';mark('user');setShade(35)};
+ img.onerror=()=>URL.revokeObjectURL(url);img.src=url;e.target.value='';
+});
+function fileName(){return 'zeppelin-cumple-'+(($('iNombre').value||'invitacion').toLowerCase().normalize('NFD').replace(/[^a-z0-9]/g,'')||'invitacion')+'.png'}
+function openSheet(url,msg){$('sheetImg').src=url;$('sheetMsg').innerHTML=msg;$('sheet').classList.add('on')}
+$('btnClose').addEventListener('click',()=>$('sheet').classList.remove('on'));
+$('btnShare').addEventListener('click',async()=>{try{await navigator.share({files:[new File([lastBlob],fileName(),{type:'image/png'})]})}catch(e){}});
+const mobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)||(navigator.maxTouchPoints>1&&/Mac/.test(navigator.platform));
+async function download(){
+ const b=$('btnDl');b.disabled=true;b.textContent='GENERANDO…';
+ try{
+  try{await document.fonts.ready}catch(e){}
+  const prev=stage.style.transform;stage.style.transform='scale(1)';
+  await new Promise(r=>setTimeout(r,60));
+  const canvas=await html2canvas(poster,{width:W,height:H,scale:1,backgroundColor:'#050505',useCORS:true,logging:false});
+  stage.style.transform=prev;
+  lastBlob=await new Promise(r=>canvas.toBlob(r,'image/png'));
+  const url=URL.createObjectURL(lastBlob);
+  const file=new File([lastBlob],fileName(),{type:'image/png'});
+  const canShare=!!(navigator.canShare&&navigator.canShare({files:[file]}));
+  if(mobile&&canShare){$('btnShare').hidden=false;openSheet(url,'Tocá <b>Compartir</b> para mandarla por WhatsApp o guardarla. También podés mantener apretada la imagen.')}
+  else{const a=document.createElement('a');a.download=fileName();a.href=url;document.body.appendChild(a);a.click();a.remove();
+   if(mobile){$('btnShare').hidden=true;openSheet(url,'Si no se guardó sola, mantené apretada la imagen y elegí <b>Guardar imagen</b>.')}}
+ }catch(err){$('btnShare').hidden=true;openSheet('','No se pudo generar la imagen. Probá de nuevo.')}
+ finally{b.disabled=false;b.textContent='DESCARGAR IMAGEN'}
+}
+$('btnDl').addEventListener('click',download);
+['iNombre','iDia','iHora','iFrase'].forEach(id=>{const v=store.get(id);if(typeof v==='string')$(id).value=v;$(id).addEventListener('input',render)});
+$('iShade').addEventListener('input',e=>setShade(+e.target.value));
+window.addEventListener('resize',fit);
+const sb=store.get('bg');setBg(BGS.find(b=>b.id===sb)||BGS[0]);
+render();fit();
+document.fonts.ready.then(()=>{render();fit()});
+}
+</script>
+</body></html>
