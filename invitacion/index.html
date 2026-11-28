@@ -198,10 +198,17 @@ async function download(){
  finally{b.disabled=false;b.textContent='DESCARGAR IMAGEN'}
 }
 $('btnDl').addEventListener('click',download);
-['iNombre','iDia','iHora','iFrase'].forEach(id=>{const v=store.get(id);if(typeof v==='string')$(id).value=v;$(id).addEventListener('input',render)});
+['iNombre','iDia','iHora','iFrase'].forEach(id=>{const v=store.get(id);if(typeof v==='string'&&!location.search.includes('n='))$(id).value=v;$(id).addEventListener('input',render)});
 $('iShade').addEventListener('input',e=>setShade(+e.target.value));
 window.addEventListener('resize',fit);
-const sb=store.get('bg');setBg(BGS.find(b=>b.id===sb)||BGS[0]);
+const q=new URLSearchParams(location.search),qn=(q.get('n')||'').trim(),qf=q.get('f')||'';
+if(qn){
+ $('iNombre').value=qn.slice(0,20);$('iHora').value='22:00 HS';$('iFrase').value='Quiero celebrarlo con vos';
+ if(/^\d{4}-\d{2}-\d{2}$/.test(qf)){const d=new Date(qf+'T00:00:00');$('iDia').value=(d.toLocaleDateString('es-AR',{weekday:'long'})+' '+d.getDate()).toUpperCase();}
+ document.querySelector('.panel h1').textContent='¡Tu invitación está lista!';
+ document.querySelector('.panel .sub').textContent='Descargala y compartila con tus invitados. Si querés, cambiá el fondo o la frase.';
+ setBg(BGS.find(b=>b.id==='salon'));
+}else{const sb=store.get('bg');setBg(BGS.find(b=>b.id===sb)||BGS[0]);}
 render();fit();
 document.fonts.ready.then(()=>{render();fit()});
 }
