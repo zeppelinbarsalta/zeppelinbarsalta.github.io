@@ -404,7 +404,7 @@
 /* ============================================================
    Reservas Zeppelin — v4.0 (mesas editables por sector)
    ============================================================ */
-const VERSION="5.22";
+const VERSION="5.23";
 
 /* Metadatos fijos de sector (nombre, zona, reglas de combinación). */
 const SECTORES_META=[
@@ -696,7 +696,21 @@ function enviarWhatsapp(id,tipo){
   window.open('https://wa.me/'+r.wa+'?text='+encodeURIComponent(msg),'_blank');
   renderReservas();
 }
-window.menuWhatsapp=menuWhatsapp; window.cerrarWaMenu=cerrarWaMenu; window.enviarWhatsapp=enviarWhatsapp;
+// Invitación de cumple: manda por WhatsApp el link a zeppelin-bar.com/invitacion con nombre de pila y fecha de la reserva (22:00 hs, fondo Salón).
+function nombrePila(n){const p=String(n||'').trim().split(/\s+/)[0]||'';return p?p.charAt(0).toUpperCase()+p.slice(1).toLowerCase():'';}
+function diaInvitacion(iso){try{const d=new Date(String(iso).slice(0,10)+'T00:00:00');return d.toLocaleDateString('es-AR',{weekday:'long'})+' '+d.getDate();}catch(_){return '';}}
+function enviarInvitacion(id){
+  WA_MENU=null;
+  const r=RESERVAS.find(x=>x.id===id); if(!r||!r.wa){ renderReservas(); return; }
+  const pila=nombrePila(r.nombre), f=String(r.fecha).slice(0,10);
+  const link='https://zeppelin-bar.com/invitacion/?n='+encodeURIComponent(pila)+'&f='+f;
+  const msg='🎂 ¡Hola '+pila+'! Te armamos tu invitación de cumple para compartir con tus invitados 🎉\n\n'+
+    'Abrila acá, descargala y mandala por WhatsApp o subila a tus historias:\n'+link+'\n\n'+
+    '¡Te esperamos el '+diaInvitacion(f)+' en Zeppelin! 🔥';
+  window.open('https://wa.me/'+r.wa+'?text='+encodeURIComponent(msg),'_blank');
+  renderReservas();
+}
+window.menuWhatsapp=menuWhatsapp; window.cerrarWaMenu=cerrarWaMenu; window.enviarWhatsapp=enviarWhatsapp; window.enviarInvitacion=enviarInvitacion;
 function flashRv(msg){const el=document.getElementById('rvMsg');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),4000);}
 let PENDING=null, EDITING=null;
 // Arma opciones de ubicación (permanecer + alternativas) para una reserva con cierta cantidad.
@@ -876,6 +890,7 @@ function waMenuHTML(r){
     <div class="ed-actions2">
       <button class="mini wa-send" onclick="enviarWhatsapp('${r.id}','cumple')">🥳 Cumpleaños</button>
       <button class="mini wa-send" onclick="enviarWhatsapp('${r.id}','general')">🎶 General</button>
+      <button class="mini wa-send" onclick="enviarInvitacion('${r.id}')">🎂 Invitación</button>
       <button class="mini danger" onclick="cerrarWaMenu()">Cancelar</button>
     </div>
   </div>`;
@@ -1052,7 +1067,7 @@ document.getElementById('pax').addEventListener('keydown',e=>{if(e.key==='Enter'
 document.getElementById('exportBtn').addEventListener('click',()=>{const blob=new Blob([JSON.stringify({version:VERSION,reglas:REGLAS,config:CFG,sectores:SECTORES},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='mapa_mesas_zeppelin_v'+VERSION+'.json';a.click();});
 document.getElementById('expResBtn').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(RESERVAS,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='reservas_zeppelin.json';a.click();});
 /* Solo ver: cualquier acción de edición queda anulada (además el backend la rechaza). */
-['reservar','editPax','setEstado','liberar','editarReserva','guardarEdicion','pedirCambioSector','pedirCambioFecha','moverReserva','menuWhatsapp','enviarWhatsapp','setCount','toggleSillon','restablecer'].forEach(fn=>{
+['reservar','editPax','setEstado','liberar','editarReserva','guardarEdicion','pedirCambioSector','pedirCambioFecha','moverReserva','menuWhatsapp','enviarWhatsapp','enviarInvitacion','setCount','toggleSillon','restablecer'].forEach(fn=>{
   const orig=window[fn]; if(typeof orig!=='function') return;
   window[fn]=function(){ if(esSoloVer()) return; return orig.apply(this,arguments); };
 });
