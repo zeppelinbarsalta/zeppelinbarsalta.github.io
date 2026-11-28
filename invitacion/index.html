@@ -7,6 +7,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=EB+Garamond:ital@1&family=Oswald:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Z4ZBXD057T"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Z4ZBXD057T');gtag('config','AW-18003811067');
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','2288749361531054');fbq('track','PageView');</script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;min-width:0;-webkit-tap-highlight-color:transparent}
 body{background:#0c0c0c;color:#fff;font-family:'Oswald',sans-serif;padding:16px;overflow-x:clip}
@@ -56,6 +60,11 @@ body{background:#0c0c0c;color:#fff;font-family:'Oswald',sans-serif;padding:16px;
 .sheet img{max-height:70vh;max-width:100%;border-radius:12px;-webkit-touch-callout:default}
 .sheet p{color:#ddd;font-size:15px;text-align:center;max-width:420px;line-height:1.4}
 .sheet .btn{max-width:320px}
+a.btn{display:flex;align-items:center;justify-content:center;text-align:center;text-decoration:none}
+.btn.wa{background:#25D366;color:#0c0c0c}
+.guest{margin-top:16px;padding-top:16px;border-top:1px dashed #333}
+.guest p{font-size:14px;color:#9a9a9a;margin-bottom:6px;line-height:1.45}
+.web{font-family:'Oswald';font-size:28px;letter-spacing:6px;color:rgba(255,255,255,.75);margin-top:14px;text-shadow:0 2px 14px rgba(0,0,0,.9)}
 </style></head>
 <body>
 <div class="layout">
@@ -78,6 +87,13 @@ body{background:#0c0c0c;color:#fff;font-family:'Oswald',sans-serif;padding:16px;
   </div>
   <button class="btn" id="btnDl">DESCARGAR IMAGEN</button>
   <p class="hint">Se genera en 1080×1920 (formato historia).</p>
+  <div class="guest">
+    <span class="lbl">Link para tus invitados</span>
+    <p>Les llega tu invitación, cómo llegar, la carta y la hora límite de llegada.</p>
+    <a class="btn wa" id="guestWa" target="_blank" rel="noopener">MANDAR POR WHATSAPP</a>
+    <button class="btn ghost" id="guestCopy" type="button">COPIAR LINK</button>
+    <input class="txt" id="guestUrl" readonly hidden style="margin-top:8px;font-size:13px">
+  </div>
 </div>
 <div class="side"><div class="stageWrap"><div id="stage">
   <div class="canvas" id="poster">
@@ -91,6 +107,7 @@ body{background:#0c0c0c;color:#fff;font-family:'Oswald',sans-serif;padding:16px;
       <div class="accent" id="pAccent">Quiero celebrarlo con vos</div>
       <div class="dateblock"><div class="date" id="pDate">SÁBADO 6</div><div class="hour" id="pHour">22:00 HS</div></div>
       <div class="addr">25 DE MAYO 340 · SALTA</div>
+      <div class="web">zeppelin-bar.com</div>
     </div>
   </div>
 </div></div></div>
@@ -99,6 +116,7 @@ body{background:#0c0c0c;color:#fff;font-family:'Oswald',sans-serif;padding:16px;
   <img id="sheetImg" alt="Invitación generada">
   <p id="sheetMsg"></p>
   <button class="btn" id="btnShare" hidden>COMPARTIR</button>
+  <a class="btn wa" id="sheetGuest" target="_blank" rel="noopener">MANDAR LINK A INVITADOS</a>
   <button class="btn ghost" id="btnClose">CERRAR</button>
 </div>
 <script>
@@ -146,7 +164,11 @@ const BGS=[
 ];
 const cache={};
 function srcOf(b){if(b.img)return b.img;if(!cache[b.id]){const[c,x]=cv();GEN[b.gen](x);cache[b.id]=c.toDataURL('image/jpeg',.85)}return cache[b.id]}
-let userPhoto=null,lastBlob=null;
+let userPhoto=null,lastBlob=null,curBg='salon';
+function track(ev,p){try{gtag('event',ev,p||{})}catch(e){}try{fbq('trackCustom',ev,p||{})}catch(e){}}
+function guestLink(){const q=new URLSearchParams();q.set('n',$('iNombre').value.trim());q.set('d',$('iDia').value.trim());q.set('h',$('iHora').value.trim());q.set('b',curBg);return 'https://zeppelin-bar.com/cumple/?'+q.toString()}
+function guestMsg(){return '🎉 ¡Te invito a mi cumple en Zeppelin! Mirá la invitación, cómo llegar y todo lo que tenés que saber acá: '+guestLink()}
+function updGuest(){const h='https://wa.me/?text='+encodeURIComponent(guestMsg());$('guestWa').href=h;$('sheetGuest').href=h;$('guestUrl').value=guestLink()}
 function nameSize(n){return n<=6?188:n<=8?158:n<=10?130:n<=12?108:92}
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 function render(){
@@ -156,13 +178,13 @@ function render(){
  $('pDate').textContent=($('iDia').value||'').toUpperCase();
  $('pHour').textContent=($('iHora').value||'').toUpperCase();
  $('pAccent').textContent=$('iFrase').value||'';
- ['iNombre','iDia','iHora','iFrase'].forEach(id=>store.set(id,$(id).value));
+ ['iNombre','iDia','iHora','iFrase'].forEach(id=>store.set(id,$(id).value));updGuest();
 }
 function fit(){const s=Math.min(wrap.clientWidth/W,1);stage.style.transform='scale('+s+')';wrap.style.height=(H*s)+'px'}
 function setShade(v){$('iShade').value=v;$('shade').style.opacity=v/100;$('oShade').textContent=v+'%'}
 function addTile(id,name,thumb,onClick){const el=document.createElement('button');el.type='button';el.className='bg';el.dataset.id=id;el.setAttribute('aria-label','Fondo '+name);if(thumb)el.style.backgroundImage='url('+thumb+')';const sp=document.createElement('span');sp.textContent=name;el.appendChild(sp);el.addEventListener('click',onClick);$('bgs').insertBefore(el,$('upBtn'));return el}
 function mark(id){document.querySelectorAll('.bg').forEach(e=>e.setAttribute('aria-pressed',String(e.dataset.id===id)))}
-function setBg(b,keepShade){$('photo').style.backgroundImage='url('+srcOf(b)+')';mark(b.id);if(!keepShade)setShade(b.shade);store.set('bg',b.id)}
+function setBg(b,keepShade){$('photo').style.backgroundImage='url('+srcOf(b)+')';mark(b.id);if(!keepShade)setShade(b.shade);store.set('bg',b.id);curBg=b.id;updGuest()}
 BGS.forEach(b=>{const el=addTile(b.id,b.name,b.img||null,()=>setBg(b));if(b.gen)setTimeout(()=>{el.style.backgroundImage='url('+srcOf(b)+')'},50)});
 $('iFile').addEventListener('change',e=>{
  const f=e.target.files&&e.target.files[0];if(!f)return;
@@ -177,7 +199,7 @@ $('iFile').addEventListener('change',e=>{
 function fileName(){return 'zeppelin-cumple-'+(($('iNombre').value||'invitacion').toLowerCase().normalize('NFD').replace(/[^a-z0-9]/g,'')||'invitacion')+'.png'}
 function openSheet(url,msg){$('sheetImg').src=url;$('sheetMsg').innerHTML=msg;$('sheet').classList.add('on')}
 $('btnClose').addEventListener('click',()=>$('sheet').classList.remove('on'));
-$('btnShare').addEventListener('click',async()=>{try{await navigator.share({files:[new File([lastBlob],fileName(),{type:'image/png'})]})}catch(e){}});
+$('btnShare').addEventListener('click',async()=>{try{await navigator.share({files:[new File([lastBlob],fileName(),{type:'image/png'})],text:guestMsg()});track('invitacion_compartida')}catch(e){}});
 const mobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)||(navigator.maxTouchPoints>1&&/Mac/.test(navigator.platform));
 async function download(){
  const b=$('btnDl');b.disabled=true;b.textContent='GENERANDO…';
@@ -187,7 +209,7 @@ async function download(){
   await new Promise(r=>setTimeout(r,60));
   const canvas=await html2canvas(poster,{width:W,height:H,scale:1,backgroundColor:'#050505',useCORS:true,logging:false});
   stage.style.transform=prev;
-  lastBlob=await new Promise(r=>canvas.toBlob(r,'image/png'));
+  lastBlob=await new Promise(r=>canvas.toBlob(r,'image/png'));track('invitacion_generada',{fondo:curBg});
   const url=URL.createObjectURL(lastBlob);
   const file=new File([lastBlob],fileName(),{type:'image/png'});
   const canShare=!!(navigator.canShare&&navigator.canShare({files:[file]}));
@@ -198,6 +220,8 @@ async function download(){
  finally{b.disabled=false;b.textContent='DESCARGAR IMAGEN'}
 }
 $('btnDl').addEventListener('click',download);
+$('guestCopy').addEventListener('click',async()=>{track('invitacion_link_copiado');try{await navigator.clipboard.writeText(guestLink());$('guestCopy').textContent='¡LINK COPIADO!';setTimeout(()=>{$('guestCopy').textContent='COPIAR LINK'},2000)}catch(e){const u=$('guestUrl');u.hidden=false;u.focus();u.select()}});
+['guestWa','sheetGuest'].forEach(id=>$(id).addEventListener('click',()=>track('invitacion_link_invitados')));
 ['iNombre','iDia','iHora','iFrase'].forEach(id=>{const v=store.get(id);if(typeof v==='string'&&!location.search.includes('n='))$(id).value=v;$(id).addEventListener('input',render)});
 $('iShade').addEventListener('input',e=>setShade(+e.target.value));
 window.addEventListener('resize',fit);
